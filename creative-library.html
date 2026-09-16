@@ -82,6 +82,14 @@ header h1{font-size:17px;font-weight:700;letter-spacing:-.02em;white-space:nowra
 .art .txt{position:relative;font-size:17px;font-weight:700;line-height:1.2;letter-spacing:-.02em;max-width:15ch}
 .art .shape{position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);width:42%;aspect-ratio:1;
   border-radius:50%;background:rgba(255,255,255,.18)}
+.pic img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.pic .imgwrap{position:relative;background:var(--hover)}
+.pic.r916 .imgwrap{aspect-ratio:9/16}.pic.r45 .imgwrap{aspect-ratio:4/5}.pic.r11 .imgwrap{aspect-ratio:1/1}
+.f .drop{border:1px dashed var(--line);border-radius:10px;padding:14px;text-align:center;color:var(--muted);
+  font-size:13px;cursor:pointer;background:var(--bg)}
+.f .drop:hover{border-color:var(--text);color:var(--text)}
+.f .drop.has{border-style:solid;padding:0;overflow:hidden}
+.f .drop img{width:100%;max-height:150px;object-fit:cover;display:block}
 .art .shape.box{border-radius:10px;width:34%;aspect-ratio:.6;background:rgba(255,255,255,.26)}
 .play{position:absolute;top:10px;left:10px;z-index:2;background:rgba(0,0,0,.45);color:#fff;border-radius:14px;
   padding:3px 9px;font-size:12px;font-weight:600;display:flex;gap:5px;align-items:center}
@@ -368,14 +376,21 @@ const stage=document.getElementById("stage");
 /* one simple thumbnail: flat colour, the hook, a play badge if it's video */
 function pic(d,opts){
   opts=opts||{};
+  const badges=`
+      ${(!opts.plain&&d.type==="video")?`<span class="play">▶ ${esc(d.dur||"")}</span>`:""}
+      ${(!opts.plain&&d.source==="Competitor scan")?`<span class="livetag" style="${d.type==="video"?"top:40px":""}">Live ${wks(d)} wks</span>`:""}`;
+  // A real screenshot or export of the ad, when we have one.
+  if(d.img) return `<div class="pic ${R[d.fmt]||"r45"}">
+      <div class="imgwrap"><img src="${esc(d.img)}" alt="${esc(d.hook)}" loading="lazy">${badges}</div>
+    </div>`;
+  // Otherwise: a stand-in, so the board still reads while assets are being imported.
   const shape=d.layout==="product"?'<span class="shape box"></span>'
             :(d.layout==="ugc"||d.layout==="split")?'<span class="shape"></span>':"";
   return `<div class="pic ${R[d.fmt]||"r45"}">
     <div class="art" style="background:${d.c1}">
       <span class="shade"></span>${shape}
       ${opts.plain?"":`<span class="txt">${esc(d.hook)}</span>`}
-      ${(!opts.plain&&d.type==="video")?`<span class="play">▶ ${esc(d.dur||"")}</span>`:""}
-      ${(!opts.plain&&d.source==="Competitor scan")?`<span class="livetag" style="${d.type==="video"?"top:40px":""}">Live ${wks(d)} wks</span>`:""}
+      ${badges}
     </div></div>`;
 }
 
@@ -601,6 +616,11 @@ function addForm(){
   el.className="modal";el.setAttribute("role","dialog");el.setAttribute("aria-label","Add a creative");
   el.innerHTML=`
     <h2>Add a creative</h2>
+    <div class="f"><label>The ad itself</label>
+      <div class="drop" id="a-drop" role="button" tabindex="0">Click to choose a screenshot or export</div>
+      <input type="file" id="a-file" accept="image/*" hidden>
+    </div>
+    <div class="f"><label for="a-url">…or paste an image URL</label><input id="a-url" placeholder="https://"></div>
     <div class="f"><label for="a-h">Hook or headline</label><input id="a-h" placeholder="What does the ad say?"></div>
     <div class="row2">
       <div class="f"><label for="a-c">Client</label><input id="a-c" list="cl" placeholder="Kiss Now">
@@ -614,6 +634,14 @@ function addForm(){
     </div>
     <div class="f"><label for="a-n">Why save it?</label><textarea id="a-n" placeholder="Optional"></textarea></div>
     <div class="acts"><button class="btn" data-a="x">Cancel</button><button class="btn btn-dark" data-a="ok">Add</button></div>`;
+  let picked="";
+  const drop=el.querySelector("#a-drop"),file=el.querySelector("#a-file");
+  drop.addEventListener("click",()=>file.click());
+  drop.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();file.click()}});
+  file.addEventListener("change",()=>{
+    const f=file.files[0];if(!f)return;
+    shrink(f,900,url=>{picked=url;drop.classList.add("has");drop.innerHTML=`<img src="${url}" alt="">`;});
+  });
   el.querySelector('[data-a="x"]').addEventListener("click",shut);
   el.querySelector('[data-a="ok"]').addEventListener("click",()=>{
     const v=id=>el.querySelector(id).value.trim();
@@ -622,11 +650,29 @@ function addForm(){
       industry:v("#a-i")||"Unsorted",type,source:"Manual",layout:"type",hook:v("#a-h")||"Untitled",
       fmt:el.querySelector("#a-f").value,dur:type==="video"?"0:30":"",spend:"—",ctr:"—",hookRate:"—",days:0,
       added:new Date().toISOString().slice(0,10),by:"Added by you",note:v("#a-n")||"No note yet.",
-      c1:"#4A5560",c2:"#20262C"};
+      img:picked||v("#a-url")||"",c1:"#4A5560",c2:"#20262C"};
     DATA.unshift(item);store({added:[item,...(saved().added||[])]});
     shut();go("all");toast("Added");
   });
   put(el);
+}
+
+/* Browser storage is small, so a picked file is resized before it is kept. */
+function shrink(file,max,done){
+  const r=new FileReader();
+  r.onload=()=>{
+    const im=new Image();
+    im.onload=()=>{
+      const k=Math.min(1,max/Math.max(im.width,im.height));
+      const c=document.createElement("canvas");
+      c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);
+      c.getContext("2d").drawImage(im,0,0,c.width,c.height);
+      try{done(c.toDataURL("image/jpeg",.82))}catch(e){done(r.result)}
+    };
+    im.onerror=()=>done(r.result);
+    im.src=r.result;
+  };
+  r.readAsDataURL(file);
 }
 
 let tt=null;

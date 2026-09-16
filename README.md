@@ -21,6 +21,20 @@ Saved items and anything you add persist in the browser via `localStorage`.
 Deliberately plain: a Pinterest-style masonry board, system type, and filters that sit in
 one row above it. Nothing competes with the creative itself. Works in light and dark.
 
+## Adding the real ads
+
+Three ways, in order of effort:
+
+1. **In the app** — *Add* takes a file straight off your machine (it's downscaled and
+   kept in the browser) or an image URL.
+2. **In the repo** — put files in `assets/` and add `img:"assets/name.jpg"` to that
+   creative in `creative-library.html`. This is the one to use for the Motion import.
+3. **Remote URLs** — any `img` value that is a URL works on the deployed site.
+
+A creative with no `img` falls back to a colour block, so a partial import still reads
+as a board. Note that the published Claude artifact blocks remote images — the Vercel
+site doesn't, so use that for the demo.
+
 ## Sample data
 
 Everything in `creative-library.html` is **illustrative**. Client names, spend, CTR, hook
@@ -54,7 +68,7 @@ npx vercel --prod
 
 ## Not built yet
 
-- Real asset storage and thumbnails (frames are generated from CSS, not the actual ads)
+- A real asset pipeline (resizing, CDN, video playback — `img` is a plain file path today)
 - The Motion and Slack connections themselves — the bot, the export, the sync
 - A view for the shortlist; **Save** currently only marks creatives
 - Auth, and any notion of who is looking

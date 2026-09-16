@@ -1,0 +1,1179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Creative Library</title>
+<meta name="description" content="A unified creative library for Klimt & Design — every ad the agency has saved, filterable by client, industry and ad type.">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#DEE2DD" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0F1210" media="(prefers-color-scheme: dark)">
+<meta property="og:title" content="Creative Library">
+<meta property="og:description" content="A unified creative library for Klimt & Design — every ad the agency has saved, filterable by client, industry and ad type.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23BE3318%22%20stroke-width%3D%221.6%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%227.2%22%2F%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%222.4%22%2F%3E%3Cpath%20d%3D%22M12%20.8v6M12%2017.2v6M.8%2012h6M17.2%2012h6%22%2F%3E%3C%2Fsvg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{color-scheme:light dark}
+  html,body{margin:0}
+  img{max-width:100%}
+  [hidden]{display:none!important}
+</style>
+<style>
+/* ===========================================================
+   THE PROOF SHEET
+   Light table grey-green ground, prints with white mats and
+   crop marks, mono spec strips, condensed poster type.
+   Archivo variable (wdth 62-125) carries display + UI;
+   IBM Plex Mono carries every number and label.
+   =========================================================== */
+:root{
+  --paper:#DEE2DD; --grid:rgba(15,19,16,.055);
+  --sheet:#FBFCFA; --sheet-2:#F0F2EE; --sheet-3:#E6EAE4;
+  --rule:#C5CBC3; --rule-soft:#DDE2DB;
+  --ink:#0F1310; --ink-2:#535B52; --ink-3:#8B928A;
+  --reg:#BE3318; --reg-soft:#F5E1DB; --on-reg:#FFFFFF;
+  --amber:#7E6410; --amber-soft:#F0E6C6;
+  --mat:#FFFFFF;
+  --lift:0 1px 0 rgba(15,19,16,.05), 0 6px 18px -12px rgba(15,19,16,.38);
+  --lift-2:0 24px 60px -26px rgba(15,19,16,.5);
+  --focus:#BE3318;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0F1210; --grid:rgba(233,237,231,.05);
+    --sheet:#181C18; --sheet-2:#20251F; --sheet-3:#283027;
+    --rule:#2F362E; --rule-soft:#242B23;
+    --ink:#E9EDE7; --ink-2:#A2AA9F; --ink-3:#727A6F;
+    --reg:#E4543A; --reg-soft:#2E1610; --on-reg:#160705;
+    --amber:#D6B24D; --amber-soft:#2A2310;
+    --mat:#0B0D0B;
+    --lift:0 1px 0 rgba(0,0,0,.5), 0 6px 18px -12px rgba(0,0,0,.9);
+    --lift-2:0 24px 60px -26px rgba(0,0,0,.95);
+    --focus:#E4543A;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0F1210; --grid:rgba(233,237,231,.05);
+  --sheet:#181C18; --sheet-2:#20251F; --sheet-3:#283027;
+  --rule:#2F362E; --rule-soft:#242B23;
+  --ink:#E9EDE7; --ink-2:#A2AA9F; --ink-3:#727A6F;
+  --reg:#E4543A; --reg-soft:#2E1610; --on-reg:#160705;
+  --amber:#D6B24D; --amber-soft:#2A2310;
+  --mat:#0B0D0B;
+  --lift:0 1px 0 rgba(0,0,0,.5), 0 6px 18px -12px rgba(0,0,0,.9);
+  --lift-2:0 24px 60px -26px rgba(0,0,0,.95);
+  --focus:#E4543A;
+}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:"Archivo","Helvetica Neue",Arial,sans-serif;font-size:13.5px;line-height:1.45;
+  -webkit-font-smoothing:antialiased;font-synthesis-weight:none}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+h1,h2,h3,h4{margin:0;text-wrap:balance}
+
+/* type roles */
+.disp{font-stretch:72%;font-weight:800;letter-spacing:.005em;text-transform:uppercase;line-height:.94}
+.lbl{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace;font-size:9.5px;text-transform:uppercase;
+  letter-spacing:.15em;font-weight:500;color:var(--ink-3)}
+.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace;font-variant-numeric:tabular-nums}
+
+/* ---------- shell ---------- */
+.app{display:grid;grid-template-columns:228px minmax(0,1fr);min-height:100vh}
+.rail{border-right:1px solid var(--rule);background:var(--sheet);padding:0 0 28px;
+  display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto}
+.brand{display:flex;align-items:center;gap:10px;padding:16px 16px 15px;border-bottom:1px solid var(--rule)}
+.brand .reg{width:22px;height:22px;flex:0 0 auto;color:var(--reg)}
+.brand h1{font-size:12px;font-stretch:78%;font-weight:800;text-transform:uppercase;letter-spacing:.08em;line-height:1.1}
+.brand .sub{display:block;font-family:"IBM Plex Mono",monospace;font-size:8.5px;letter-spacing:.17em;
+  text-transform:uppercase;color:var(--ink-3);margin-top:2px}
+
+nav.views{display:flex;flex-direction:column;padding:8px 0;border-bottom:1px solid var(--rule)}
+.view-btn{display:flex;align-items:center;gap:8px;width:100%;background:none;border:0;
+  padding:7px 16px 7px 14px;cursor:pointer;text-align:left;color:var(--ink-2);
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;
+  border-left:2px solid transparent}
+.view-btn:hover{color:var(--ink);background:var(--sheet-2)}
+.view-btn[aria-current="page"]{color:var(--ink);border-left-color:var(--reg);background:var(--sheet-2);font-weight:600}
+.view-btn svg{flex:0 0 auto;opacity:.7}
+.view-btn[aria-current="page"] svg{opacity:1;color:var(--reg)}
+.view-btn .badge{margin-left:auto;font-size:9.5px;background:var(--reg);color:var(--on-reg);
+  padding:1px 5px;font-weight:600;letter-spacing:.06em}
+
+#filters{display:flex;flex-direction:column}
+.facet{display:flex;flex-direction:column;padding:13px 16px;border-bottom:1px solid var(--rule-soft)}
+.facet > h2{margin:0 0 7px}
+.opt{display:flex;align-items:center;gap:8px;width:100%;background:none;border:0;padding:3px 0;
+  cursor:pointer;text-align:left;color:var(--ink-2);font-size:12.5px}
+.opt:hover{color:var(--ink)}
+.opt .box{width:9px;height:9px;flex:0 0 auto;border:1px solid var(--rule);background:var(--sheet)}
+.opt:hover .box{border-color:var(--ink-3)}
+.opt[aria-pressed="true"]{color:var(--ink);font-weight:600}
+.opt[aria-pressed="true"] .box{background:var(--reg);border-color:var(--reg)}
+.opt .n{margin-left:auto;font-family:"IBM Plex Mono",monospace;font-size:10.5px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.opt[data-empty="true"]{opacity:.35}
+.rail-foot{margin-top:auto;padding:14px 16px 0;border-top:1px solid var(--rule)}
+.rail-foot h2{margin-bottom:8px}
+.src-line{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:11.5px;color:var(--ink-2);padding:2.5px 0}
+.src-line .dots{flex:1;border-bottom:1px dotted var(--rule);transform:translateY(-3px)}
+.src-line b{font-family:"IBM Plex Mono",monospace;font-weight:500;font-variant-numeric:tabular-nums;color:var(--ink)}
+
+/* ---------- stage ---------- */
+main{min-width:0;display:flex;flex-direction:column;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:26px 26px;background-position:-1px -1px}
+.toolbar{position:sticky;top:0;z-index:5;background:var(--sheet);border-bottom:1px solid var(--rule);
+  padding:0 16px;display:flex;align-items:stretch;gap:0;flex-wrap:nowrap;min-height:46px}
+.search{flex:1 1 160px;min-width:96px;position:relative;display:flex;align-items:center;border-right:1px solid var(--rule-soft);margin-right:14px}
+.search input{width:100%;padding:12px 12px 12px 26px;border:0;background:none;font-size:13.5px}
+.search input::placeholder{color:var(--ink-3)}
+.search svg{position:absolute;left:2px;color:var(--ink-3)}
+.seg{display:flex;align-items:center;gap:2px}
+.seg button{border:0;background:none;padding:6px 9px;cursor:pointer;color:var(--ink-3);
+  font-family:"IBM Plex Mono",monospace;font-size:10px;text-transform:uppercase;letter-spacing:.11em;
+  border-bottom:2px solid transparent}
+.seg button:hover{color:var(--ink)}
+.seg button[aria-pressed="true"]{color:var(--ink);border-bottom-color:var(--reg);font-weight:600}
+.toolbar .spacer{flex:1 0 14px}
+.btn{border:1px solid var(--rule);background:var(--sheet);padding:6px 11px;cursor:pointer;
+  font-family:"IBM Plex Mono",monospace;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-2)}
+.btn:hover{border-color:var(--ink);color:var(--ink)}
+.btn-primary{background:var(--reg);border-color:var(--reg);color:var(--on-reg);font-weight:600}
+.btn-primary:hover{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.toolbar .btn{align-self:center;flex:0 0 auto;white-space:nowrap}
+.toolbar .btn+.btn{margin-left:6px}
+.icon-btn{border:0;background:none;cursor:pointer;color:var(--ink-3);padding:4px 6px;line-height:1}
+.icon-btn:hover{background:var(--sheet-2);color:var(--ink)}
+
+/* ---------- sheet head ---------- */
+.head{padding:26px 22px 0;display:flex;flex-direction:column;gap:9px}
+.head .hrow{display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap}
+.head h2{font-size:clamp(30px,4.4vw,46px);font-stretch:68%;font-weight:800;text-transform:uppercase;
+  letter-spacing:-.005em;line-height:.9}
+.head .specline{display:flex;align-items:center;gap:0;flex-wrap:wrap;
+  border-top:1px solid var(--ink);border-bottom:1px solid var(--rule);padding:5px 0;margin-top:2px}
+.head .specline span{font-family:"IBM Plex Mono",monospace;font-size:9.5px;text-transform:uppercase;
+  letter-spacing:.14em;color:var(--ink-2);padding:0 11px;border-right:1px solid var(--rule-soft)}
+.head .specline span:first-child{padding-left:0}
+.head .specline span:last-child{border-right:0}
+.head .specline b{color:var(--ink);font-weight:600}
+.head p{margin:0;color:var(--ink-2);font-size:13px;max-width:68ch}
+.chips{padding:12px 22px 0;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.chip{display:inline-flex;align-items:center;gap:6px;font-family:"IBM Plex Mono",monospace;font-size:10px;
+  text-transform:uppercase;letter-spacing:.09em;background:var(--reg-soft);color:var(--ink);
+  border:1px solid var(--reg);padding:3px 4px 3px 9px}
+.chip button{border:0;background:none;cursor:pointer;color:var(--reg);line-height:1;padding:1px 4px;font-size:12px;font-family:inherit}
+.chip button:hover{background:var(--reg);color:var(--on-reg)}
+.chip.plain{background:none;border-color:var(--rule);color:var(--ink-2)}
+.chip.plain button{color:var(--ink-2)}
+.chip.plain button:hover{background:var(--ink);color:var(--paper)}
+
+/* ---------- the board: prints on the table ---------- */
+.board{padding:20px 22px 72px;columns:4;column-gap:20px}
+@media(max-width:1520px){.board{columns:3}}
+@media(max-width:1080px){.board{columns:2}}
+.card{break-inside:avoid;margin:0 0 20px;width:100%;background:var(--mat);border:1px solid var(--rule);
+  padding:7px 7px 0;cursor:pointer;position:relative;
+  transition:box-shadow .16s ease,border-color .16s ease,transform .16s ease}
+.card:hover{box-shadow:var(--lift);border-color:var(--ink-3);transform:translateY(-1px);z-index:2}
+/* crop marks, revealed on hover */
+.card::before,.card::after{content:"";position:absolute;width:9px;height:9px;opacity:0;transition:opacity .16s ease;pointer-events:none}
+.card::before{top:-1px;left:-1px;border-top:1px solid var(--reg);border-left:1px solid var(--reg)}
+.card::after{bottom:-1px;right:-1px;border-bottom:1px solid var(--reg);border-right:1px solid var(--reg)}
+.card:hover::before,.card:hover::after,.card:focus-visible::before,.card:focus-visible::after{opacity:1}
+.card .save{position:absolute;top:15px;right:15px;z-index:4;opacity:0;background:rgba(10,12,10,.62);
+  color:#fff;border:0;padding:4px 8px;cursor:pointer;backdrop-filter:blur(4px);
+  font-family:"IBM Plex Mono",monospace;font-size:9.5px;text-transform:uppercase;letter-spacing:.1em;
+  transition:opacity .16s ease}
+.card:hover .save,.card:focus-within .save{opacity:1}
+.card .save:hover{background:var(--reg)}
+.card .save[data-saved="true"]{opacity:1;background:var(--reg);font-weight:600}
+
+/* spec strip under each print */
+.spec{padding:9px 1px 10px;display:flex;flex-direction:column;gap:5px}
+.spec .l1{display:flex;align-items:baseline;gap:8px}
+.spec .client{font-size:12.5px;font-weight:700;letter-spacing:-.01em;line-height:1.2}
+.spec .sig{margin-left:auto;font-family:"IBM Plex Mono",monospace;font-size:9.5px;color:var(--ink-3);
+  text-transform:uppercase;letter-spacing:.08em;white-space:nowrap}
+.spec .l2{display:flex;flex-wrap:wrap;gap:0 7px;align-items:center;
+  font-family:"IBM Plex Mono",monospace;font-size:9.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-3)}
+.spec .l2 .sep{opacity:.5}
+.spec .l2 .on{color:var(--ink-2)}
+.spec .l2 .vid{color:var(--reg);font-weight:600}
+.spec .l2 .flag{color:var(--amber);font-weight:600}
+.spec .hair{height:1px;background:var(--rule-soft)}
+
+/* ---------- generated ad frames ---------- */
+.frame{color:#fff;position:relative;display:block;overflow:hidden;isolation:isolate;font-size:13px}
+.frame.r916{aspect-ratio:9/16}.frame.r45{aspect-ratio:4/5}.frame.r11{aspect-ratio:1/1}
+.frame .grad{position:absolute;inset:0;z-index:-2}
+.frame .vig{position:absolute;inset:0;z-index:-1;
+  background:linear-gradient(180deg,rgba(0,0,0,.3) 0%,rgba(0,0,0,0) 32%,rgba(0,0,0,.08) 54%,rgba(0,0,0,.66) 100%)}
+.wordmark{position:absolute;top:10px;left:11px;z-index:4;font-family:"IBM Plex Mono",monospace;
+  font-size:9px;letter-spacing:.2em;text-transform:uppercase;font-weight:500;opacity:.88;
+  text-shadow:0 1px 3px rgba(0,0,0,.4)}
+.playtag{position:absolute;top:9px;right:10px;z-index:4;background:rgba(0,0,0,.5);
+  padding:2px 7px;font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.08em;backdrop-filter:blur(3px)}
+.fbottom{position:absolute;left:0;right:0;bottom:0;padding:13px 13px 14px;z-index:3;display:flex;flex-direction:column;gap:6px}
+.fkicker{font-family:"IBM Plex Mono",monospace;font-size:8.5px;text-transform:uppercase;letter-spacing:.16em;opacity:.85}
+.fhook{font-size:17px;font-weight:700;line-height:1.14;letter-spacing:-.022em;max-width:17ch;text-shadow:0 1px 10px rgba(0,0,0,.35)}
+.frame.big .fhook{font-size:23px}
+.cta{align-self:flex-start;margin-top:4px;background:#fff;color:#111;padding:4px 10px;
+  font-family:"IBM Plex Mono",monospace;font-size:9.5px;font-weight:600;text-transform:uppercase;letter-spacing:.1em}
+
+.ugc-sub{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);width:46%;aspect-ratio:1;border-radius:50%;
+  background:radial-gradient(circle at 38% 32%,rgba(255,255,255,.42),rgba(255,255,255,.06) 62%,transparent 74%)}
+.ugc-shoulder{position:absolute;left:50%;bottom:26%;transform:translateX(-50%);width:76%;height:26%;
+  border-radius:50% 50% 0 0/70% 70% 0 0;background:rgba(255,255,255,.13)}
+.cap{position:absolute;left:50%;top:57%;transform:translateX(-50%);z-index:3;background:rgba(6,8,6,.76);
+  padding:4px 9px;font-size:11px;font-weight:700;letter-spacing:-.01em;white-space:nowrap;max-width:88%;
+  overflow:hidden;text-overflow:ellipsis}
+.cap em{font-style:normal;color:#FFD84D}
+
+.split{position:absolute;inset:0}
+.split .half{position:absolute;top:0;bottom:0;display:grid;place-items:center}
+.split .l{left:0;width:44%;background:rgba(0,0,0,.3)}
+.split .r{right:0;width:56%;background:rgba(255,255,255,.1)}
+.split .rule{position:absolute;top:0;bottom:0;left:44%;width:1px;background:rgba(255,255,255,.9)}
+.split .lbl{position:absolute;top:36px;color:#fff;font-family:"IBM Plex Mono",monospace;font-size:8.5px;
+  letter-spacing:.18em;font-weight:600;opacity:.92;text-shadow:0 1px 4px rgba(0,0,0,.5)}
+.split .blob{width:58%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 40% 35%,rgba(255,255,255,.3),transparent 68%)}
+.split .r .blob{background:radial-gradient(circle at 40% 35%,rgba(255,255,255,.66),rgba(255,255,255,.08) 70%)}
+
+.typeonly{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:16px 15px;z-index:3;color:#fff}
+.typeonly .big{font-size:30px;font-stretch:76%;font-weight:800;line-height:.98;letter-spacing:-.015em;
+  text-transform:uppercase;max-width:11ch}
+.frame.r11 .typeonly .big{font-size:26px}
+.typeonly .rulehr{width:100%;height:1px;background:rgba(255,255,255,.55);margin:12px 0 9px}
+.typeonly .sm{font-size:11px;opacity:.88;max-width:24ch;line-height:1.35}
+
+.prod{position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);z-index:2;width:26%;height:46%;
+  border-radius:3px 3px 2px 2px;background:linear-gradient(100deg,rgba(255,255,255,.96),rgba(255,255,255,.62));
+  box-shadow:0 18px 34px -14px rgba(0,0,0,.6)}
+.prod::before{content:"";position:absolute;left:26%;right:26%;top:-13%;height:15%;background:rgba(255,255,255,.75)}
+.prod::after{content:"";position:absolute;left:14%;right:14%;top:44%;height:15%;background:var(--brand);opacity:.3}
+.pshadow{position:absolute;left:50%;top:73%;transform:translateX(-50%);width:34%;height:5%;border-radius:50%;
+  background:rgba(0,0,0,.34);filter:blur(6px)}
+
+.uicard{position:absolute;left:11%;right:11%;top:15%;z-index:3;background:#fff;color:#111;
+  padding:13px;box-shadow:0 20px 40px -18px rgba(0,0,0,.6);display:flex;flex-direction:column;gap:9px}
+.uicard .ulbl{font-family:"IBM Plex Mono",monospace;font-size:8.5px;letter-spacing:.15em;text-transform:uppercase;color:#6B736C;font-weight:600}
+.uicard .num{font-size:27px;font-stretch:78%;font-weight:800;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
+.uirow{display:flex;align-items:center;gap:7px}
+.uirow .b{height:6px;background:#E2E6E1}
+.uirow .b.a{background:var(--brand);opacity:.8}
+.uidot{width:14px;height:14px;background:#E8ECE7;flex:0 0 auto}
+
+.bars{position:absolute;left:12%;right:12%;top:21%;height:43%;display:flex;align-items:flex-end;gap:9%;z-index:3}
+.bars .bar{flex:1;background:rgba(255,255,255,.26);position:relative}
+.bars .bar.us{background:#fff}
+.bars .bar span{position:absolute;bottom:-16px;left:0;right:0;text-align:center;font-size:8px;
+  letter-spacing:.12em;font-family:"IBM Plex Mono",monospace;opacity:.85}
+
+.rev{position:absolute;left:9%;right:9%;top:17%;display:flex;flex-direction:column;gap:7px;z-index:3}
+.rev .r{background:#fff;color:#111;padding:8px 9px;box-shadow:0 8px 18px -10px rgba(0,0,0,.55)}
+.rev .r:nth-child(2){margin-left:7%}
+.rev .r:nth-child(3){margin-left:14%;opacity:.85}
+.rev .stars{color:#E0A23A;font-size:9px;letter-spacing:1px}
+.rev .t{font-size:10px;font-weight:600;line-height:1.3;margin-top:2px}
+
+.doc{position:absolute;left:17%;right:17%;top:15%;height:42%;background:#fff;padding:12px;z-index:3;
+  box-shadow:0 18px 34px -16px rgba(0,0,0,.6);display:flex;flex-direction:column;gap:6px}
+.doc .l{height:4px;background:#DFE3DE}
+.doc .l.s{width:52%}.doc .l.t{width:72%;height:8px;background:#111;opacity:.85;margin-bottom:3px}
+.doc .seal{position:absolute;right:10px;bottom:10px;width:28px;height:28px;border-radius:50%;
+  border:2px solid var(--brand);opacity:.6}
+
+/* ---------- boards ---------- */
+.bgrid{padding:20px 22px 72px;display:grid;gap:20px;grid-template-columns:repeat(auto-fill,minmax(254px,1fr))}
+.btile{background:var(--mat);border:1px solid var(--rule);padding:7px 7px 0;cursor:pointer;text-align:left;
+  position:relative;transition:box-shadow .16s ease,border-color .16s ease,transform .16s ease}
+.btile:hover{box-shadow:var(--lift);border-color:var(--ink-3);transform:translateY(-1px)}
+.mosaic{display:grid;grid-template-columns:2fr 1fr;grid-template-rows:1fr 1fr;gap:3px;height:150px;background:var(--rule-soft)}
+.mosaic > *{overflow:hidden;position:relative}
+.mosaic > *:first-child{grid-row:span 2}
+.mosaic .frame{position:absolute;inset:0;aspect-ratio:auto}
+.btile .cap2{padding:10px 1px 12px;display:flex;flex-direction:column;gap:6px}
+.btile h3{font-size:16px;font-stretch:76%;font-weight:800;text-transform:uppercase;letter-spacing:.005em;line-height:1}
+.btile .sub2{font-family:"IBM Plex Mono",monospace;font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-3);
+  display:flex;gap:7px;align-items:center}
+.btile .sub2 .on{color:var(--ink-2)}
+.btile .meter{display:flex;height:3px;gap:2px;margin-top:1px}
+.btile .meter i{display:block;height:100%}
+.btile .meter .v{background:var(--reg)}
+.btile .meter .s{background:var(--ink-3);opacity:.45}
+
+/* ---------- inbox: slips off the wire ---------- */
+.inbox{padding:20px 22px 72px;display:flex;flex-direction:column;gap:14px;max-width:1040px}
+.irow{background:var(--sheet);border:1px solid var(--rule);border-left:2px solid var(--reg);
+  padding:13px 15px;display:grid;grid-template-columns:86px minmax(0,1fr);gap:16px;align-items:start}
+.irow .thumbwrap{overflow:hidden;border:1px solid var(--rule-soft)}
+.irow .msg{display:flex;flex-direction:column;gap:10px;min-width:0}
+.slackline{display:flex;align-items:center;gap:9px;flex-wrap:wrap;font-family:"IBM Plex Mono",monospace;
+  font-size:9.5px;text-transform:uppercase;letter-spacing:.11em;color:var(--ink-3)}
+.slackline .who{color:var(--ink);font-weight:600}
+.slackline .ch{color:var(--reg)}
+.quote{font-size:14px;color:var(--ink);line-height:1.45;max-width:64ch}
+.quote::before{content:"“"}.quote::after{content:"”"}
+.tagrow{display:flex;gap:7px;flex-wrap:wrap;align-items:center;border-top:1px solid var(--rule-soft);padding-top:10px}
+.tagrow select{border:1px solid var(--rule);padding:5px 7px;background:var(--sheet);
+  font-family:"IBM Plex Mono",monospace;font-size:10px;text-transform:uppercase;letter-spacing:.07em}
+.tagrow .spacer{flex:1}
+.inbox-done{text-align:center;padding:64px 22px;color:var(--ink-3)}
+.inbox-done b{display:block;color:var(--ink);font-size:22px;font-stretch:72%;font-weight:800;text-transform:uppercase;margin-bottom:8px}
+
+/* ---------- competitor watch ---------- */
+.watch{padding:20px 22px 72px;display:flex;flex-direction:column;gap:30px;max-width:1040px}
+.scanbar{display:flex;align-items:center;gap:11px;background:var(--sheet);border:1px solid var(--rule);
+  padding:10px 14px;flex-wrap:wrap;font-family:"IBM Plex Mono",monospace;font-size:10px;
+  text-transform:uppercase;letter-spacing:.11em;color:var(--ink-3)}
+.scanbar .pulse{width:7px;height:7px;border-radius:50%;background:var(--reg);flex:0 0 auto;box-shadow:0 0 0 3px var(--reg-soft)}
+.scanbar b{color:var(--ink);font-weight:600}
+.bset h3{font-size:19px;font-stretch:72%;font-weight:800;text-transform:uppercase;letter-spacing:.005em;
+  border-bottom:1px solid var(--ink);padding-bottom:6px}
+.bset .sub3{margin:7px 0 12px;font-family:"IBM Plex Mono",monospace;font-size:10px;text-transform:uppercase;
+  letter-spacing:.11em;color:var(--ink-3)}
+.wlist{display:flex;flex-direction:column;gap:1px;background:var(--rule-soft);border:1px solid var(--rule)}
+.wrow{display:grid;grid-template-columns:58px minmax(0,1.5fr) minmax(130px,1fr) auto;gap:16px;align-items:center;
+  background:var(--sheet);padding:11px 14px;cursor:pointer}
+.wrow:hover{background:var(--sheet-2)}
+.wrow .thumbwrap{overflow:hidden;border:1px solid var(--rule-soft)}
+.wrow .wh{font-weight:700;font-size:13.5px;letter-spacing:-.012em}
+.wrow .wsub{font-family:"IBM Plex Mono",monospace;font-size:9.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-3);margin-top:3px}
+.track{height:6px;background:var(--sheet-3);display:flex}
+.track i{display:block;height:100%;background:var(--amber)}
+.tracklbl{font-family:"IBM Plex Mono",monospace;font-size:9px;text-transform:uppercase;letter-spacing:.1em;
+  color:var(--ink-3);margin-top:5px;display:flex;justify-content:space-between}
+.tracklbl b{color:var(--amber);font-weight:600}
+.wrow .go{font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--ink-3);letter-spacing:.1em}
+.wrow:hover .go{color:var(--reg)}
+
+/* ---------- drawer: the spec sheet ---------- */
+.scrim{position:fixed;inset:0;background:rgba(10,14,11,.58);z-index:20}
+.drawer{position:fixed;top:0;right:0;height:100vh;width:min(448px,100vw);z-index:21;background:var(--sheet);
+  border-left:1px solid var(--rule);display:flex;flex-direction:column;box-shadow:var(--lift-2)}
+.drawer .top{padding:0 8px 0 16px;display:flex;align-items:center;gap:6px;border-bottom:1px solid var(--rule);
+  min-height:44px;flex:0 0 auto}
+.drawer .top h3{font-family:"IBM Plex Mono",monospace;font-size:10px;text-transform:uppercase;
+  letter-spacing:.16em;color:var(--ink-3);font-weight:500}
+.drawer .nav{margin-left:auto;display:flex;gap:1px;align-items:center}
+.drawer .body{padding:18px 18px 22px;display:flex;flex-direction:column;gap:16px;overflow-y:auto}
+.drawer .preview{background:var(--mat);border:1px solid var(--rule);padding:7px}
+.drawer h4{font-size:24px;font-stretch:80%;font-weight:800;letter-spacing:-.02em;line-height:1.05;text-transform:uppercase}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--rule);background:var(--rule-soft);gap:1px}
+.stat{background:var(--sheet);padding:10px 11px}
+.stat .k{font-family:"IBM Plex Mono",monospace;font-size:8.5px;text-transform:uppercase;letter-spacing:.14em;color:var(--ink-3);font-weight:500}
+.stat .v{font-size:19px;font-stretch:80%;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums;margin-top:3px}
+.stat .v.up{color:var(--reg)}
+.dl{display:grid;grid-template-columns:auto 1fr;gap:0;font-size:13px;border-top:1px solid var(--rule)}
+.dl dt{font-family:"IBM Plex Mono",monospace;font-size:9px;text-transform:uppercase;letter-spacing:.13em;
+  color:var(--ink-3);padding:7px 14px 7px 0;border-bottom:1px solid var(--rule-soft);white-space:nowrap}
+.dl dd{margin:0;padding:7px 0;border-bottom:1px solid var(--rule-soft);text-align:right}
+.note{background:var(--sheet-2);border-left:2px solid var(--ink);padding:12px 14px;font-size:13.5px;color:var(--ink-2);line-height:1.5}
+.note .who{display:block;font-family:"IBM Plex Mono",monospace;font-size:9.5px;text-transform:uppercase;
+  letter-spacing:.11em;color:var(--ink-3);margin-top:9px}
+.drawer .foot{margin-top:auto;border-top:1px solid var(--rule);padding:11px 14px;display:flex;gap:7px;flex:0 0 auto}
+
+/* ---------- modal + toast ---------- */
+.modal{position:fixed;z-index:21;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:min(470px,calc(100vw - 28px));background:var(--sheet);border:1px solid var(--ink);
+  box-shadow:var(--lift-2);padding:20px;display:flex;flex-direction:column;gap:13px;max-height:90vh;overflow-y:auto}
+.modal h3{font-size:22px;font-stretch:72%;font-weight:800;text-transform:uppercase;letter-spacing:.005em;
+  border-bottom:1px solid var(--ink);padding-bottom:9px}
+.modal p.hint{margin:0;color:var(--ink-2);font-size:12.5px}
+.field{display:flex;flex-direction:column;gap:4px}
+.field label{font-family:"IBM Plex Mono",monospace;font-size:9px;text-transform:uppercase;letter-spacing:.14em;color:var(--ink-3);font-weight:500}
+.field input,.field select,.field textarea{border:1px solid var(--rule);padding:8px 9px;background:var(--paper);font-family:inherit;font-size:13px}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--ink);outline:none}
+.field textarea{resize:vertical;min-height:56px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.modal .actions{display:flex;gap:7px;justify-content:flex-end;margin-top:3px}
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);z-index:40;background:var(--ink);
+  color:var(--paper);padding:9px 14px;box-shadow:var(--lift-2);display:flex;align-items:center;gap:11px;
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em}
+.toast b{font-weight:600}
+.toast .btn{border-color:currentColor;background:none;color:inherit}
+.toast .btn:hover{background:var(--paper);color:var(--ink)}
+.empty{padding:60px 22px;color:var(--ink-2);max-width:50ch}
+.empty b{display:block;color:var(--ink);font-size:24px;font-stretch:72%;font-weight:800;text-transform:uppercase;margin-bottom:9px}
+.kbd{font-family:"IBM Plex Mono",monospace;font-size:9.5px;color:var(--ink-3);letter-spacing:.1em;padding:0 6px}
+
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media(max-width:880px){
+  .app{grid-template-columns:1fr}
+  .rail{position:static;height:auto;border-right:0;border-bottom:1px solid var(--rule)}
+  .board{columns:2;padding:14px}
+  .toolbar{padding:0 12px;flex-wrap:wrap}
+  .head,.chips,.bgrid,.inbox,.watch{padding-left:14px;padding-right:14px}
+  .irow{grid-template-columns:1fr}
+  .wrow{grid-template-columns:52px minmax(0,1fr)}
+  .wrow .track,.wrow .go,.wrow .tracklbl{display:none}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="rail">
+    <div class="brand">
+      <svg class="reg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+        <circle cx="12" cy="12" r="7.2"/><circle cx="12" cy="12" r="2.4"/>
+        <path d="M12 .8v6M12 17.2v6M.8 12h6M17.2 12h6"/></svg>
+      <div><h1>Creative Library</h1><span class="sub">Klimt &amp; Design</span></div>
+    </div>
+
+    <nav class="views" aria-label="Sections">
+      <button class="view-btn" data-view="library" aria-current="page">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.8" y="1.8" width="5" height="7"/><rect x="9.2" y="1.8" width="5" height="4.4"/><rect x="1.8" y="10.4" width="5" height="3.8"/><rect x="9.2" y="7.8" width="5" height="6.4"/></svg>
+        Library</button>
+      <button class="view-btn" data-view="boards">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1.8 4.2h5l1.2 1.6h6.2v8.4H1.8z"/><path d="M1.8 4.2V2.4h4"/></svg>
+        Boards</button>
+      <button class="view-btn" data-view="inbox">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1.8 8.4h3.4l1 1.9h3.6l1-1.9h3.4"/><path d="M3.2 2.6h9.6l1.4 5.8v5.2H1.8V8.4z"/></svg>
+        Needs sorting<span class="badge" id="inbox-badge">6</span></button>
+      <button class="view-btn" data-view="watch">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M.9 8S3.5 3.4 8 3.4 15.1 8 15.1 8 12.5 12.6 8 12.6.9 8 .9 8z"/><circle cx="8" cy="8" r="2"/></svg>
+        Competitor watch</button>
+    </nav>
+
+    <hr>
+    <div id="filters" style="display:flex;flex-direction:column;gap:18px">
+      <div class="facet" id="f-type"><h2 class="lbl">Ad type</h2></div>
+      <div class="facet" id="f-industry"><h2 class="lbl">Industry</h2></div>
+      <div class="facet" id="f-client"><h2 class="lbl">Client</h2></div>
+      <div class="facet" id="f-source"><h2 class="lbl">Source</h2></div>
+    </div>
+
+    <div class="rail-foot">
+      <h2 class="lbl">Where it came from</h2>
+      <div class="src-line"><span>Motion import</span><i class="dots"></i><b id="s-motion">—</b></div>
+      <div class="src-line"><span>Slack backfill</span><i class="dots"></i><b id="s-slack">—</b></div>
+      <div class="src-line"><span>Added by team</span><i class="dots"></i><b id="s-manual">—</b></div>
+      <div class="src-line"><span>Competitor scan</span><i class="dots"></i><b id="s-scan">—</b></div>
+    </div>
+  </aside>
+
+  <main>
+    <div class="toolbar">
+      <div class="search">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/></svg>
+        <input id="q" type="search" placeholder="Search hooks, clients, notes…" aria-label="Search the library">
+      </div>
+      <div class="seg" role="group" aria-label="Sort order" id="sortseg">
+        <button data-sort="recent" aria-pressed="true">Recent</button>
+        <button data-sort="client" aria-pressed="false">By client</button>
+        <button data-sort="performance" aria-pressed="false">Top performing</button>
+      </div>
+      <span class="spacer"></span>
+      <button class="btn" id="theme-toggle" title="Switch light / dark" aria-label="Switch light or dark theme">Light / dark</button>
+      <button class="btn btn-primary" id="add-btn">+ Add creative</button>
+    </div>
+    <div id="stage"></div>
+  </main>
+</div>
+
+<script>
+/* ------------------------------------------------------------------
+   Sample library — stands in for the Phase 1 import:
+   Motion (all workspaces) + #creative-inspiration backfill +
+   manual adds + the weekly competitor scan. Replace DATA with the
+   real feed; every field below is one the real sources give us.
+-------------------------------------------------------------------*/
+const SEED=[
+{id:"m-101",client:"Kiss Now",industry:"Beauty",type:"video",source:"Motion",layout:"ugc",
+ hook:"I stopped buying lip oil after this",kicker:"UGC · hook test",cap:"three <em>weeks</em> of this",fmt:"9:16",dur:"0:22",
+ spend:"$48.2k",ctr:"2.9%",hookRate:"41%",thumbstop:"3.1s",days:34,added:"2026-08-30",by:"Motion · Kiss Now workspace",
+ note:"Best hook rate of the Q3 batch. The first 1.4 seconds — cap off, one swipe, no talking — is doing all the work. Reused in three variants since.",
+ c1:"#C0407A",c2:"#5B1233",cta:"Shop the shade"},
+{id:"s-088",client:"Klamnedic",industry:"Beauty",type:"video",source:"Competitor scan",layout:"split",brandSet:"Kiss Now",
+ hook:"Dermatologists hate this 9pm habit",kicker:"Competitor · live 5 wks",fmt:"9:16",dur:"0:31",
+ spend:"—",ctr:"—",hookRate:"—",thumbstop:"—",days:35,added:"2026-09-01",by:"Weekly scan · Kiss Now brand set",
+ note:"Live five weeks unchanged, which on this account usually means it is carrying the spend. Problem/agitate open, hard cut to the routine at 0:08.",
+ c1:"#2F5F8A",c2:"#10202F"},
+{id:"m-104",client:"Ferrow",industry:"Finance",type:"static",source:"Motion",layout:"type",
+ hook:"Your savings account is losing to inflation",kicker:"Feed static",fmt:"4:5",dur:"",
+ spend:"$31.7k",ctr:"1.6%",hookRate:"—",thumbstop:"—",days:62,added:"2026-08-12",by:"Motion · Ferrow workspace",
+ note:"Number-forward static. The 4.85% APY sits at optical centre, not true centre — worth copying that crop on the Northbank set.",
+ c1:"#1E4D42",c2:"#0B221D",big:"4.85% APY",sm:"Compare that to the 0.4% you're getting now."},
+{id:"k-012",client:"Kiss Now",industry:"Beauty",type:"static",source:"Slack",layout:"product",
+ hook:"Three shades. One tube. Zero regrets.",kicker:"Carousel frame 1",fmt:"1:1",dur:"",
+ spend:"$12.4k",ctr:"1.9%",hookRate:"—",thumbstop:"—",days:21,added:"2026-08-26",by:"Priya in #creative-inspiration",
+ note:"Shared as reference for the autumn shade drop. Product on colour block, no model, no hand.",
+ c1:"#D2683C",c2:"#6B2411",cta:"Three for $34"},
+{id:"n-201",client:"Northbank",industry:"Finance",type:"video",source:"Motion",layout:"ui",
+ hook:"The 4-minute business account",kicker:"Screen explainer",fmt:"1:1",dur:"0:45",
+ spend:"$27.0k",ctr:"1.2%",hookRate:"28%",thumbstop:"1.9s",days:48,added:"2026-08-19",by:"Motion · Northbank workspace",
+ note:"Screen recording ad. Slow first three seconds — every later cut opens on the finished account instead of the signup form.",
+ c1:"#28407C",c2:"#0F1934",num:"4:02",numlbl:"Account opened in"},
+{id:"l-330",client:"Lumen Skin",industry:"Beauty",type:"video",source:"Slack",layout:"split",
+ hook:"Day 1 vs day 60, no filter",kicker:"Transformation",fmt:"9:16",dur:"0:18",
+ spend:"$19.8k",ctr:"3.4%",hookRate:"52%",thumbstop:"4.4s",days:14,added:"2026-09-03",by:"Marcus in #creative-inspiration",
+ note:"Split screen holds the whole way through instead of cutting between states. Highest hook rate in the library.",
+ c1:"#A8567E",c2:"#3A1428"},
+{id:"h-045",client:"Halo Health",industry:"Wellness",type:"static",source:"Manual",layout:"chart",
+ hook:"What's actually in your greens powder",kicker:"Comparison chart",fmt:"4:5",dur:"",
+ spend:"$8.9k",ctr:"2.1%",hookRate:"—",thumbstop:"—",days:27,added:"2026-08-24",by:"Added by Arav",
+ note:"Ingredient table as the creative. Dense, but the scroll-stop is the competitor column being mostly empty.",
+ c1:"#3F7A34",c2:"#152F11"},
+{id:"t-077",client:"Tilt",industry:"Fintech",type:"video",source:"Motion",layout:"ugc",
+ hook:"POV: rent is due and you're not panicking",kicker:"UGC · talking head",cap:"rent's due <em>friday</em>",fmt:"9:16",dur:"0:27",
+ spend:"$36.5k",ctr:"2.4%",hookRate:"38%",thumbstop:"2.8s",days:41,added:"2026-08-21",by:"Motion · Tilt workspace",
+ note:"Creator shot this on a phone in a parked car. The lack of production value is the point — the polished re-shoot underperformed it by half.",
+ c1:"#7A4CB8",c2:"#26123F"},
+{id:"p-155",client:"Peak Provisions",industry:"Food & bev",type:"static",source:"Slack",layout:"product",
+ hook:"Built for the 5am start",kicker:"Lifestyle static",fmt:"1:1",dur:"",
+ spend:"$6.2k",ctr:"1.1%",hookRate:"—",thumbstop:"—",days:19,added:"2026-08-28",by:"Dana in #creative-inspiration",
+ note:"Not ours — saved as a lighting reference for the winter shoot. Single hard source, low and left.",
+ c1:"#B07A22",c2:"#3A2606"},
+{id:"o-410",client:"Orenda",industry:"Home",type:"video",source:"Motion",layout:"split",
+ hook:"Watch it eat six months of dust",kicker:"Product demo",fmt:"4:5",dur:"0:35",
+ spend:"$22.1k",ctr:"2.7%",hookRate:"44%",thumbstop:"3.6s",days:30,added:"2026-08-15",by:"Motion · Orenda workspace",
+ note:"Pure demo, no voiceover until 0:12. Satisfying-mechanism ads keep beating benefit-led ones on this account.",
+ c1:"#2E6E75",c2:"#0C2427"},
+{id:"f-118",client:"Ferrow",industry:"Finance",type:"video",source:"Motion",layout:"ugc",
+ hook:"I asked my bank where the fee came from",kicker:"Narrative",cap:"so I <em>called them</em>",fmt:"9:16",dur:"0:41",
+ spend:"$14.6k",ctr:"1.8%",hookRate:"31%",thumbstop:"2.2s",days:23,added:"2026-08-27",by:"Motion · Ferrow workspace",
+ note:"Story-led and long for finance, but retention holds to 0:30 because the answer only lands at the end.",
+ c1:"#1E4D42",c2:"#0B221D"},
+{id:"k-019",client:"Kiss Now",industry:"Beauty",type:"static",source:"Motion",layout:"type",
+ hook:"Sold out twice. Back for good.",kicker:"Restock announce",fmt:"9:16",dur:"",
+ spend:"$9.4k",ctr:"2.2%",hookRate:"—",thumbstop:"—",days:11,added:"2026-09-05",by:"Motion · Kiss Now workspace",
+ note:"Scarcity copy on a plain ground. Cheap to make, consistently top-third CTR, never the top spender.",
+ c1:"#C0407A",c2:"#5B1233",big:"Sold out twice.",sm:"Back for good this time. Restocked Friday.",cta:"Get yours"},
+{id:"s-091",client:"Verabloom",industry:"Beauty",type:"static",source:"Competitor scan",layout:"chart",brandSet:"Lumen Skin",
+ hook:"The 40-second morning routine",kicker:"Competitor · live 3 wks",fmt:"4:5",dur:"",
+ spend:"—",ctr:"—",hookRate:"—",thumbstop:"—",days:22,added:"2026-09-07",by:"Weekly scan · Lumen Skin brand set",
+ note:"Three products laid out as a numbered routine. Flagged because it has been live three weeks with no variant swap.",
+ c1:"#8E6BA8",c2:"#2B1A38"},
+{id:"n-208",client:"Northbank",industry:"Finance",type:"static",source:"Manual",layout:"type",
+ hook:"No monthly fee. We checked twice.",kicker:"Copy-led static",fmt:"1:1",dur:"",
+ spend:"$5.1k",ctr:"1.4%",hookRate:"—",thumbstop:"—",days:16,added:"2026-09-02",by:"Added by Sofia",
+ note:"Type-only ad. Works in feed, dies in stories — keep it placement-locked when it goes back up.",
+ c1:"#28407C",c2:"#0F1934",big:"$0 / month",sm:"No minimum. No maintenance fee. No asterisk."},
+{id:"t-081",client:"Tilt",industry:"Fintech",type:"static",source:"Slack",layout:"type",
+ hook:"$0 to open. $0 to keep.",kicker:"Offer static",fmt:"4:5",dur:"",
+ spend:"$11.3k",ctr:"2.0%",hookRate:"—",thumbstop:"—",days:29,added:"2026-08-22",by:"Marcus in #creative-inspiration",
+ note:"Two numbers, one line. Everything else on the frame is negative space and it still out-clicks the busy version.",
+ c1:"#7A4CB8",c2:"#26123F",big:"$0 → $0",sm:"Nothing to open it. Nothing to keep it."},
+{id:"h-052",client:"Halo Health",industry:"Wellness",type:"video",source:"Motion",layout:"ugc",
+ hook:"Nutritionist reacts to your supplement shelf",kicker:"Expert reaction",cap:"okay, <em>that one</em> can go",fmt:"9:16",dur:"0:52",
+ spend:"$16.9k",ctr:"2.6%",hookRate:"36%",thumbstop:"3.0s",days:37,added:"2026-08-17",by:"Motion · Halo Health workspace",
+ note:"Longest performer in the library. Authority format — the credential card at 0:02 is non-negotiable, we tested removing it.",
+ c1:"#3F7A34",c2:"#152F11"},
+{id:"o-415",client:"Orenda",industry:"Home",type:"static",source:"Slack",layout:"split",
+ hook:"Before / after, same rug",kicker:"Split static",fmt:"1:1",dur:"",
+ spend:"$7.8k",ctr:"2.3%",hookRate:"—",thumbstop:"—",days:25,added:"2026-08-25",by:"Dana in #creative-inspiration",
+ note:"The dividing line sits off centre so the after gets more frame. Small trick, repeatable on any before/after.",
+ c1:"#2E6E75",c2:"#0C2427"},
+{id:"l-337",client:"Lumen Skin",industry:"Beauty",type:"static",source:"Motion",layout:"product",
+ hook:"Fragrance-free. Actually.",kicker:"Ingredient static",fmt:"4:5",dur:"",
+ spend:"$13.7k",ctr:"1.7%",hookRate:"—",thumbstop:"—",days:44,added:"2026-08-11",by:"Motion · Lumen Skin workspace",
+ note:"Label crop shot at 45°. Reads as a photo of a product rather than an ad, which is why it clears the scroll.",
+ c1:"#A8567E",c2:"#3A1428"},
+{id:"p-160",client:"Peak Provisions",industry:"Food & bev",type:"video",source:"Motion",layout:"product",
+ hook:"One bar, four ingredients, on camera",kicker:"Process",fmt:"1:1",dur:"0:29",
+ spend:"$10.5k",ctr:"1.9%",hookRate:"33%",thumbstop:"2.5s",days:20,added:"2026-08-29",by:"Motion · Peak Provisions workspace",
+ note:"Ingredient-drop process shot. No face, no voiceover, subtitles only — travels well across markets.",
+ c1:"#B07A22",c2:"#3A2606"},
+{id:"s-096",client:"Cardinal Trust",industry:"Finance",type:"video",source:"Competitor scan",layout:"ui",brandSet:"Northbank",
+ hook:"Where your money sleeps at night",kicker:"Competitor · live 6 wks",fmt:"1:1",dur:"0:38",
+ spend:"—",ctr:"—",hookRate:"—",thumbstop:"—",days:43,added:"2026-09-08",by:"Weekly scan · Northbank brand set",
+ note:"Six weeks live. Motion graphic, no people, heavy on regulator logos at the end card. Nothing in our set answers it.",
+ c1:"#4A5A6B",c2:"#1A222A",num:"$250k",numlbl:"Protected up to"},
+{id:"k-024",client:"Kiss Now",industry:"Beauty",type:"video",source:"Slack",layout:"review",
+ hook:"Reading the reviews so you don't have to",kicker:"Review scroll",fmt:"9:16",dur:"0:24",
+ spend:"$21.6k",ctr:"3.1%",hookRate:"47%",thumbstop:"4.1s",days:12,added:"2026-09-04",by:"Priya in #creative-inspiration",
+ note:"Screen recording of the review page with a creator voiceover. Zero shoot cost, second-best hook rate we have.",
+ c1:"#C0407A",c2:"#5B1233"},
+{id:"t-086",client:"Tilt",industry:"Fintech",type:"video",source:"Motion",layout:"ui",
+ hook:"Every subscription you forgot about",kicker:"Screen demo",fmt:"4:5",dur:"0:33",
+ spend:"$18.2k",ctr:"2.2%",hookRate:"35%",thumbstop:"2.9s",days:26,added:"2026-08-20",by:"Motion · Tilt workspace",
+ note:"The list scroll is deliberately too fast to read — the point is the length of it, not the items.",
+ c1:"#7A4CB8",c2:"#26123F",num:"$284",numlbl:"Forgotten per month"},
+{id:"h-058",client:"Halo Health",industry:"Wellness",type:"static",source:"Slack",layout:"doc",
+ hook:"Third-party tested. Here's the certificate.",kicker:"Trust static",fmt:"1:1",dur:"",
+ spend:"$4.6k",ctr:"1.3%",hookRate:"—",thumbstop:"—",days:18,added:"2026-08-31",by:"Added by Arav",
+ note:"Document as creative. Low CTR, best post-click conversion rate on the account by a wide margin.",
+ c1:"#3F7A34",c2:"#152F11"},
+{id:"o-421",client:"Orenda",industry:"Home",type:"video",source:"Slack",layout:"ugc",
+ hook:"My cleaner asked what I'd changed",kicker:"UGC · testimonial",cap:"she <em>actually asked</em>",fmt:"9:16",dur:"0:26",
+ spend:"$15.4k",ctr:"2.5%",hookRate:"39%",thumbstop:"3.3s",days:15,added:"2026-09-06",by:"Dana in #creative-inspiration",
+ note:"Third-party praise as the hook instead of the creator's own opinion. Format is portable across every client here.",
+ c1:"#2E6E75",c2:"#0C2427"},
+{id:"l-341",client:"Lumen Skin",industry:"Beauty",type:"video",source:"Motion",layout:"review",
+ hook:"4,812 reviews. One complaint.",kicker:"Social proof",fmt:"4:5",dur:"0:20",
+ spend:"$9.1k",ctr:"2.8%",hookRate:"43%",thumbstop:"3.5s",days:9,added:"2026-09-07",by:"Motion · Lumen Skin workspace",
+ note:"Names the single complaint out loud at 0:11, which is why it beats the version that only shows praise.",
+ c1:"#A8567E",c2:"#3A1428"},
+{id:"s-099",client:"Meridian Pay",industry:"Fintech",type:"static",source:"Competitor scan",layout:"type",brandSet:"Tilt",
+ hook:"Switch in 90 seconds",kicker:"Competitor · live 2 wks",fmt:"4:5",dur:"",
+ spend:"—",ctr:"—",hookRate:"—",thumbstop:"—",days:15,added:"2026-09-08",by:"Weekly scan · Tilt brand set",
+ note:"Straight speed claim with a stopwatch graphic. Two weeks live — just crossed the auto-save threshold.",
+ c1:"#1F6E6A",c2:"#0A2422",big:"90 seconds",sm:"That's the whole switch. Timed, not estimated."},
+{id:"p-166",client:"Peak Provisions",industry:"Food & bev",type:"static",source:"Manual",layout:"chart",
+ hook:"14g protein. 2g sugar. Read the panel.",kicker:"Spec static",fmt:"4:5",dur:"",
+ spend:"$3.4k",ctr:"1.5%",hookRate:"—",thumbstop:"—",days:8,added:"2026-09-05",by:"Added by Sofia",
+ note:"Numbers-versus-category-average bars. Untested at scale — went live last week on a $500/day cap.",
+ c1:"#B07A22",c2:"#3A2606"},
+{id:"n-214",client:"Northbank",industry:"Finance",type:"video",source:"Slack",layout:"doc",
+ hook:"The fee schedule, read out loud",kicker:"Transparency",fmt:"9:16",dur:"0:44",
+ spend:"$6.7k",ctr:"1.9%",hookRate:"30%",thumbstop:"2.4s",days:13,added:"2026-09-03",by:"Marcus in #creative-inspiration",
+ note:"Founder reads the actual fee schedule to camera. Boring on paper, top-quartile watch time in practice.",
+ c1:"#28407C",c2:"#0F1934"}
+];
+
+/* Slack items pulled by the bot from #creative-inspiration, not yet tagged. */
+const INBOX_SEED=[
+{id:"in-1",who:"Priya Raman",time:"Today, 9:14am",ch:"#creative-inspiration",
+ msg:"this hook is everywhere on my FYP right now — the pause before she says the price is the whole ad",
+ hook:"Guess how much this costs",layout:"ugc",cap:"go on, <em>guess</em>",fmt:"9:16",type:"video",dur:"0:19",c1:"#B8446A",c2:"#3E1024",
+ guessClient:"Kiss Now",guessInd:"Beauty"},
+{id:"in-2",who:"Marcus Webb",time:"Yesterday, 4:02pm",ch:"#creative-inspiration",
+ msg:"stealing this layout for the Ferrow rate card. everything is one number and a sentence",
+ hook:"5.1% and no lock-in",layout:"type",big:"5.1%",sm:"No lock-in, no notice period, no catch.",fmt:"4:5",type:"static",dur:"",c1:"#245247",c2:"#0A1F1A",
+ guessClient:"Ferrow",guessInd:"Finance"},
+{id:"in-3",who:"Dana Osei",time:"Yesterday, 11:47am",ch:"#creative-inspiration",
+ msg:"reference for the Orenda winter shoot — look at how low the key light is",
+ hook:"Six weeks, one filter",layout:"product",fmt:"1:1",type:"static",dur:"",c1:"#356C71",c2:"#0B2326",
+ guessClient:"Orenda",guessInd:"Home"},
+{id:"in-4",who:"Arav Lohe",time:"Mon, 3:20pm",ch:"#creative-inspiration",
+ msg:"competitor to Halo, this ran all through August. the certificate thing again",
+ hook:"Independently tested, twice a year",layout:"doc",fmt:"4:5",type:"static",dur:"",c1:"#4A7534",c2:"#152C0F",
+ guessClient:"",guessInd:"Wellness"},
+{id:"in-5",who:"Sofia Marin",time:"Mon, 10:05am",ch:"#creative-inspiration",
+ msg:"the review-scroll format working for a fintech, not just beauty — worth a Tilt test",
+ hook:"I read all 900 reviews",layout:"review",fmt:"9:16",type:"video",dur:"0:28",c1:"#6B48A8",c2:"#211037",
+ guessClient:"Tilt",guessInd:"Fintech"},
+{id:"in-6",who:"Priya Raman",time:"Fri, 5:38pm",ch:"#creative-inspiration",
+ msg:"before/after but the after is the boring bit. counterintuitive and it works",
+ hook:"The unglamorous after",layout:"split",fmt:"4:5",type:"video",dur:"0:23",c1:"#9A5A3C",c2:"#301509",
+ guessClient:"",guessInd:""}
+];
+
+const STORE="creative-library-v2";
+const RCLASS={"9:16":"r916","4:5":"r45","1:1":"r11"};
+let DATA=[], INBOX=[], SAVED=new Set();
+let state={view:"library",type:new Set(),industry:new Set(),client:new Set(),source:new Set(),q:"",sort:"recent",boardBy:"industry"};
+
+function persisted(){ try{return JSON.parse(localStorage.getItem(STORE)||"{}")}catch(e){return{}} }
+function persist(patch){
+  try{ localStorage.setItem(STORE, JSON.stringify(Object.assign(persisted(), patch))); }catch(e){}
+}
+(function init(){
+  const p=persisted();
+  DATA=[...(p.added||[]), ...SEED];
+  const cleared=new Set(p.cleared||[]);
+  INBOX=INBOX_SEED.filter(i=>!cleared.has(i.id));
+  SAVED=new Set(p.saved||[]);
+})();
+
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const num=s=>parseFloat(String(s).replace(/[^0-9.]/g,""))||0;
+const uniq=k=>[...new Set(DATA.map(d=>d[k]))].sort();
+const weeks=d=>Math.max(1,Math.round(d.days/7));
+
+/* ---------------- the generated ad frame ---------------- */
+function inner(d){
+  switch(d.layout){
+    case "ugc": return `<div class="ugc-shoulder"></div><div class="ugc-sub"></div>
+      ${d.cap?`<div class="cap">${d.cap}</div>`:""}`;
+    case "split": return `<div class="split">
+        <div class="half l"><div class="blob"></div><span class="lbl" style="left:12px">BEFORE</span></div>
+        <div class="half r"><div class="blob"></div><span class="lbl" style="right:12px">AFTER</span></div>
+        <div class="rule"></div></div>`;
+    case "type": return `<div class="typeonly"><span class="big">${esc(d.big||d.hook)}</span>
+        <span class="rulehr"></span><span class="sm">${esc(d.sm||"")}</span></div>`;
+    case "product": return `<div class="pshadow"></div><div class="prod"></div>`;
+    case "ui": return `<div class="uicard">
+        <span class="ulbl">${esc(d.numlbl||"This month")}</span>
+        <span class="num">${esc(d.num||"$0")}</span>
+        <div class="uirow"><span class="uidot"></span><span class="b a" style="flex:.62"></span><span class="b" style="flex:.38"></span></div>
+        <div class="uirow"><span class="uidot"></span><span class="b a" style="flex:.4"></span><span class="b" style="flex:.6"></span></div>
+        <div class="uirow"><span class="uidot"></span><span class="b a" style="flex:.78"></span><span class="b" style="flex:.22"></span></div>
+      </div>`;
+    case "chart": return `<div class="bars">
+        <div class="bar us" style="height:92%"><span>OURS</span></div>
+        <div class="bar" style="height:47%"><span>BRAND B</span></div>
+        <div class="bar" style="height:31%"><span>BRAND C</span></div>
+        <div class="bar" style="height:18%"><span>BRAND D</span></div></div>`;
+    case "review": return `<div class="rev">
+        <div class="r"><div class="stars">★★★★★</div><div class="t">"Third one I've bought this year."</div></div>
+        <div class="r"><div class="stars">★★★★★</div><div class="t">"Didn't expect it to actually work."</div></div>
+        <div class="r"><div class="stars">★★★★☆</div><div class="t">"Wish the shade range was wider."</div></div></div>`;
+    case "doc": return `<div class="doc"><span class="l t"></span><span class="l"></span><span class="l"></span>
+        <span class="l s"></span><span class="l"></span><span class="l s"></span><span class="seal"></span></div>`;
+    default: return "";
+  }
+}
+function frame(d,opts){
+  opts=opts||{};
+  const showText = d.layout!=="type";
+  return `<div class="frame ${RCLASS[d.fmt]||"r45"} ${opts.big?"big":""}" style="--brand:${d.c1}" aria-hidden="true">
+    <div class="grad" style="background:linear-gradient(155deg,${d.c1},${d.c2})"></div>
+    <div class="vig"></div>
+    ${inner(d)}
+    ${opts.bare?"":`<span class="wordmark">${esc(d.client||"unfiled")}</span>`}
+    ${(!opts.bare && d.type==="video")?`<span class="playtag">▶ ${esc(d.dur||"")}</span>`:""}
+    ${(!opts.bare && showText)?`<div class="fbottom">
+        <span class="fkicker">${esc(d.kicker||"")}</span>
+        <span class="fhook">${esc(d.hook)}</span>
+        ${d.cta?`<span class="cta">${esc(d.cta)}</span>`:""}
+      </div>`:""}
+  </div>`;
+}
+
+/* ---------------- filtering ---------------- */
+function matches(d,ignore){
+  for(const k of ["type","industry","client","source"]){
+    if(k===ignore) continue;
+    if(state[k].size && !state[k].has(d[k])) return false;
+  }
+  if(state.q){
+    const hay=(d.hook+" "+d.client+" "+d.industry+" "+d.note+" "+d.kicker+" "+d.by).toLowerCase();
+    if(!hay.includes(state.q)) return false;
+  }
+  return true;
+}
+function visible(){
+  const out=DATA.filter(d=>matches(d,null));
+  if(state.sort==="client") out.sort((a,b)=>a.client.localeCompare(b.client)||a.hook.localeCompare(b.hook));
+  else if(state.sort==="performance") out.sort((a,b)=>num(b.ctr)-num(a.ctr)||num(b.hookRate)-num(a.hookRate));
+  else out.sort((a,b)=>b.added.localeCompare(a.added));
+  return out;
+}
+
+/* ---------------- rail ---------------- */
+const FACETS=[
+  {key:"type",el:"f-type",values:()=>["static","video"],label:v=>v==="static"?"Static image":"Video"},
+  {key:"industry",el:"f-industry",values:()=>uniq("industry"),label:v=>v},
+  {key:"client",el:"f-client",values:()=>uniq("client"),label:v=>v},
+  {key:"source",el:"f-source",values:()=>uniq("source"),label:v=>v}
+];
+function renderRail(){
+  document.getElementById("filters").style.display = state.view==="library" ? "flex":"none";
+  for(const f of FACETS){
+    const box=document.getElementById(f.el);
+    box.querySelectorAll(".opt").forEach(n=>n.remove());
+    for(const v of f.values()){
+      const n=DATA.filter(d=>d[f.key]===v&&matches(d,f.key)).length;
+      const b=document.createElement("button");
+      b.className="opt";b.type="button";
+      b.setAttribute("aria-pressed",state[f.key].has(v));
+      if(!n&&!state[f.key].has(v)) b.dataset.empty="true";
+      b.innerHTML=`<span class="box"></span><span>${esc(f.label(v))}</span><span class="n">${n}</span>`;
+      b.addEventListener("click",()=>{
+        state[f.key].has(v)?state[f.key].delete(v):state[f.key].add(v);
+        go("library");
+      });
+      box.appendChild(b);
+    }
+  }
+  const by=s=>DATA.filter(d=>d.source===s).length;
+  document.getElementById("s-motion").textContent=by("Motion");
+  document.getElementById("s-slack").textContent=by("Slack");
+  document.getElementById("s-manual").textContent=by("Manual");
+  document.getElementById("s-scan").textContent=by("Competitor scan");
+  const badge=document.getElementById("inbox-badge");
+  badge.textContent=INBOX.length;
+  badge.style.display=INBOX.length?"":"none";
+  document.querySelectorAll(".view-btn").forEach(b=>{
+    if(b.dataset.view===state.view) b.setAttribute("aria-current","page"); else b.removeAttribute("aria-current");
+  });
+  document.querySelector(".toolbar .search").style.display=state.view==="library"?"":"none";
+  document.getElementById("sortseg").style.display=state.view==="library"?"":"none";
+}
+
+/* ---------------- views ---------------- */
+const stage=document.getElementById("stage");
+function go(view){ if(view) state.view=view; renderRail(); render(); }
+
+function render(){
+  stage.innerHTML="";
+  if(state.view==="library") viewLibrary();
+  else if(state.view==="boards") viewBoards();
+  else if(state.view==="inbox") viewInbox();
+  else viewWatch();
+}
+
+function headEl(title,specs,blurb){
+  const h=document.createElement("div");
+  h.className="head";
+  h.innerHTML=`<div class="hrow"><h2>${esc(title)}</h2></div>
+    ${specs&&specs.length?`<div class="specline">${specs.map(s=>`<span>${s}</span>`).join("")}</div>`:""}
+    ${blurb?`<p>${blurb}</p>`:""}`;
+  return h;
+}
+const TODAY="16 Sep 2026";
+
+/* --- library --- */
+function viewLibrary(){
+  const items=visible();
+  const title = state.client.size===1?[...state.client][0]
+    : state.industry.size===1?[...state.industry][0] : "Everything";
+  const vids=items.filter(d=>d.type==="video").length;
+  stage.appendChild(headEl(title,[
+    `<b>${items.length}</b> ${items.length===1?"print":"prints"}`,
+    `<b>${vids}</b> video`, `<b>${items.length-vids}</b> static`,
+    `sorted ${state.sort==="performance"?"by CTR":state.sort==="client"?"by client":"newest first"}`,
+    `updated ${TODAY}`]));
+
+  const chips=document.createElement("div");chips.className="chips";
+  const active=[];
+  for(const f of FACETS) for(const v of state[f.key]) active.push([f.key,v,f.label(v)]);
+  if(state.q) active.push(["q",state.q,"“"+state.q+"”"]);
+  for(const [key,v,label] of active){
+    const c=document.createElement("span");c.className="chip";
+    c.innerHTML=`<span>${esc(label)}</span>`;
+    const x=document.createElement("button");x.type="button";x.textContent="×";
+    x.setAttribute("aria-label","Remove filter "+label);
+    x.addEventListener("click",()=>{
+      if(key==="q"){state.q="";document.getElementById("q").value="";}
+      else state[key].delete(v);
+      go();
+    });
+    c.appendChild(x);chips.appendChild(c);
+  }
+  if(active.length>1){
+    const c=document.createElement("span");c.className="chip";c.style.paddingLeft="4px";
+    const b=document.createElement("button");b.type="button";b.textContent="Clear all";b.style.padding="2px 8px";
+    b.addEventListener("click",()=>{FACETS.forEach(f=>state[f.key].clear());state.q="";document.getElementById("q").value="";go();});
+    c.appendChild(b);chips.appendChild(c);
+  }
+  stage.appendChild(chips);
+
+  const board=document.createElement("div");board.className="board";
+  if(!items.length){
+    board.style.columns="1";
+    board.innerHTML=`<div class="empty"><b>Nothing matches those filters.</b>
+      Clear a client or an industry — or add the ad yourself with <em>Add creative</em> and it lands in the board straight away.</div>`;
+    stage.appendChild(board);return;
+  }
+  items.forEach((d,i)=>board.appendChild(cardEl(d,items,i)));
+  stage.appendChild(board);
+}
+
+function cardEl(d,list,i){
+  const card=document.createElement("div");
+  card.className="card";card.tabIndex=0;card.setAttribute("role","button");
+  card.setAttribute("aria-label",d.hook+", "+d.client);
+  const bits=[
+    `<span class="${d.type==="video"?"vid":"on"}">${d.type==="video"?"video "+esc(d.dur):"static"}</span>`,
+    `<span>${esc(d.fmt)}</span>`,
+    `<span>${esc(d.source==="Competitor scan"?"scan":d.source)}</span>`];
+  if(d.hookRate&&d.hookRate!=="—") bits.push(`<span class="on">hook ${esc(d.hookRate)}</span>`);
+  if(d.source==="Competitor scan") bits.push(`<span class="flag">live ${weeks(d)}w</span>`);
+  card.innerHTML=frame(d)+`
+    <button class="save" data-saved="${SAVED.has(d.id)}" type="button">${SAVED.has(d.id)?"✓ Saved":"Save"}</button>
+    <div class="spec">
+      <div class="hair"></div>
+      <div class="l1"><span class="client">${esc(d.client)}</span><span class="sig">${esc(d.id)}</span></div>
+      <div class="l2">${bits.join('<span class="sep">/</span>')}</div>
+    </div>`;
+  const open=()=>openDrawer(d,list,i);
+  card.addEventListener("click",e=>{ if(!e.target.closest(".save")) open(); });
+  card.addEventListener("keydown",e=>{ if(e.key==="Enter"||e.key===" "){e.preventDefault();open();} });
+  card.querySelector(".save").addEventListener("click",()=>{
+    SAVED.has(d.id)?SAVED.delete(d.id):SAVED.add(d.id);
+    persist({saved:[...SAVED]});
+    toast(SAVED.has(d.id)?"Saved to your shortlist":"Removed from shortlist");
+    render();
+  });
+  return card;
+}
+
+/* --- boards --- */
+function viewBoards(){
+  stage.appendChild(headEl("Boards",[
+    `<b>${new Set(DATA.map(d=>d.industry)).size}</b> industries`,
+    `<b>${new Set(DATA.map(d=>d.client)).size}</b> clients`,
+    `<b>${DATA.length}</b> prints filed`],
+    "Every creative files itself into two buckets — its industry and its client. Open one to get the board, filtered."));
+  const seg=document.createElement("div");
+  seg.className="chips";
+  seg.innerHTML=`<div class="seg" role="group" aria-label="Group boards by">
+      <button data-by="industry" aria-pressed="${state.boardBy==="industry"}">By industry</button>
+      <button data-by="client" aria-pressed="${state.boardBy==="client"}">By client</button>
+    </div>`;
+  seg.querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{state.boardBy=b.dataset.by;render();}));
+  stage.appendChild(seg);
+
+  const key=state.boardBy;
+  const grid=document.createElement("div");grid.className="bgrid";
+  const groups=[...new Set(DATA.map(d=>d[key]))].sort((a,b)=>
+    DATA.filter(d=>d[key]===b).length-DATA.filter(d=>d[key]===a).length);
+  for(const g of groups){
+    const items=DATA.filter(d=>d[key]===g);
+    const pics=items.slice(0,3);
+    const vids=items.filter(d=>d.type==="video").length;
+    const t=document.createElement("button");t.className="btile";t.type="button";
+    t.innerHTML=`<div class="mosaic">${pics.map(p=>`<div>${frame(p,{bare:true})}</div>`).join("")}
+        ${pics.length<3?`<div style="background:var(--surface-2)"></div>`.repeat(3-pics.length):""}</div>
+      <div class="cap2">
+        <h3>${esc(g)}</h3>
+        <div class="meter"><i class="v" style="flex:${vids||0.001}"></i><i class="s" style="flex:${items.length-vids||0.001}"></i></div>
+        <span class="sub2"><span class="on">${items.length} prints</span> / ${vids} video / ${items.length-vids} static</span>
+      </div>`;
+    t.addEventListener("click",()=>{
+      FACETS.forEach(f=>state[f.key].clear());
+      state[key].add(g); state.q=""; document.getElementById("q").value="";
+      go("library"); window.scrollTo({top:0});
+    });
+    grid.appendChild(t);
+  }
+  stage.appendChild(grid);
+}
+
+/* --- inbox (Slack triage) --- */
+function viewInbox(){
+  stage.appendChild(headEl("Needs sorting",[
+    `<b>${INBOX.length}</b> waiting`,`channel #creative-inspiration`,`bot pulls every 60s`],
+    "Everything the bot lifted out of Slack, still untagged. Name the client and the industry and it files itself — the original message travels with it as the note."));
+  const wrap=document.createElement("div");wrap.className="inbox";
+  if(!INBOX.length){
+    wrap.innerHTML=`<div class="inbox-done"><b>Inbox clear.</b>Anything posted to #creative-inspiration shows up here within a minute.</div>`;
+    stage.appendChild(wrap);return;
+  }
+  const clients=uniq("client"),inds=uniq("industry");
+  for(const it of INBOX){
+    const row=document.createElement("div");row.className="irow";
+    row.innerHTML=`
+      <div class="thumbwrap">${frame(Object.assign({},it,{client:it.guessClient||"",kicker:"from Slack"}),{bare:true})}</div>
+      <div class="msg">
+        <div class="slackline"><span class="ch">${esc(it.ch)}</span><span class="who">${esc(it.who)}</span><span>${esc(it.time)}</span></div>
+        <div class="quote">${esc(it.msg)}</div>
+        <div class="tagrow">
+          <select aria-label="Client"><option value="">Client…</option>${clients.map(c=>`<option ${c===it.guessClient?"selected":""}>${esc(c)}</option>`).join("")}</select>
+          <select aria-label="Industry"><option value="">Industry…</option>${inds.map(c=>`<option ${c===it.guessInd?"selected":""}>${esc(c)}</option>`).join("")}</select>
+          <select aria-label="Ad type"><option value="static" ${it.type==="static"?"selected":""}>Static image</option><option value="video" ${it.type==="video"?"selected":""}>Video</option></select>
+          <span class="spacer"></span>
+          <button class="btn btn-sm" data-act="skip">Not for us</button>
+          <button class="btn btn-sm btn-primary" data-act="add">Add to library</button>
+        </div>
+      </div>`;
+    const [selC,selI,selT]=row.querySelectorAll("select");
+    row.querySelector('[data-act="skip"]').addEventListener("click",()=>{clearInbox(it.id);toast("Dismissed");});
+    row.querySelector('[data-act="add"]').addEventListener("click",()=>{
+      const item={id:"s-"+it.id,client:selC.value||"Unassigned",industry:selI.value||"Unsorted",
+        type:selT.value,source:"Slack",layout:it.layout,hook:it.hook,kicker:"From #creative-inspiration",
+        cap:it.cap,big:it.big,sm:it.sm,fmt:it.fmt,dur:selT.value==="video"?(it.dur||"0:30"):"",
+        spend:"—",ctr:"—",hookRate:"—",thumbstop:"—",days:0,added:new Date().toISOString().slice(0,10),
+        by:it.who+" in "+it.ch,note:it.msg,c1:it.c1,c2:it.c2};
+      DATA.unshift(item);
+      persist({added:[item,...(persisted().added||[])]});
+      clearInbox(it.id);
+      toast("Added to "+item.client,"View",()=>{FACETS.forEach(f=>f.key&&state[f.key].clear());state.client.add(item.client);go("library");});
+    });
+    wrap.appendChild(row);
+  }
+  stage.appendChild(wrap);
+}
+function clearInbox(id){
+  INBOX=INBOX.filter(i=>i.id!==id);
+  persist({cleared:[...(persisted().cleared||[]),id]});
+  renderRail();render();
+}
+
+/* --- competitor watch --- */
+function viewWatch(){
+  const scanned=DATA.filter(d=>d.source==="Competitor scan");
+  stage.appendChild(headEl("Competitor watch",[
+    `<b>${scanned.length}</b> flagged`,`<b>3</b> brand sets`,`scan runs mondays 06:00`],
+    "Each brand set is swept once a week. An ad still running after seven days is treated as working, and saves itself here."));
+  const wrap=document.createElement("div");wrap.className="watch";
+  const bar=document.createElement("div");bar.className="scanbar";
+  bar.innerHTML=`<span class="pulse"></span><span>Last scan <b>Mon 8 Sep, 6:00am</b> · next <b>Mon 15 Sep</b></span>
+    <span style="margin-left:auto;color:var(--ink-3)">3 brand sets · 11 competitors tracked · auto-save at <b>7 days live</b></span>`;
+  wrap.appendChild(bar);
+
+  const sets=[...new Set(scanned.map(d=>d.brandSet||"Unassigned"))];
+  for(const s of sets){
+    const items=scanned.filter(d=>(d.brandSet||"Unassigned")===s).sort((a,b)=>b.days-a.days);
+    const sec=document.createElement("section");sec.className="bset";
+    sec.innerHTML=`<h3>${esc(s)} brand set</h3><p class="sub3">${items.length} competitor ad${items.length===1?"":"s"} still live · watching ${esc(items.map(i=>i.client).join(", "))}</p>`;
+    const list=document.createElement("div");list.className="wlist";
+    items.forEach((d,i)=>{
+      const w=weeks(d),pct=Math.min(100,Math.round(w/8*100));
+      const r=document.createElement("div");r.className="wrow";r.tabIndex=0;r.setAttribute("role","button");
+      r.innerHTML=`<div class="thumbwrap">${frame(d,{bare:true})}</div>
+        <div><div class="wh">${esc(d.hook)}</div><div class="wsub">${esc(d.client)} · ${d.type==="video"?"video "+esc(d.dur):"static"} · ${esc(d.fmt)}</div></div>
+        <div><div class="track"><i style="width:${pct}%"></i></div>
+          <div class="tracklbl"><b>${w} wks live</b><span>first seen ${esc(d.added)}</span></div></div>
+        <span class="go tag">open →</span>`;
+      const open=()=>openDrawer(d,items,i);
+      r.addEventListener("click",open);
+      r.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();open();}});
+      list.appendChild(r);
+    });
+    sec.appendChild(list);wrap.appendChild(sec);
+  }
+  stage.appendChild(wrap);
+}
+
+/* ---------------- drawer ---------------- */
+let overlay=null,drawerCtx=null;
+function closeOverlay(){
+  if(!overlay)return;
+  overlay.forEach(n=>n.remove());overlay=null;drawerCtx=null;
+  document.removeEventListener("keydown",onKey);
+}
+function onKey(e){
+  if(e.key==="Escape")return closeOverlay();
+  if(!drawerCtx)return;
+  if(e.key==="ArrowRight")step(1);
+  if(e.key==="ArrowLeft")step(-1);
+}
+function step(n){
+  if(!drawerCtx)return;
+  const {list,i}=drawerCtx;
+  const j=(i+n+list.length)%list.length;
+  openDrawer(list[j],list,j);
+}
+function mount(node){
+  closeOverlay();
+  const scrim=document.createElement("div");scrim.className="scrim";
+  scrim.addEventListener("click",closeOverlay);
+  document.body.append(scrim,node);
+  overlay=[scrim,node];
+  document.addEventListener("keydown",onKey);
+  const f=node.querySelector("input,select,textarea,button");if(f)f.focus();
+}
+function openDrawer(d,list,i){
+  const el=document.createElement("aside");
+  el.className="drawer";el.setAttribute("role","dialog");el.setAttribute("aria-label",d.hook);
+  const rows=[["Client",d.client],["Industry",d.industry],
+    ["Format",(d.type==="video"?"Video · "+d.dur:"Static image")+" · "+d.fmt],
+    ["Days live",d.days?d.days+" days":"just added"],["Source",d.source],["Saved",d.added]];
+  const perf=(d.spend&&d.spend!=="—");
+  el.innerHTML=`
+    <div class="top">
+      <h3>${esc(d.id)}</h3>
+      <div class="nav">
+        ${list&&list.length>1?`<button class="icon-btn" data-nav="-1" aria-label="Previous creative">←</button>
+        <button class="icon-btn" data-nav="1" aria-label="Next creative">→</button>
+        <span class="kbd">${(i||0)+1} / ${list.length}</span>`:""}
+        <button class="icon-btn" data-close aria-label="Close" style="font-size:17px">×</button>
+      </div>
+    </div>
+    <div class="body">
+      <div class="preview">${frame(d,{big:true})}</div>
+      <h4>${esc(d.hook)}</h4>
+      ${perf?`<div class="stats">
+        <div class="stat"><div class="k">Spend</div><div class="v">${esc(d.spend)}</div></div>
+        <div class="stat"><div class="k">CTR</div><div class="v ${num(d.ctr)>=2.3?"up":""}">${esc(d.ctr)}</div></div>
+        <div class="stat"><div class="k">${d.hookRate!=="—"?"Hook rate":"Thumbstop"}</div><div class="v ${num(d.hookRate)>=40?"up":""}">${esc(d.hookRate!=="—"?d.hookRate:d.thumbstop)}</div></div>
+      </div>`:`<div class="stats"><div class="stat" style="grid-column:span 3">
+        <div class="k">Competitor ad</div><div class="v">${weeks(d)} weeks live · no spend data</div></div></div>`}
+      <div class="note">${esc(d.note)}<span class="who">${esc(d.by)}</span></div>
+      <dl class="dl">${rows.map(r=>`<dt>${esc(r[0])}</dt><dd>${esc(String(r[1]))}</dd>`).join("")}</dl>
+    </div>
+    <div class="foot">
+      <button class="btn" data-act="save" style="flex:1">${SAVED.has(d.id)?"✓ On your shortlist":"Save to shortlist"}</button>
+      <button class="btn" data-act="similar" style="flex:1">More from ${esc(d.client)}</button>
+    </div>`;
+  el.querySelector("[data-close]").addEventListener("click",closeOverlay);
+  el.querySelectorAll("[data-nav]").forEach(b=>b.addEventListener("click",()=>step(+b.dataset.nav)));
+  el.querySelector('[data-act="save"]').addEventListener("click",()=>{
+    SAVED.has(d.id)?SAVED.delete(d.id):SAVED.add(d.id);
+    persist({saved:[...SAVED]});
+    toast(SAVED.has(d.id)?"Saved to your shortlist":"Removed from shortlist");
+    render();openDrawer(d,list,i);
+  });
+  el.querySelector('[data-act="similar"]').addEventListener("click",()=>{
+    FACETS.forEach(f=>state[f.key].clear());
+    state.client.add(d.client);state.q="";document.getElementById("q").value="";
+    closeOverlay();go("library");window.scrollTo({top:0});
+  });
+  mount(el);
+  drawerCtx={list:list||[d],i:i||0};
+}
+
+/* ---------------- add creative ---------------- */
+function openAdd(){
+  const el=document.createElement("div");
+  el.className="modal";el.setAttribute("role","dialog");el.setAttribute("aria-label","Add creative");
+  el.innerHTML=`
+    <h3>Add creative</h3>
+    <p class="hint">Paste a link or describe the ad. It lands in the board straight away and stays in this browser.</p>
+    <div class="field"><label for="a-hook">Hook or headline</label><input id="a-hook" placeholder="I stopped buying lip oil after this"></div>
+    <div class="two">
+      <div class="field"><label for="a-client">Client or brand</label><input id="a-client" list="clients" placeholder="Kiss Now">
+        <datalist id="clients">${uniq("client").map(c=>`<option value="${esc(c)}">`).join("")}</datalist></div>
+      <div class="field"><label for="a-ind">Industry</label><input id="a-ind" list="inds" placeholder="Beauty">
+        <datalist id="inds">${uniq("industry").map(c=>`<option value="${esc(c)}">`).join("")}</datalist></div>
+    </div>
+    <div class="two">
+      <div class="field"><label for="a-type">Ad type</label><select id="a-type"><option value="static">Static image</option><option value="video">Video</option></select></div>
+      <div class="field"><label for="a-fmt">Aspect</label><select id="a-fmt"><option>9:16</option><option selected>4:5</option><option>1:1</option></select></div>
+    </div>
+    <div class="field"><label for="a-layout">Looks like</label><select id="a-layout">
+      <option value="ugc">UGC / creator</option><option value="split">Before &amp; after</option>
+      <option value="type">Copy-led type</option><option value="product">Product on colour</option>
+      <option value="ui">App screen</option><option value="chart">Comparison chart</option>
+      <option value="review">Review scroll</option><option value="doc">Document / proof</option></select></div>
+    <div class="field"><label for="a-note">Why it's worth saving</label><textarea id="a-note" placeholder="What's doing the work in the first two seconds?"></textarea></div>
+    <div class="actions"><button class="btn" data-act="cancel">Cancel</button><button class="btn btn-primary" data-act="save">Add to library</button></div>`;
+  el.querySelector('[data-act="cancel"]').addEventListener("click",closeOverlay);
+  el.querySelector('[data-act="save"]').addEventListener("click",()=>{
+    const v=id=>el.querySelector(id).value.trim();
+    const type=el.querySelector("#a-type").value;
+    const item={id:"u-"+Math.random().toString(36).slice(2,6),
+      client:v("#a-client")||"Unassigned",industry:v("#a-ind")||"Unsorted",
+      type,source:"Manual",layout:el.querySelector("#a-layout").value,
+      hook:v("#a-hook")||"Untitled creative",kicker:"Added by the team",
+      big:v("#a-hook")||"Untitled",sm:v("#a-note").slice(0,60),
+      fmt:el.querySelector("#a-fmt").value,dur:type==="video"?"0:30":"",
+      spend:"—",ctr:"—",hookRate:"—",thumbstop:"—",days:0,
+      added:new Date().toISOString().slice(0,10),by:"Added just now",
+      note:v("#a-note")||"No note yet.",c1:"#3D4A55",c2:"#161D23"};
+    DATA.unshift(item);
+    persist({added:[item,...(persisted().added||[])]});
+    closeOverlay();go("library");
+    toast("Added to the library");
+  });
+  mount(el);
+}
+
+/* ---------------- toast ---------------- */
+let toastTimer=null;
+function toast(msg,actionLabel,fn){
+  document.querySelectorAll(".toast").forEach(n=>n.remove());
+  const t=document.createElement("div");t.className="toast";t.setAttribute("role","status");
+  t.innerHTML=`<b>${esc(msg)}</b>`;
+  if(actionLabel){
+    const b=document.createElement("button");b.className="btn btn-sm";b.textContent=actionLabel;
+    b.style.background="transparent";b.style.color="inherit";b.style.borderColor="currentColor";
+    b.addEventListener("click",()=>{t.remove();fn&&fn();});
+    t.appendChild(b);
+  }
+  document.body.appendChild(t);
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.remove(),3200);
+}
+
+/* ---------------- wiring ---------------- */
+document.getElementById("q").addEventListener("input",e=>{state.q=e.target.value.trim().toLowerCase();go("library");});
+document.querySelectorAll("#sortseg button").forEach(b=>b.addEventListener("click",()=>{
+  state.sort=b.dataset.sort;
+  document.querySelectorAll("#sortseg button").forEach(o=>o.setAttribute("aria-pressed",o===b));
+  render();
+}));
+document.querySelectorAll(".view-btn").forEach(b=>b.addEventListener("click",()=>{go(b.dataset.view);window.scrollTo({top:0});}));
+document.getElementById("add-btn").addEventListener("click",openAdd);
+document.getElementById("theme-toggle").addEventListener("click",()=>{
+  const cur=document.documentElement.getAttribute("data-theme");
+  const dark=cur?cur==="dark":matchMedia("(prefers-color-scheme: dark)").matches;
+  document.documentElement.setAttribute("data-theme",dark?"light":"dark");
+});
+document.addEventListener("keydown",e=>{
+  if(e.key==="/"&&!/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)){
+    e.preventDefault();go("library");document.getElementById("q").focus();
+  }
+});
+go("library");
+</script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+{
+  "name": "creative-library",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Creative Library — a unified swipe file of ad creative for Klimt & Design",
+  "scripts": {
+    "build": "node build.js",
+    "dev": "node build.js && npx --yes serve ."
+  },
+  "license": "UNLICENSED"
+}

@@ -9,20 +9,17 @@ This is a **working prototype**: real interaction, real information design, samp
 
 | Section | What it does |
 | --- | --- |
-| **Library** | The board. Filter by ad type (static / video), industry, client and source; search hooks, clients and notes; sort by recency, client or CTR. Click any print for the spec sheet. |
-| **Boards** | The buckets from the brief — industry and client — each showing its video/static mix. Opening one drops you into the filtered board. |
-| **Needs sorting** | Triage for whatever the bot lifts out of `#creative-inspiration`. Tag the client and industry and it files itself; the original Slack message travels with it as the note. |
-| **Competitor watch** | Brand sets swept weekly. An ad still running after seven days is treated as working and saves itself here, with a weeks-live track. |
+| **All creative** | The board. Filter by ad type (images / video), industry and client, or search. Click anything for the detail view. |
+| **Boards** | The buckets from the brief — one per industry, one per client. Open one to see just that board. |
+| **From Slack** | Whatever the bot pulled out of `#creative-inspiration`, waiting to be filed. Pick a client and industry, hit Add. |
+| **Competitors** | Scanned weekly. Anything a competitor has kept running over a week saves itself here with a "Live N wks" badge. |
 
 Saved items and anything you add persist in the browser via `localStorage`.
 
 ## Design
 
-A proof sheet on a light table: prints with white mats and registration crop marks, mono
-spec strips, condensed poster type (Archivo's variable width axis at 68–80%), one
-registration-red accent doing the interactive work and amber reserved for the live-ad
-signal. Light and dark are designed as a pair — the dark theme is a darkroom, not an
-inversion.
+Deliberately plain: a Pinterest-style masonry board, system type, and filters that sit in
+one row above it. Nothing competes with the creative itself. Works in light and dark.
 
 ## Sample data
 
@@ -59,5 +56,5 @@ npx vercel --prod
 
 - Real asset storage and thumbnails (frames are generated from CSS, not the actual ads)
 - The Motion and Slack connections themselves — the bot, the export, the sync
-- A view for the shortlist; **Save** currently only marks prints
+- A view for the shortlist; **Save** currently only marks creatives
 - Auth, and any notion of who is looking

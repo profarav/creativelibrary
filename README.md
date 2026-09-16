@@ -45,8 +45,9 @@ Artifact host supplies in preview. Edit the source, then rebuild — never edit
 
 ## Deploying
 
-Vercel, zero config: import the repo, framework preset **Other**, no build command
-needed — `index.html` is committed. `vercel.json` sets clean URLs and security headers.
+Vercel builds from `vercel.json`: `node build.js` regenerates `index.html` from the
+source, output directory is the repo root. Clean URLs and security headers are set there
+too. The GitHub repo is connected, so a push to `main` deploys.
 
 To deploy from the CLI:
 

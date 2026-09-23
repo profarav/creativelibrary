@@ -60,7 +60,8 @@ header h1{font-size:17px;font-weight:700;letter-spacing:-.02em;white-space:nowra
 .btn-dark:hover{opacity:.85;background:var(--btn)}
 
 /* tabs */
-.tabs{display:flex;gap:4px;padding:10px 20px 0;overflow-x:auto}
+.tabs{display:flex;gap:4px;padding:10px 20px 0;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
 .tabs button{border:0;background:none;padding:8px 14px;border-radius:20px;cursor:pointer;
   font-size:14px;font-weight:600;color:var(--muted);white-space:nowrap}
 .tabs button:hover{background:var(--hover);color:var(--text)}
@@ -119,14 +120,17 @@ header h1{font-size:17px;font-weight:700;letter-spacing:-.02em;white-space:nowra
   padding:3px 10px;font-size:12px;font-weight:700}
 
 /* boards */
-.tiles{padding:6px 20px 60px;display:grid;gap:20px;grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
+.tiles{padding:0 20px 24px;display:grid;gap:20px;grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
 .tile{background:none;border:0;padding:0;cursor:pointer;text-align:left}
 .tile .cover{display:grid;grid-template-columns:2fr 1fr;grid-template-rows:1fr 1fr;gap:3px;height:150px;
   border-radius:14px;overflow:hidden}
 .tile .cover > *{position:relative;overflow:hidden;background:var(--hover)}
 .tile .cover > *:first-child{grid-row:span 2}
-.tile .cover .art{position:absolute;inset:0;aspect-ratio:auto!important;padding:0}
+.tile .cover .pic{position:absolute;inset:0;border-radius:0}
+.tile .cover .art,.tile .cover .imgwrap{position:absolute;inset:0;aspect-ratio:auto!important;padding:0}
 .tile:hover .cover{opacity:.85}
+.section{padding:18px 20px 10px;font-size:15px;font-weight:700;letter-spacing:-.01em}
+.section span{color:var(--muted);font-weight:500;margin-left:6px}
 .tile h3{font-size:15px;font-weight:700;margin-top:9px;letter-spacing:-.01em}
 .tile .sub{font-size:13px;color:var(--muted);margin-top:1px}
 
@@ -153,7 +157,7 @@ header h1{font-size:17px;font-weight:700;letter-spacing:-.02em;white-space:nowra
 .sheet .left{background:var(--hover);display:flex;align-items:center;justify-content:center;padding:20px}
 .sheet .left .pic{width:100%;max-width:280px}
 .sheet .right{padding:22px;display:flex;flex-direction:column;gap:14px}
-.sheet h2{font-size:21px;letter-spacing:-.02em;line-height:1.25}
+.sheet h2{font-size:21px;letter-spacing:-.02em;line-height:1.25;padding-right:28px}
 .sheet .meta{font-size:14px;color:var(--muted)}
 .sheet .why{font-size:14px;line-height:1.55;background:var(--bg);border-radius:12px;padding:12px 14px}
 .sheet .why span{display:block;color:var(--muted);font-size:12.5px;margin-top:8px}
@@ -507,8 +511,9 @@ function viewBoards(){
   note.className="note-line";
   note.textContent="Buckets by industry and by client. Open one to see just that board.";
   stage.appendChild(note);
-  const grid=document.createElement("div");grid.className="tiles";
   for(const key of ["industry","client"]){
+    const head=document.createElement("h2");head.className="section";
+    const grid=document.createElement("div");grid.className="tiles";
     const groups=[...new Set(DATA.map(d=>d[key]))]
       .sort((a,b)=>DATA.filter(d=>d[key]===b).length-DATA.filter(d=>d[key]===a).length);
     for(const g of groups){
@@ -516,15 +521,16 @@ function viewBoards(){
       const t=document.createElement("button");t.className="tile";t.type="button";
       t.innerHTML=`<div class="cover">${items.slice(0,3).map(p=>`<div>${pic(p,{plain:true})}</div>`).join("")}</div>
         <h3>${esc(g)}</h3>
-        <div class="sub">${items.length} creative${items.length===1?"":"s"} · ${key==="industry"?"industry":"client"}</div>`;
+        <div class="sub">${items.length} creative${items.length===1?"":"s"}</div>`;
       t.addEventListener("click",()=>{
         S.industry=key==="industry"?g:"";S.client=key==="client"?g:"";S.type="all";
         go("all");window.scrollTo({top:0});
       });
       grid.appendChild(t);
     }
+    head.innerHTML=`By ${key}<span>${groups.length}</span>`;
+    stage.append(head,grid);
   }
-  stage.appendChild(grid);
 }
 
 /* ---- from Slack ---- */

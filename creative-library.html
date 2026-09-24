@@ -116,6 +116,23 @@ mark{background:#FFE58A;color:#111;border-radius:3px;padding:0 2px}
 .item .missing{font-size:12.5px;color:var(--live);margin:-6px 0 10px}
 .item.done .said{margin-bottom:10px}
 
+.art .sbar{position:absolute;left:9%;right:9%;top:28%;background:#fff;color:#333;border-radius:999px;
+  padding:8px 12px;font-size:12px;display:flex;gap:7px;align-items:center;box-shadow:0 6px 18px rgba(0,0,0,.28);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.art .sbar svg{flex:0 0 auto;color:#888}
+.art .qbox{position:absolute;left:13%;right:13%;top:24%;background:#fff;color:#111;border-radius:14px;
+  overflow:hidden;text-align:center;display:flex;flex-direction:column;box-shadow:0 8px 22px rgba(0,0,0,.3)}
+.art .qbox .qh{background:linear-gradient(90deg,#7B5CFF,#E1306C);color:#fff;font-size:10.5px;font-weight:700;padding:7px 8px}
+.art .qbox .qq{padding:11px 10px 13px;font-size:13px;font-weight:600;line-height:1.3}
+.subtabs{display:flex;gap:4px;padding:6px 20px 4px}
+.subtabs button{border:1px solid var(--line);background:var(--card);border-radius:18px;padding:6px 14px;
+  cursor:pointer;font-size:13.5px;font-weight:600;color:var(--muted)}
+.subtabs button:hover{color:var(--text)}
+.subtabs button[aria-pressed="true"]{background:var(--btn);color:var(--btn-text);border-color:var(--btn)}
+.subtabs .n{opacity:.6;font-weight:500;margin-left:4px}
+.tile .empty{height:150px;border-radius:14px;border:1px dashed var(--line);display:flex;align-items:center;
+  justify-content:center;color:var(--muted);font-size:13px}
+
 /* boards */
 .tiles{padding:0 20px 24px;display:grid;gap:20px;grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
 .tile{background:none;border:0;padding:0;cursor:pointer;text-align:left}
@@ -123,6 +140,8 @@ mark{background:#FFE58A;color:#111;border-radius:3px;padding:0 2px}
   border-radius:14px;overflow:hidden}
 .tile .cover > *{position:relative;overflow:hidden;background:var(--hover)}
 .tile .cover > *:first-child{grid-row:span 2}
+.tile .cover.n1 > *{grid-column:1/-1}
+.tile .cover.n2 > *:nth-child(2){grid-row:span 2}
 .tile .cover .pic{position:absolute;inset:0;border-radius:0}
 .tile .cover .art,.tile .cover .imgwrap{position:absolute;inset:0;aspect-ratio:auto!important;padding:0}
 .tile:hover .cover{opacity:.85}
@@ -206,142 +225,142 @@ mark{background:#FFE58A;color:#111;border-radius:3px;padding:0 2px}
 
 <script>
 const SEED=[
-{id:"m-101",client:"Kiss Now",industry:"Beauty",type:"video",source:"Motion",layout:"ugc",
+{id:"m-101",theme:"UGC",client:"Kiss Now",industry:"Beauty",type:"video",source:"Motion",layout:"ugc",
  hook:"I stopped buying lip oil after this",kicker:"UGC · hook test",cap:"three <em>weeks</em> of this",fmt:"9:16",dur:"0:22",
  spend:"$48.2k",ctr:"2.9%",hookRate:"41%",thumbstop:"3.1s",days:34,added:"2026-08-30",by:"Motion · Kiss Now workspace",
  note:"Best hook rate of the Q3 batch. The first 1.4 seconds — cap off, one swipe, no talking — is doing all the work. Reused in three variants since.",
  c1:"#C0407A",c2:"#5B1233",cta:"Shop the shade"},
-{id:"s-088",client:"Klamnedic",industry:"Beauty",type:"video",source:"Competitor scan",layout:"split",brandSet:"Kiss Now",
+{id:"s-088",theme:"This or that",client:"Klamnedic",industry:"Beauty",type:"video",source:"Competitor scan",layout:"split",brandSet:"Kiss Now",
  hook:"Dermatologists hate this 9pm habit",kicker:"Competitor · live 5 wks",fmt:"9:16",dur:"0:31",
  spend:"—",ctr:"—",hookRate:"—",thumbstop:"—",days:35,added:"2026-09-01",by:"Weekly scan · Kiss Now brand set",
  note:"Live five weeks unchanged, which on this account usually means it is carrying the spend. Problem/agitate open, hard cut to the routine at 0:08.",
  c1:"#2F5F8A",c2:"#10202F"},
-{id:"m-104",client:"Ferrow",industry:"Finance",type:"static",source:"Motion",layout:"type",
+{id:"m-104",theme:"Facts + Stats",client:"Ferrow",industry:"Finance",type:"static",source:"Motion",layout:"type",
  hook:"Your savings account is losing to inflation",kicker:"Feed static",fmt:"4:5",dur:"",
  spend:"$31.7k",ctr:"1.6%",hookRate:"—",thumbstop:"—",days:62,added:"2026-08-12",by:"Motion · Ferrow workspace",
  note:"Number-forward static. The 4.85% APY sits at optical centre, not true centre — worth copying that crop on the Northbank set.",
  c1:"#1E4D42",c2:"#0B221D",big:"4.85% APY",sm:"Compare that to the 0.4% you're getting now."},
-{id:"k-012",client:"Kiss Now",industry:"Beauty",type:"static",source:"Slack",layout:"product",
+{id:"k-012",theme:"Organic",client:"Kiss Now",industry:"Beauty",type:"static",source:"Slack",layout:"product",
  hook:"Three shades. One tube. Zero regrets.",kicker:"Carousel frame 1",fmt:"1:1",dur:"",
  spend:"$12.4k",ctr:"1.9%",hookRate:"—",thumbstop:"—",days:21,added:"2026-08-26",by:"Priya in #creative-inspiration",
  note:"Shared as reference for the autumn shade drop. Product on colour block, no model, no hand.",
  c1:"#D2683C",c2:"#6B2411",cta:"Three for $34"},
-{id:"n-201",client:"Northbank",industry:"Finance",type:"video",source:"Motion",layout:"ui",
+{id:"n-201",theme:"Facts + Stats",client:"Northbank",industry:"Finance",type:"video",source:"Motion",layout:"ui",
  hook:"The 4-minute business account",kicker:"Screen explainer",fmt:"1:1",dur:"0:45",
  spend:"$27.0k",ctr:"1.2%",hookRate:"28%",thumbstop:"1.9s",days:48,added:"2026-08-19",by:"Motion · Northbank workspace",
  note:"Screen recording ad. Slow first three seconds — every later cut opens on the finished account instead of the signup form.",
  c1:"#28407C",c2:"#0F1934",num:"4:02",numlbl:"Account opened in"},
-{id:"l-330",client:"Lumen Skin",industry:"Beauty",type:"video",source:"Slack",layout:"split",
+{id:"l-330",theme:"This or that",client:"Lumen Skin",industry:"Beauty",type:"video",source:"Slack",layout:"split",
  hook:"Day 1 vs day 60, no filter",kicker:"Transformation",fmt:"9:16",dur:"0:18",
  spend:"$19.8k",ctr:"3.4%",hookRate:"52%",thumbstop:"4.4s",days:14,added:"2026-09-03",by:"Marcus in #creative-inspiration",
  note:"Split screen holds the whole way through instead of cutting between states. Highest hook rate in the library.",
  c1:"#A8567E",c2:"#3A1428"},
-{id:"h-045",client:"Halo Health",industry:"Wellness",type:"static",source:"Manual",layout:"chart",
+{id:"h-045",theme:"Vs the alt",client:"Halo Health",industry:"Wellness",type:"static",source:"Manual",layout:"chart",
  hook:"What's actually in your greens powder",kicker:"Comparison chart",fmt:"4:5",dur:"",
  spend:"$8.9k",ctr:"2.1%",hookRate:"—",thumbstop:"—",days:27,added:"2026-08-24",by:"Added by Arav",
  note:"Ingredient table as the creative. Dense, but the scroll-stop is the competitor column being mostly empty.",
  c1:"#3F7A34",c2:"#152F11"},
-{id:"t-077",client:"Tilt",industry:"Fintech",type:"video",source:"Motion",layout:"ugc",
+{id:"t-077",theme:"UGC",client:"Tilt",industry:"Fintech",type:"video",source:"Motion",layout:"ugc",
  hook:"POV: rent is due and you're not panicking",kicker:"UGC · talking head",cap:"rent's due <em>friday</em>",fmt:"9:16",dur:"0:27",
  spend:"$36.5k",ctr:"2.4%",hookRate:"38%",thumbstop:"2.8s",days:41,added:"2026-08-21",by:"Motion · Tilt workspace",
  note:"Creator shot this on a phone in a parked car. The lack of production value is the point — the polished re-shoot underperformed it by half.",
  c1:"#7A4CB8",c2:"#26123F"},
-{id:"p-155",client:"Peak Provisions",industry:"Food & bev",type:"static",source:"Slack",layout:"product",
+{id:"p-155",theme:"Organic",client:"Peak Provisions",industry:"Food & bev",type:"static",source:"Slack",layout:"product",
  hook:"Built for the 5am start",kicker:"Lifestyle static",fmt:"1:1",dur:"",
  spend:"$6.2k",ctr:"1.1%",hookRate:"—",thumbstop:"—",days:19,added:"2026-08-28",by:"Dana in #creative-inspiration",
  note:"Not ours — saved as a lighting reference for the winter shoot. Single hard source, low and left.",
  c1:"#B07A22",c2:"#3A2606"},
-{id:"o-410",client:"Orenda",industry:"Home",type:"video",source:"Motion",layout:"split",
+{id:"o-410",theme:"This or that",client:"Orenda",industry:"Home",type:"video",source:"Motion",layout:"split",
  hook:"Watch it eat six months of dust",kicker:"Product demo",fmt:"4:5",dur:"0:35",
  spend:"$22.1k",ctr:"2.7%",hookRate:"44%",thumbstop:"3.6s",days:30,added:"2026-08-15",by:"Motion · Orenda workspace",
  note:"Pure demo, no voiceover until 0:12. Satisfying-mechanism ads keep beating benefit-led ones on this account.",
  c1:"#2E6E75",c2:"#0C2427"},
-{id:"f-118",client:"Ferrow",industry:"Finance",type:"video",source:"Motion",layout:"ugc",
+{id:"f-118",theme:"Search bar",client:"Ferrow",industry:"Finance",type:"video",source:"Motion",layout:"search",query:"why is my bank charging me a fee",
  hook:"I asked my bank where the fee came from",kicker:"Narrative",cap:"so I <em>called them</em>",fmt:"9:16",dur:"0:41",
  spend:"$14.6k",ctr:"1.8%",hookRate:"31%",thumbstop:"2.2s",days:23,added:"2026-08-27",by:"Motion · Ferrow workspace",
  note:"Story-led and long for finance, but retention holds to 0:30 because the answer only lands at the end.",
  c1:"#1E4D42",c2:"#0B221D"},
-{id:"k-019",client:"Kiss Now",industry:"Beauty",type:"static",source:"Motion",layout:"type",
+{id:"k-019",theme:"Copy only",client:"Kiss Now",industry:"Beauty",type:"static",source:"Motion",layout:"type",
  hook:"Sold out twice. Back for good.",kicker:"Restock announce",fmt:"9:16",dur:"",
  spend:"$9.4k",ctr:"2.2%",hookRate:"—",thumbstop:"—",days:11,added:"2026-09-05",by:"Motion · Kiss Now workspace",
  note:"Scarcity copy on a plain ground. Cheap to make, consistently top-third CTR, never the top spender.",
  c1:"#C0407A",c2:"#5B1233",big:"Sold out twice.",sm:"Back for good this time. Restocked Friday.",cta:"Get yours"},
-{id:"s-091",client:"Verabloom",industry:"Beauty",type:"static",source:"Competitor scan",layout:"chart",brandSet:"Lumen Skin",
+{id:"s-091",theme:"Vs the alt",client:"Verabloom",industry:"Beauty",type:"static",source:"Competitor scan",layout:"chart",brandSet:"Lumen Skin",
  hook:"The 40-second morning routine",kicker:"Competitor · live 3 wks",fmt:"4:5",dur:"",
  spend:"—",ctr:"—",hookRate:"—",thumbstop:"—",days:22,added:"2026-09-07",by:"Weekly scan · Lumen Skin brand set",
  note:"Three products laid out as a numbered routine. Flagged because it has been live three weeks with no variant swap.",
  c1:"#8E6BA8",c2:"#2B1A38"},
-{id:"n-208",client:"Northbank",industry:"Finance",type:"static",source:"Manual",layout:"type",
+{id:"n-208",theme:"Copy only",client:"Northbank",industry:"Finance",type:"static",source:"Manual",layout:"type",
  hook:"No monthly fee. We checked twice.",kicker:"Copy-led static",fmt:"1:1",dur:"",
  spend:"$5.1k",ctr:"1.4%",hookRate:"—",thumbstop:"—",days:16,added:"2026-09-02",by:"Added by Sofia",
  note:"Type-only ad. Works in feed, dies in stories — keep it placement-locked when it goes back up.",
  c1:"#28407C",c2:"#0F1934",big:"$0 / month",sm:"No minimum. No maintenance fee. No asterisk."},
-{id:"t-081",client:"Tilt",industry:"Fintech",type:"static",source:"Slack",layout:"type",
+{id:"t-081",theme:"Copy only",client:"Tilt",industry:"Fintech",type:"static",source:"Slack",layout:"type",
  hook:"$0 to open. $0 to keep.",kicker:"Offer static",fmt:"4:5",dur:"",
  spend:"$11.3k",ctr:"2.0%",hookRate:"—",thumbstop:"—",days:29,added:"2026-08-22",by:"Marcus in #creative-inspiration",
  note:"Two numbers, one line. Everything else on the frame is negative space and it still out-clicks the busy version.",
  c1:"#7A4CB8",c2:"#26123F",big:"$0 → $0",sm:"Nothing to open it. Nothing to keep it."},
-{id:"h-052",client:"Halo Health",industry:"Wellness",type:"video",source:"Motion",layout:"ugc",
+{id:"h-052",theme:"UGC",client:"Halo Health",industry:"Wellness",type:"video",source:"Motion",layout:"ugc",
  hook:"Nutritionist reacts to your supplement shelf",kicker:"Expert reaction",cap:"okay, <em>that one</em> can go",fmt:"9:16",dur:"0:52",
  spend:"$16.9k",ctr:"2.6%",hookRate:"36%",thumbstop:"3.0s",days:37,added:"2026-08-17",by:"Motion · Halo Health workspace",
  note:"Longest performer in the library. Authority format — the credential card at 0:02 is non-negotiable, we tested removing it.",
  c1:"#3F7A34",c2:"#152F11"},
-{id:"o-415",client:"Orenda",industry:"Home",type:"static",source:"Slack",layout:"split",
+{id:"o-415",theme:"This or that",client:"Orenda",industry:"Home",type:"static",source:"Slack",layout:"split",
  hook:"Before / after, same rug",kicker:"Split static",fmt:"1:1",dur:"",
  spend:"$7.8k",ctr:"2.3%",hookRate:"—",thumbstop:"—",days:25,added:"2026-08-25",by:"Dana in #creative-inspiration",
  note:"The dividing line sits off centre so the after gets more frame. Small trick, repeatable on any before/after.",
  c1:"#2E6E75",c2:"#0C2427"},
-{id:"l-337",client:"Lumen Skin",industry:"Beauty",type:"static",source:"Motion",layout:"product",
+{id:"l-337",theme:"Organic",client:"Lumen Skin",industry:"Beauty",type:"static",source:"Motion",layout:"product",
  hook:"Fragrance-free. Actually.",kicker:"Ingredient static",fmt:"4:5",dur:"",
  spend:"$13.7k",ctr:"1.7%",hookRate:"—",thumbstop:"—",days:44,added:"2026-08-11",by:"Motion · Lumen Skin workspace",
  note:"Label crop shot at 45°. Reads as a photo of a product rather than an ad, which is why it clears the scroll.",
  c1:"#A8567E",c2:"#3A1428"},
-{id:"p-160",client:"Peak Provisions",industry:"Food & bev",type:"video",source:"Motion",layout:"product",
+{id:"p-160",theme:"Organic",client:"Peak Provisions",industry:"Food & bev",type:"video",source:"Motion",layout:"product",
  hook:"One bar, four ingredients, on camera",kicker:"Process",fmt:"1:1",dur:"0:29",
  spend:"$10.5k",ctr:"1.9%",hookRate:"33%",thumbstop:"2.5s",days:20,added:"2026-08-29",by:"Motion · Peak Provisions workspace",
  note:"Ingredient-drop process shot. No face, no voiceover, subtitles only — travels well across markets.",
  c1:"#B07A22",c2:"#3A2606"},
-{id:"s-096",client:"Cardinal Trust",industry:"Finance",type:"video",source:"Competitor scan",layout:"ui",brandSet:"Northbank",
+{id:"s-096",theme:"Facts + Stats",client:"Cardinal Trust",industry:"Finance",type:"video",source:"Competitor scan",layout:"ui",brandSet:"Northbank",
  hook:"Where your money sleeps at night",kicker:"Competitor · live 6 wks",fmt:"1:1",dur:"0:38",
  spend:"—",ctr:"—",hookRate:"—",thumbstop:"—",days:43,added:"2026-09-08",by:"Weekly scan · Northbank brand set",
  note:"Six weeks live. Motion graphic, no people, heavy on regulator logos at the end card. Nothing in our set answers it.",
  c1:"#4A5A6B",c2:"#1A222A",num:"$250k",numlbl:"Protected up to"},
-{id:"k-024",client:"Kiss Now",industry:"Beauty",type:"video",source:"Slack",layout:"review",
+{id:"k-024",theme:"Reviews/Testimonials",client:"Kiss Now",industry:"Beauty",type:"video",source:"Slack",layout:"review",
  hook:"Reading the reviews so you don't have to",kicker:"Review scroll",fmt:"9:16",dur:"0:24",
  spend:"$21.6k",ctr:"3.1%",hookRate:"47%",thumbstop:"4.1s",days:12,added:"2026-09-04",by:"Priya in #creative-inspiration",
  note:"Screen recording of the review page with a creator voiceover. Zero shoot cost, second-best hook rate we have.",
  c1:"#C0407A",c2:"#5B1233"},
-{id:"t-086",client:"Tilt",industry:"Fintech",type:"video",source:"Motion",layout:"ui",
+{id:"t-086",theme:"Facts + Stats",client:"Tilt",industry:"Fintech",type:"video",source:"Motion",layout:"ui",
  hook:"Every subscription you forgot about",kicker:"Screen demo",fmt:"4:5",dur:"0:33",
  spend:"$18.2k",ctr:"2.2%",hookRate:"35%",thumbstop:"2.9s",days:26,added:"2026-08-20",by:"Motion · Tilt workspace",
  note:"The list scroll is deliberately too fast to read — the point is the length of it, not the items.",
  c1:"#7A4CB8",c2:"#26123F",num:"$284",numlbl:"Forgotten per month"},
-{id:"h-058",client:"Halo Health",industry:"Wellness",type:"static",source:"Slack",layout:"doc",
+{id:"h-058",theme:"Facts + Stats",client:"Halo Health",industry:"Wellness",type:"static",source:"Slack",layout:"doc",
  hook:"Third-party tested. Here's the certificate.",kicker:"Trust static",fmt:"1:1",dur:"",
  spend:"$4.6k",ctr:"1.3%",hookRate:"—",thumbstop:"—",days:18,added:"2026-08-31",by:"Added by Arav",
  note:"Document as creative. Low CTR, best post-click conversion rate on the account by a wide margin.",
  c1:"#3F7A34",c2:"#152F11"},
-{id:"o-421",client:"Orenda",industry:"Home",type:"video",source:"Slack",layout:"ugc",
+{id:"o-421",theme:"Question box/comment response",client:"Orenda",industry:"Home",type:"video",source:"Slack",layout:"qbox",question:"ok what did you change??",
  hook:"My cleaner asked what I'd changed",kicker:"UGC · testimonial",cap:"she <em>actually asked</em>",fmt:"9:16",dur:"0:26",
  spend:"$15.4k",ctr:"2.5%",hookRate:"39%",thumbstop:"3.3s",days:15,added:"2026-09-06",by:"Dana in #creative-inspiration",
  note:"Third-party praise as the hook instead of the creator's own opinion. Format is portable across every client here.",
  c1:"#2E6E75",c2:"#0C2427"},
-{id:"l-341",client:"Lumen Skin",industry:"Beauty",type:"video",source:"Motion",layout:"review",
+{id:"l-341",theme:"Reviews/Testimonials",client:"Lumen Skin",industry:"Beauty",type:"video",source:"Motion",layout:"review",
  hook:"4,812 reviews. One complaint.",kicker:"Social proof",fmt:"4:5",dur:"0:20",
  spend:"$9.1k",ctr:"2.8%",hookRate:"43%",thumbstop:"3.5s",days:9,added:"2026-09-07",by:"Motion · Lumen Skin workspace",
  note:"Names the single complaint out loud at 0:11, which is why it beats the version that only shows praise.",
  c1:"#A8567E",c2:"#3A1428"},
-{id:"s-099",client:"Meridian Pay",industry:"Fintech",type:"static",source:"Competitor scan",layout:"type",brandSet:"Tilt",
+{id:"s-099",theme:"Facts + Stats",client:"Meridian Pay",industry:"Fintech",type:"static",source:"Competitor scan",layout:"type",brandSet:"Tilt",
  hook:"Switch in 90 seconds",kicker:"Competitor · live 2 wks",fmt:"4:5",dur:"",
  spend:"—",ctr:"—",hookRate:"—",thumbstop:"—",days:15,added:"2026-09-08",by:"Weekly scan · Tilt brand set",
  note:"Straight speed claim with a stopwatch graphic. Two weeks live — just crossed the auto-save threshold.",
  c1:"#1F6E6A",c2:"#0A2422",big:"90 seconds",sm:"That's the whole switch. Timed, not estimated."},
-{id:"p-166",client:"Peak Provisions",industry:"Food & bev",type:"static",source:"Manual",layout:"chart",
+{id:"p-166",theme:"Vs the alt",client:"Peak Provisions",industry:"Food & bev",type:"static",source:"Manual",layout:"chart",
  hook:"14g protein. 2g sugar. Read the panel.",kicker:"Spec static",fmt:"4:5",dur:"",
  spend:"$3.4k",ctr:"1.5%",hookRate:"—",thumbstop:"—",days:8,added:"2026-09-05",by:"Added by Sofia",
  note:"Numbers-versus-category-average bars. Untested at scale — went live last week on a $500/day cap.",
  c1:"#B07A22",c2:"#3A2606"},
-{id:"n-214",client:"Northbank",industry:"Finance",type:"video",source:"Slack",layout:"doc",
+{id:"n-214",theme:"Copy only",client:"Northbank",industry:"Finance",type:"video",source:"Slack",layout:"doc",
  hook:"The fee schedule, read out loud",kicker:"Transparency",fmt:"9:16",dur:"0:44",
  spend:"$6.7k",ctr:"1.9%",hookRate:"30%",thumbstop:"2.4s",days:13,added:"2026-09-03",by:"Marcus in #creative-inspiration",
  note:"Founder reads the actual fee schedule to camera. Boring on paper, top-quartile watch time in practice.",
@@ -358,13 +377,13 @@ const INBOX_SEED=[
  msg:"primer growth ugc — founder talking straight to camera, no edits for the first 5 seconds",
  hook:"No edits for the first five seconds",layout:"ugc",fmt:"9:16",type:"video",dur:"0:34",c1:"#2F6B5E",c2:"#0E2621"},
 {id:"in-3",who:"Marcus Webb",time:"Yesterday, 4:02pm",ch:"#creative-inspiration",
- msg:"finance offer ferrow — everything is one number and one sentence",
+ msg:"finance stats ferrow — everything is one number and one sentence",
  hook:"One number, one sentence",layout:"type",fmt:"4:5",type:"static",dur:"",c1:"#245247",c2:"#0A1F1A"},
 {id:"in-4",who:"Dana Osei",time:"Yesterday, 11:47am",ch:"#creative-inspiration",
- msg:"home demo orenda — look how low the key light is",
+ msg:"home organic orenda — look how low the key light is",
  hook:"Look how low the key light is",layout:"product",fmt:"1:1",type:"static",dur:"",c1:"#356C71",c2:"#0B2326"},
 {id:"in-5",who:"Arav Lohe",time:"Mon, 3:20pm",ch:"#creative-inspiration",
- msg:"competitor wellness halo — ran all through August, the certificate angle again",
+ msg:"wellness vs the alt, competitor to halo — ran all through August",
  hook:"Ran all through August",layout:"doc",fmt:"4:5",type:"static",dur:"",c1:"#4A7534",c2:"#152C0F"},
 {id:"in-6",who:"Sofia Marin",time:"Mon, 10:05am",ch:"#creative-inspiration",
  msg:"review scroll format, worth trying on one of ours",
@@ -376,9 +395,8 @@ const INBOX_SEED=[
 
 /* ---------- vocab ---------- */
 const INDUSTRIES=["Beauty","Finance","Fintech","Food & bev","Home","Primer Growth","Wellness"];
-const THEMES=["UGC","Competitor","Product demo","Testimonial","Before & after","Offer / promo","Founder-led","Comparison","Proof / trust"];
-const THEME_OF_LAYOUT={ugc:"UGC",split:"Before & after",product:"Product demo",ui:"Product demo",
-  review:"Testimonial",type:"Offer / promo",chart:"Comparison",doc:"Proof / trust"};
+const THEMES=["UGC","Vs the alt","Facts + Stats","This or that","Copy only","Reviews/Testimonials",
+  "BDQs","Search bar","Question box/comment response","Organic"];
 
 /* Keywords people type in Slack → where the post gets filed. First match wins. */
 const KEYWORDS={
@@ -392,15 +410,16 @@ const KEYWORDS={
     "Home":["home","cleaning","rug","vacuum","furniture","decor"]
   },
   theme:{
-    "Competitor":["competitor","competition","comp","rival"],
-    "UGC":["ugc","creator","talking head","pov","fyp"],
-    "Before & after":["before/after","before and after","before after","transformation"],
-    "Testimonial":["review","reviews","testimonial"],
-    "Product demo":["demo","how it works","product shot","screen recording"],
-    "Offer / promo":["offer","promo","discount","sale","% off"],
-    "Founder-led":["founder","ceo"],
-    "Comparison":["vs","comparison","chart"],
-    "Proof / trust":["certificate","tested","proof"]
+    "Question box/comment response":["question box","comment","comments","reply","replying"],
+    "Search bar":["search bar","search","google"],
+    "Reviews/Testimonials":["review","reviews","testimonial","testimonials"],
+    "This or that":["this or that","before/after","before and after","before after"],
+    "Vs the alt":["vs the alt","vs","versus","alternative","compared"],
+    "Facts + Stats":["facts","fact","stats","stat","numbers","data"],
+    "Copy only":["copy only","copy","text only","type only"],
+    "BDQs":["bdq","bdqs"],
+    "Organic":["organic","lofi","lo-fi","native"],
+    "UGC":["ugc","creator","talking head","pov","fyp","founder"]
   }
 };
 function tag(text,clients){
@@ -422,7 +441,7 @@ function store(patch){try{localStorage.setItem(STORE,JSON.stringify(Object.assig
 (function(){
   const p=saved();
   DATA=[...(p.added||[]),...SEED];
-  DATA.forEach(d=>{ if(!d.theme) d.theme=d.source==="Competitor scan"?"Competitor":(THEME_OF_LAYOUT[d.layout]||"UGC"); });
+  DATA.forEach(d=>{ if(!THEMES.includes(d.theme)) d.theme="UGC"; });
   const gone=new Set(p.cleared||[]);
   const clients=[...new Set(DATA.map(d=>d.client))];
   // Slack posts that name an industry and a theme file themselves; the rest wait for a person.
@@ -460,7 +479,9 @@ function pic(d,opts){
     </div>`;
   // Otherwise: a stand-in, so the board still reads while assets are being imported.
   const shape=d.layout==="product"?'<span class="shape box"></span>'
-            :(d.layout==="ugc"||d.layout==="split")?'<span class="shape"></span>':"";
+            :(d.layout==="ugc"||d.layout==="split")?'<span class="shape"></span>'
+            :d.layout==="search"?`<span class="sbar"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/></svg>${esc(d.query||d.hook)}</span>`
+            :d.layout==="qbox"?`<span class="qbox"><span class="qh">Ask me a question</span><span class="qq">${esc(d.question||d.hook)}</span></span>`:"";
   return `<div class="pic ${R[d.fmt]||"r45"}">
     <div class="art" style="background:${d.c1}">
       <span class="shade"></span>${shape}
@@ -557,31 +578,36 @@ function card(d,list,i){
 }
 
 /* ---- boards ---- */
+const BOARD_TABS=[["industry","Industries"],["theme","Themes"],["client","Clients"]];
 function viewBoards(){
-  const note=document.createElement("p");
-  note.className="note-line";
-  note.textContent="Buckets by industry and by client. Open one to see just that board.";
-  stage.appendChild(note);
-  for(const key of ["industry","client"]){
-    const head=document.createElement("h2");head.className="section";
-    const grid=document.createElement("div");grid.className="tiles";
-    const groups=[...new Set(DATA.map(d=>d[key]))]
-      .sort((a,b)=>DATA.filter(d=>d[key]===b).length-DATA.filter(d=>d[key]===a).length);
-    for(const g of groups){
-      const items=DATA.filter(d=>d[key]===g);
-      const t=document.createElement("button");t.className="tile";t.type="button";
-      t.innerHTML=`<div class="cover">${items.slice(0,3).map(p=>`<div>${pic(p,{plain:true})}</div>`).join("")}</div>
-        <h3>${esc(g)}</h3>
-        <div class="sub">${items.length} creative${items.length===1?"":"s"}</div>`;
-      t.addEventListener("click",()=>{
-        S.industry=key==="industry"?g:"";S.client=key==="client"?g:"";S.type="all";
-        go("all");window.scrollTo({top:0});
-      });
-      grid.appendChild(t);
-    }
-    head.innerHTML=`By ${key}<span>${groups.length}</span>`;
-    stage.append(head,grid);
+  const key=S.boardBy||"industry";
+  const groupsFor=k=>k==="theme"?THEMES.slice()
+    :k==="industry"?industries()
+    :uniq("client").filter(Boolean);
+  const tabs=document.createElement("div");tabs.className="subtabs";tabs.setAttribute("role","group");
+  tabs.innerHTML=BOARD_TABS.map(([k,label])=>
+    `<button data-k="${k}" aria-pressed="${k===key}">${label}<span class="n">${groupsFor(k).length}</span></button>`).join("");
+  tabs.querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{S.boardBy=b.dataset.k;draw()}));
+  stage.appendChild(tabs);
+
+  const count=g=>DATA.filter(d=>d[key]===g).length;
+  // Themes keep the order they were defined in; industries and clients go biggest first.
+  const groups=key==="theme"?groupsFor(key):groupsFor(key).sort((a,b)=>count(b)-count(a)||a.localeCompare(b));
+  const grid=document.createElement("div");grid.className="tiles";grid.style.paddingTop="14px";
+  for(const g of groups){
+    const items=DATA.filter(d=>d[key]===g);
+    const t=document.createElement("button");t.className="tile";t.type="button";
+    t.innerHTML=`${items.length?`<div class="cover n${Math.min(items.length,3)}">${items.slice(0,3).map(p=>`<div>${pic(p,{plain:true})}</div>`).join("")}</div>`
+        :`<div class="empty">Nothing filed yet</div>`}
+      <h3>${esc(g)}</h3>
+      <div class="sub">${items.length} creative${items.length===1?"":"s"}</div>`;
+    t.addEventListener("click",()=>{
+      S.industry=key==="industry"?g:"";S.theme=key==="theme"?g:"";S.client=key==="client"?g:"";S.type="all";
+      go("all");window.scrollTo({top:0});
+    });
+    grid.appendChild(t);
   }
+  stage.appendChild(grid);
 }
 
 /* ---- from Slack ---- */
@@ -600,7 +626,7 @@ function viewSlack(){
   const head=document.createElement("div");head.className="slackhead";
   head.innerHTML=`<p>Post an image in <b>#creative-inspiration</b> with a few keywords: an industry, a theme,
     and the client if there is one. Anything that names an industry and a theme files itself.</p>
-    <p class="eg">For example <code>beauty ugc kiss now</code> <code>competitor finance</code> <code>primer growth founder</code></p>`;
+    <p class="eg">For example <code>beauty ugc kiss now</code> <code>finance facts</code> <code>primer growth organic</code></p>`;
   stage.appendChild(head);
 
   if(AUTO.length){

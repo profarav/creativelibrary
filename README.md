@@ -10,7 +10,7 @@ This is a **working prototype**: real interaction, real information design, samp
 | Section | What it does |
 | --- | --- |
 | **All creative** | The board. Filter by ad type (images / video), industry, creative theme and client, or search. Click anything for the detail view. |
-| **Boards** | The buckets from the brief — one per industry, one per client. Open one to see just that board. |
+| **Boards** | Three tabs — Industries, Themes, Clients — one board per bucket. Open one to see just that board. |
 | **From Slack** | Posts from `#creative-inspiration`, sorted by the keywords people type with them. A post that names an industry and a theme files itself; anything else waits under *Needs a look*. |
 | **Competitors** | Scanned weekly. Anything a competitor has kept running over a week saves itself here with a "Live N wks" badge. |
 
@@ -28,8 +28,8 @@ When adding one by hand, *What's good about this?* is required — it's what sho
 tile.
 
 - **Industries:** Beauty, Finance, Fintech, Food & bev, Home, Primer Growth, Wellness
-- **Themes:** UGC, Competitor, Product demo, Testimonial, Before & after, Offer / promo,
-  Founder-led, Comparison, Proof / trust
+- **Creative themes:** UGC, Vs the alt, Facts + Stats, This or that, Copy only,
+  Reviews/Testimonials, BDQs, Search bar, Question box/comment response, Organic
 
 Both lists, and the Slack keywords that map to them, live at the top of the script in
 `creative-library.html` (`INDUSTRIES`, `THEMES`, `KEYWORDS`).

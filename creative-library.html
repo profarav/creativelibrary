@@ -97,6 +97,25 @@ header h1{font-size:17px;font-weight:700;letter-spacing:-.02em;white-space:nowra
 .livetag{position:absolute;top:10px;left:10px;z-index:2;background:var(--live);color:#fff;border-radius:14px;
   padding:3px 10px;font-size:12px;font-weight:700}
 
+.art .txt{display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}
+.why b{display:block;font-size:12.5px;color:var(--muted);margin-bottom:4px;font-weight:600}
+.f label i{color:var(--live);font-style:normal}
+.f label .opt{color:var(--muted);font-weight:500;margin-left:4px}
+.f .err{display:none;color:var(--live);font-size:12.5px}
+.f.bad .err{display:block}
+.f.bad input,.f.bad select,.f.bad textarea,select.bad{border-color:var(--live)}
+.f #a-url{margin-top:6px}
+.slackhead{padding:4px 20px 0;max-width:760px;color:var(--muted);font-size:14px}
+.slackhead p{margin:0 0 8px}
+.slackhead b{color:var(--text)}
+.slackhead code{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;background:var(--card);
+  border:1px solid var(--line);border-radius:6px;padding:2px 7px;margin-right:4px;color:var(--text)}
+mark{background:#FFE58A;color:#111;border-radius:3px;padding:0 2px}
+.item .filed{font-size:13px;color:var(--muted)}
+.chip{font-size:12.5px;font-weight:600;background:var(--hover);border-radius:12px;padding:3px 10px}
+.item .missing{font-size:12.5px;color:var(--live);margin:-6px 0 10px}
+.item.done .said{margin-bottom:10px}
+
 /* boards */
 .tiles{padding:0 20px 24px;display:grid;gap:20px;grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
 .tile{background:none;border:0;padding:0;cursor:pointer;text-align:left}
@@ -330,50 +349,102 @@ const SEED=[
 ];
 
 /* Slack items pulled by the bot from #creative-inspiration, not yet tagged. */
+/* What people post in #creative-inspiration: an image plus a few keywords. */
 const INBOX_SEED=[
 {id:"in-1",who:"Priya Raman",time:"Today, 9:14am",ch:"#creative-inspiration",
- msg:"this hook is everywhere on my FYP right now — the pause before she says the price is the whole ad",
- hook:"Guess how much this costs",layout:"ugc",cap:"go on, <em>guess</em>",fmt:"9:16",type:"video",dur:"0:19",c1:"#B8446A",c2:"#3E1024",
- guessClient:"Kiss Now",guessInd:"Beauty"},
-{id:"in-2",who:"Marcus Webb",time:"Yesterday, 4:02pm",ch:"#creative-inspiration",
- msg:"stealing this layout for the Ferrow rate card. everything is one number and a sentence",
- hook:"5.1% and no lock-in",layout:"type",big:"5.1%",sm:"No lock-in, no notice period, no catch.",fmt:"4:5",type:"static",dur:"",c1:"#245247",c2:"#0A1F1A",
- guessClient:"Ferrow",guessInd:"Finance"},
-{id:"in-3",who:"Dana Osei",time:"Yesterday, 11:47am",ch:"#creative-inspiration",
- msg:"reference for the Orenda winter shoot — look at how low the key light is",
- hook:"Six weeks, one filter",layout:"product",fmt:"1:1",type:"static",dur:"",c1:"#356C71",c2:"#0B2326",
- guessClient:"Orenda",guessInd:"Home"},
-{id:"in-4",who:"Arav Lohe",time:"Mon, 3:20pm",ch:"#creative-inspiration",
- msg:"competitor to Halo, this ran all through August. the certificate thing again",
- hook:"Independently tested, twice a year",layout:"doc",fmt:"4:5",type:"static",dur:"",c1:"#4A7534",c2:"#152C0F",
- guessClient:"",guessInd:"Wellness"},
-{id:"in-5",who:"Sofia Marin",time:"Mon, 10:05am",ch:"#creative-inspiration",
- msg:"the review-scroll format working for a fintech, not just beauty — worth a Tilt test",
- hook:"I read all 900 reviews",layout:"review",fmt:"9:16",type:"video",dur:"0:28",c1:"#6B48A8",c2:"#211037",
- guessClient:"Tilt",guessInd:"Fintech"},
-{id:"in-6",who:"Priya Raman",time:"Fri, 5:38pm",ch:"#creative-inspiration",
- msg:"before/after but the after is the boring bit. counterintuitive and it works",
- hook:"The unglamorous after",layout:"split",fmt:"4:5",type:"video",dur:"0:23",c1:"#9A5A3C",c2:"#301509",
- guessClient:"",guessInd:""}
+ msg:"beauty ugc kiss now — the pause before she says the price is the whole ad",
+ hook:"The pause before the price is the whole ad",layout:"ugc",fmt:"9:16",type:"video",dur:"0:19",c1:"#B8446A",c2:"#3E1024"},
+{id:"in-2",who:"Marcus Webb",time:"Today, 8:40am",ch:"#creative-inspiration",
+ msg:"primer growth ugc — founder talking straight to camera, no edits for the first 5 seconds",
+ hook:"No edits for the first five seconds",layout:"ugc",fmt:"9:16",type:"video",dur:"0:34",c1:"#2F6B5E",c2:"#0E2621"},
+{id:"in-3",who:"Marcus Webb",time:"Yesterday, 4:02pm",ch:"#creative-inspiration",
+ msg:"finance offer ferrow — everything is one number and one sentence",
+ hook:"One number, one sentence",layout:"type",fmt:"4:5",type:"static",dur:"",c1:"#245247",c2:"#0A1F1A"},
+{id:"in-4",who:"Dana Osei",time:"Yesterday, 11:47am",ch:"#creative-inspiration",
+ msg:"home demo orenda — look how low the key light is",
+ hook:"Look how low the key light is",layout:"product",fmt:"1:1",type:"static",dur:"",c1:"#356C71",c2:"#0B2326"},
+{id:"in-5",who:"Arav Lohe",time:"Mon, 3:20pm",ch:"#creative-inspiration",
+ msg:"competitor wellness halo — ran all through August, the certificate angle again",
+ hook:"Ran all through August",layout:"doc",fmt:"4:5",type:"static",dur:"",c1:"#4A7534",c2:"#152C0F"},
+{id:"in-6",who:"Sofia Marin",time:"Mon, 10:05am",ch:"#creative-inspiration",
+ msg:"review scroll format, worth trying on one of ours",
+ hook:"Review scroll format",layout:"review",fmt:"9:16",type:"video",dur:"0:28",c1:"#6B48A8",c2:"#211037"},
+{id:"in-7",who:"Priya Raman",time:"Fri, 5:38pm",ch:"#creative-inspiration",
+ msg:"so good — the after is the boring bit and it still works",
+ hook:"The after is the boring bit",layout:"split",fmt:"4:5",type:"video",dur:"0:23",c1:"#9A5A3C",c2:"#301509"}
 ];
+
+/* ---------- vocab ---------- */
+const INDUSTRIES=["Beauty","Finance","Fintech","Food & bev","Home","Primer Growth","Wellness"];
+const THEMES=["UGC","Competitor","Product demo","Testimonial","Before & after","Offer / promo","Founder-led","Comparison","Proof / trust"];
+const THEME_OF_LAYOUT={ugc:"UGC",split:"Before & after",product:"Product demo",ui:"Product demo",
+  review:"Testimonial",type:"Offer / promo",chart:"Comparison",doc:"Proof / trust"};
+
+/* Keywords people type in Slack → where the post gets filed. First match wins. */
+const KEYWORDS={
+  industry:{
+    "Primer Growth":["primer growth","primer"],
+    "Beauty":["beauty","skincare","skin","makeup","lip","serum","cosmetic"],
+    "Fintech":["fintech","payments","neobank"],
+    "Finance":["finance","bank","banking","savings","apy","loan","credit"],
+    "Wellness":["wellness","supplement","supplements","vitamin","greens","health"],
+    "Food & bev":["food","snack","drink","protein","bev","cpg"],
+    "Home":["home","cleaning","rug","vacuum","furniture","decor"]
+  },
+  theme:{
+    "Competitor":["competitor","competition","comp","rival"],
+    "UGC":["ugc","creator","talking head","pov","fyp"],
+    "Before & after":["before/after","before and after","before after","transformation"],
+    "Testimonial":["review","reviews","testimonial"],
+    "Product demo":["demo","how it works","product shot","screen recording"],
+    "Offer / promo":["offer","promo","discount","sale","% off"],
+    "Founder-led":["founder","ceo"],
+    "Comparison":["vs","comparison","chart"],
+    "Proof / trust":["certificate","tested","proof"]
+  }
+};
+function tag(text,clients){
+  const t=" "+text.toLowerCase().replace(/#/g," ").replace(/[—–,.!?:;()]/g," ").replace(/\s+/g," ")+" ";
+  const has=w=>t.includes(" "+w+" ");
+  const pick=map=>Object.keys(map).find(k=>map[k].some(has))||"";
+  const client=(clients||[]).find(c=>has(c.toLowerCase())||has(c.toLowerCase().split(" ")[0]))||"";
+  return {industry:pick(KEYWORDS.industry),theme:pick(KEYWORDS.theme),client};
+}
 
 const STORE="creative-library-simple";
 const R={"9:16":"r916","4:5":"r45","1:1":"r11"};
 let DATA=[],INBOX=[],SAVED=new Set();
-let S={view:"all",type:"all",industry:"",client:"",q:""};
+let S={view:"all",type:"all",industry:"",theme:"",client:"",q:""};
+let AUTO=[];
 
 function saved(){try{return JSON.parse(localStorage.getItem(STORE)||"{}")}catch(e){return{}}}
 function store(patch){try{localStorage.setItem(STORE,JSON.stringify(Object.assign(saved(),patch)))}catch(e){}}
 (function(){
   const p=saved();
   DATA=[...(p.added||[]),...SEED];
+  DATA.forEach(d=>{ if(!d.theme) d.theme=d.source==="Competitor scan"?"Competitor":(THEME_OF_LAYOUT[d.layout]||"UGC"); });
   const gone=new Set(p.cleared||[]);
-  INBOX=INBOX_SEED.filter(i=>!gone.has(i.id));
+  const clients=[...new Set(DATA.map(d=>d.client))];
+  // Slack posts that name an industry and a theme file themselves; the rest wait for a person.
+  for(const it of INBOX_SEED){
+    if(gone.has(it.id)) continue;
+    it.tags=tag(it.msg,clients);
+    if(it.tags.industry&&it.tags.theme){
+      const item=fromSlack(it,it.tags);item.auto=true;
+      DATA.push(item);AUTO.push(item);
+    } else INBOX.push(it);
+  }
   SAVED=new Set(p.saved||[]);
 })();
 
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const uniq=k=>[...new Set(DATA.map(d=>d[k]))].sort();
+const industries=()=>[...new Set([...INDUSTRIES,...DATA.map(d=>d.industry)])].filter(x=>x&&x!=="Unsorted").sort();
+function fromSlack(it,t){
+  return {id:"s-"+it.id,client:t.client||"",industry:t.industry,theme:t.theme,type:it.type,source:"Slack",
+    layout:it.layout,hook:it.hook,fmt:it.fmt,dur:it.dur||"",spend:"—",ctr:"—",hookRate:"—",days:0,
+    added:"2026-09-2"+(it.id.slice(-1)%4),by:it.who+" in "+it.ch,note:it.msg,c1:it.c1,c2:it.c2};
+}
 const wks=d=>Math.max(1,Math.round(d.days/7));
 const stage=document.getElementById("stage");
 
@@ -402,9 +473,10 @@ function shown(){
   return DATA.filter(d=>{
     if(S.type!=="all"&&d.type!==S.type)return false;
     if(S.industry&&d.industry!==S.industry)return false;
+    if(S.theme&&d.theme!==S.theme)return false;
     if(S.client&&d.client!==S.client)return false;
     if(S.q){
-      const hay=(d.hook+" "+d.client+" "+d.industry+" "+d.note).toLowerCase();
+      const hay=(d.hook+" "+d.client+" "+d.industry+" "+d.theme+" "+d.note).toLowerCase();
       if(!hay.includes(S.q))return false;
     }
     return true;
@@ -438,14 +510,16 @@ function viewAll(){
       <button data-t="static" aria-pressed="${S.type==="static"}">Images</button>
       <button data-t="video" aria-pressed="${S.type==="video"}">Video</button>
     </div>
-    <select id="f-ind"><option value="">All industries</option>${uniq("industry").map(v=>`<option ${v===S.industry?"selected":""}>${esc(v)}</option>`).join("")}</select>
-    <select id="f-cli"><option value="">All clients</option>${uniq("client").map(v=>`<option ${v===S.client?"selected":""}>${esc(v)}</option>`).join("")}</select>
-    ${(S.type!=="all"||S.industry||S.client||S.q)?`<button class="clear">Clear</button>`:""}`;
+    <select id="f-ind"><option value="">All industries</option>${industries().map(v=>`<option ${v===S.industry?"selected":""}>${esc(v)}</option>`).join("")}</select>
+    <select id="f-thm"><option value="">All themes</option>${THEMES.map(v=>`<option ${v===S.theme?"selected":""}>${esc(v)}</option>`).join("")}</select>
+    <select id="f-cli"><option value="">All clients</option>${uniq("client").filter(Boolean).map(v=>`<option ${v===S.client?"selected":""}>${esc(v)}</option>`).join("")}</select>
+    ${(S.type!=="all"||S.industry||S.theme||S.client||S.q)?`<button class="clear">Clear</button>`:""}`;
   f.querySelectorAll(".pills button").forEach(b=>b.addEventListener("click",()=>{S.type=b.dataset.t;draw()}));
   f.querySelector("#f-ind").addEventListener("change",e=>{S.industry=e.target.value;draw()});
+  f.querySelector("#f-thm").addEventListener("change",e=>{S.theme=e.target.value;draw()});
   f.querySelector("#f-cli").addEventListener("change",e=>{S.client=e.target.value;draw()});
   const c=f.querySelector(".clear");
-  if(c)c.addEventListener("click",()=>{S.type="all";S.industry="";S.client="";S.q="";document.getElementById("q").value="";draw()});
+  if(c)c.addEventListener("click",()=>{S.type="all";S.industry="";S.theme="";S.client="";S.q="";document.getElementById("q").value="";draw()});
   const items=shown();
   const r=document.createElement("span");
   r.className="result";r.textContent=items.length+(items.length===1?" creative":" creatives");
@@ -464,12 +538,12 @@ function viewAll(){
 function card(d,list,i){
   const el=document.createElement("div");
   el.className="card";el.tabIndex=0;el.setAttribute("role","button");
-  el.setAttribute("aria-label",d.hook+", "+d.client);
+  el.setAttribute("aria-label",d.hook+", "+(d.client||d.industry));
   el.innerHTML=pic(d)+`
     <button class="save" type="button" data-saved="${SAVED.has(d.id)}">${SAVED.has(d.id)?"Saved":"Save"}</button>
     <div class="info">
-      <div class="hook">${esc(d.client)}</div>
-      <div class="sub">${esc(d.industry)} · ${d.type==="video"?"Video":"Image"}</div>
+      <div class="hook">${esc(d.client||d.industry)}</div>
+      <div class="sub">${[d.client?d.industry:"",d.theme].filter(Boolean).map(esc).join(" · ")}</div>
     </div>`;
   const open=()=>detail(d,list,i);
   el.addEventListener("click",e=>{if(!e.target.closest(".save"))open()});
@@ -511,40 +585,82 @@ function viewBoards(){
 }
 
 /* ---- from Slack ---- */
+function highlight(msg,clients){
+  let h=esc(msg);
+  const words=[...Object.values(KEYWORDS.industry).flat(),...Object.values(KEYWORDS.theme).flat(),
+    ...clients.map(c=>c.toLowerCase())].sort((a,b)=>b.length-a.length);
+  for(const w of words){
+    const re=new RegExp("(^|[\\s#])("+w.replace(/[.*+?^${}()|[\]\\\/]/g,"\\$&")+")(?=$|[\\s,.—–!?:;])","gi");
+    h=h.replace(re,(m,pre,word)=>pre+"<mark>"+word+"</mark>");
+  }
+  return h;
+}
 function viewSlack(){
-  const note=document.createElement("p");
-  note.className="note-line";
-  note.textContent="Links the bot pulled from #creative-inspiration. Pick a client and industry to file them.";
-  stage.appendChild(note);
+  const clients=uniq("client").filter(Boolean);
+  const head=document.createElement("div");head.className="slackhead";
+  head.innerHTML=`<p>Post an image in <b>#creative-inspiration</b> with a few keywords: an industry, a theme,
+    and the client if there is one. Anything that names an industry and a theme files itself.</p>
+    <p class="eg">For example <code>beauty ugc kiss now</code> <code>competitor finance</code> <code>primer growth founder</code></p>`;
+  stage.appendChild(head);
+
+  if(AUTO.length){
+    const h=document.createElement("h2");h.className="section";
+    h.innerHTML=`Filed automatically<span>${AUTO.length}</span>`;
+    const wrap=document.createElement("div");wrap.className="list";
+    AUTO.forEach((d,i)=>{
+      const row=document.createElement("div");row.className="item done";
+      row.innerHTML=`${pic(d,{plain:true})}
+        <div>
+          <div class="who">${esc(d.by)}</div>
+          <div class="said">${highlight(d.note,clients)}</div>
+          <div class="acts">
+            <span class="filed">Filed to</span>
+            <span class="chip">${esc(d.industry)}</span><span class="chip">${esc(d.theme)}</span>
+            ${d.client?`<span class="chip">${esc(d.client)}</span>`:""}
+            <span class="gap"></span>
+            <button class="btn" data-a="view">View</button>
+          </div>
+        </div>`;
+      row.querySelector('[data-a="view"]').addEventListener("click",()=>detail(d,AUTO,i));
+      wrap.appendChild(row);
+    });
+    stage.append(h,wrap);
+  }
+
+  const h2=document.createElement("h2");h2.className="section";
+  h2.innerHTML=`Needs a look<span>${INBOX.length}</span>`;
+  stage.appendChild(h2);
   const wrap=document.createElement("div");wrap.className="list";
   if(!INBOX.length){
-    wrap.innerHTML=`<div class="blank"><b>All caught up</b>New posts in #creative-inspiration show up here.</div>`;
+    wrap.innerHTML=`<div class="blank"><b>All caught up</b>Every post in #creative-inspiration has been filed.</div>`;
     stage.appendChild(wrap);return;
   }
-  const cl=uniq("client"),ind=uniq("industry");
   for(const it of INBOX){
+    const t=it.tags||tag(it.msg,clients);
     const row=document.createElement("div");row.className="item";
     row.innerHTML=`${pic(Object.assign({},it),{plain:true})}
       <div>
         <div class="who"><b>${esc(it.who)}</b> in ${esc(it.ch)} · ${esc(it.time)}</div>
-        <div class="said">${esc(it.msg)}</div>
+        <div class="said">${highlight(it.msg,clients)}</div>
+        <div class="missing">No ${[!t.industry&&"industry",!t.theme&&"theme"].filter(Boolean).join(" or ")} in the message</div>
         <div class="acts">
-          <select aria-label="Client"><option value="">Client</option>${cl.map(c=>`<option ${c===it.guessClient?"selected":""}>${esc(c)}</option>`).join("")}</select>
-          <select aria-label="Industry"><option value="">Industry</option>${ind.map(c=>`<option ${c===it.guessInd?"selected":""}>${esc(c)}</option>`).join("")}</select>
+          <select aria-label="Industry" data-k="industry"><option value="">Industry *</option>${industries().map(c=>`<option ${c===t.industry?"selected":""}>${esc(c)}</option>`).join("")}</select>
+          <select aria-label="Creative theme" data-k="theme"><option value="">Theme *</option>${THEMES.map(c=>`<option ${c===t.theme?"selected":""}>${esc(c)}</option>`).join("")}</select>
+          <select aria-label="Client"><option value="">Client (optional)</option>${clients.map(c=>`<option ${c===t.client?"selected":""}>${esc(c)}</option>`).join("")}</select>
           <span class="gap"></span>
           <button class="btn" data-a="skip">Skip</button>
-          <button class="btn btn-dark" data-a="add">Add</button>
+          <button class="btn btn-dark" data-a="add">File it</button>
         </div>
       </div>`;
-    const [sc,si]=row.querySelectorAll("select");
+    const [si,st,sc]=row.querySelectorAll("select");
+    [si,st].forEach(x=>x.addEventListener("change",()=>x.classList.remove("bad")));
     row.querySelector('[data-a="skip"]').addEventListener("click",()=>{drop(it.id);toast("Skipped")});
     row.querySelector('[data-a="add"]').addEventListener("click",()=>{
-      const item={id:"s-"+it.id,client:sc.value||"Unassigned",industry:si.value||"Unsorted",
-        type:it.type,source:"Slack",layout:it.layout,hook:it.hook,fmt:it.fmt,dur:it.dur||"",
-        spend:"—",ctr:"—",hookRate:"—",days:0,added:new Date().toISOString().slice(0,10),
-        by:it.who+" in "+it.ch,note:it.msg,c1:it.c1,c2:it.c2};
+      si.classList.toggle("bad",!si.value);st.classList.toggle("bad",!st.value);
+      if(!si.value||!st.value){toast("Pick an industry and a theme first");return;}
+      const item=fromSlack(it,{industry:si.value,theme:st.value,client:sc.value});
       DATA.unshift(item);store({added:[item,...(saved().added||[])]});
-      drop(it.id);toast("Added to "+item.client);
+      drop(it.id);toast("Filed to "+item.industry+" · "+item.theme);
     });
     wrap.appendChild(row);
   }
@@ -599,11 +715,12 @@ function detail(d,list,i){
     <div class="left">${pic(d)}</div>
     <div class="right">
       <h2>${esc(d.hook)}</h2>
-      <div class="meta">${esc(d.client)} · ${esc(d.industry)} · ${d.type==="video"?"Video "+esc(d.dur):"Image"} · ${esc(d.fmt)}</div>
+      <div class="meta">${[d.client,d.industry,d.theme,d.type==="video"?"Video "+d.dur:"Image",d.fmt].filter(Boolean).map(esc).join(" · ")}</div>
       <div class="nums">${nums.map(n=>`<div><b>${esc(n[1])}</b><span>${esc(n[0])}</span></div>`).join("")}</div>
-      <div class="why">${esc(d.note)}<span>${esc(d.by)} · ${esc(d.added)}</span></div>
+      ${d.note?`<div class="why"><b>What's good</b>${esc(d.note)}<span>${esc(d.by)} · ${esc(d.added)}</span></div>`
+              :`<div class="meta">${esc(d.by)} · ${esc(d.added)}</div>`}
       <button class="btn" data-a="save">${SAVED.has(d.id)?"Saved":"Save"}</button>
-      <button class="btn" data-a="more">More from ${esc(d.client)}</button>
+      <button class="btn" data-a="more">More ${d.client?"from "+esc(d.client):esc(d.theme)}</button>
     </div>`;
   el.querySelector(".close").addEventListener("click",shut);
   el.querySelector('[data-a="save"]').addEventListener("click",()=>{
@@ -611,7 +728,7 @@ function detail(d,list,i){
     store({saved:[...SAVED]});draw();detail(d,list,i);
   });
   el.querySelector('[data-a="more"]').addEventListener("click",()=>{
-    S.client=d.client;S.industry="";S.type="all";shut();go("all");window.scrollTo({top:0});
+    S.client=d.client||"";S.theme=d.client?"":d.theme;S.industry="";S.type="all";shut();go("all");window.scrollTo({top:0});
   });
   put(el);ctx={list:list||[d],i:i||0};
 }
@@ -622,43 +739,56 @@ function addForm(){
   el.className="modal";el.setAttribute("role","dialog");el.setAttribute("aria-label","Add a creative");
   el.innerHTML=`
     <h2>Add a creative</h2>
-    <div class="f"><label>The ad itself</label>
+    <div class="f"><label>The ad</label>
       <div class="drop" id="a-drop" role="button" tabindex="0">Click to choose a screenshot or export</div>
       <input type="file" id="a-file" accept="image/*" hidden>
+      <input id="a-url" placeholder="…or paste an image link" aria-label="Image link">
     </div>
-    <div class="f"><label for="a-url">…or paste an image URL</label><input id="a-url" placeholder="https://"></div>
-    <div class="f"><label for="a-h">Hook or headline</label><input id="a-h" placeholder="What does the ad say?"></div>
+    <div class="f" data-req="a-good"><label for="a-good">What's good about this? <i>*</i></label>
+      <textarea id="a-good" placeholder="e.g. The first two seconds — no talking, just the product doing its thing"></textarea>
+      <span class="err">Say what makes it worth saving</span></div>
     <div class="row2">
-      <div class="f"><label for="a-c">Client</label><input id="a-c" list="cl" placeholder="Kiss Now">
-        <datalist id="cl">${uniq("client").map(c=>`<option value="${esc(c)}">`).join("")}</datalist></div>
-      <div class="f"><label for="a-i">Industry</label><input id="a-i" list="in" placeholder="Beauty">
-        <datalist id="in">${uniq("industry").map(c=>`<option value="${esc(c)}">`).join("")}</datalist></div>
+      <div class="f" data-req="a-i"><label for="a-i">Industry <i>*</i></label>
+        <select id="a-i"><option value="">Choose…</option>${industries().map(c=>`<option>${esc(c)}</option>`).join("")}</select>
+        <span class="err">Pick an industry</span></div>
+      <div class="f" data-req="a-th"><label for="a-th">Creative theme <i>*</i></label>
+        <select id="a-th"><option value="">Choose…</option>${THEMES.map(c=>`<option>${esc(c)}</option>`).join("")}</select>
+        <span class="err">Pick a theme</span></div>
     </div>
+    <div class="f"><label for="a-c">Client <span class="opt">optional</span></label>
+      <input id="a-c" list="cl" placeholder="Leave blank if it isn't for a client">
+      <datalist id="cl">${uniq("client").filter(Boolean).map(c=>`<option value="${esc(c)}">`).join("")}</datalist></div>
     <div class="row2">
       <div class="f"><label for="a-t">Type</label><select id="a-t"><option value="static">Image</option><option value="video">Video</option></select></div>
       <div class="f"><label for="a-f">Shape</label><select id="a-f"><option>9:16</option><option selected>4:5</option><option>1:1</option></select></div>
     </div>
-    <div class="f"><label for="a-n">Why save it?</label><textarea id="a-n" placeholder="Optional"></textarea></div>
-    <div class="acts"><button class="btn" data-a="x">Cancel</button><button class="btn btn-dark" data-a="ok">Add</button></div>`;
+    <div class="acts"><button class="btn" data-a="x">Cancel</button><button class="btn btn-dark" data-a="ok">Add to library</button></div>`;
   let picked="";
-  const drop=el.querySelector("#a-drop"),file=el.querySelector("#a-file");
-  drop.addEventListener("click",()=>file.click());
-  drop.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();file.click()}});
+  const drop_=el.querySelector("#a-drop"),file=el.querySelector("#a-file");
+  drop_.addEventListener("click",()=>file.click());
+  drop_.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();file.click()}});
   file.addEventListener("change",()=>{
     const f=file.files[0];if(!f)return;
-    shrink(f,900,url=>{picked=url;drop.classList.add("has");drop.innerHTML=`<img src="${url}" alt="">`;});
+    shrink(f,900,url=>{picked=url;drop_.classList.add("has");drop_.innerHTML=`<img src="${url}" alt="">`;});
   });
+  el.querySelectorAll("[data-req] input,[data-req] select,[data-req] textarea").forEach(x=>
+    x.addEventListener("input",()=>x.closest(".f").classList.remove("bad")));
   el.querySelector('[data-a="x"]').addEventListener("click",shut);
   el.querySelector('[data-a="ok"]').addEventListener("click",()=>{
     const v=id=>el.querySelector(id).value.trim();
+    let ok=true;
+    el.querySelectorAll("[data-req]").forEach(f=>{
+      const empty=!v("#"+f.dataset.req);f.classList.toggle("bad",empty);if(empty)ok=false;
+    });
+    if(!ok){el.querySelector(".f.bad textarea,.f.bad select").focus();return;}
     const type=el.querySelector("#a-t").value;
-    const item={id:"u-"+Math.random().toString(36).slice(2,6),client:v("#a-c")||"Unassigned",
-      industry:v("#a-i")||"Unsorted",type,source:"Manual",layout:"type",hook:v("#a-h")||"Untitled",
+    const item={id:"u-"+Math.random().toString(36).slice(2,6),client:v("#a-c"),
+      industry:v("#a-i"),theme:v("#a-th"),type,source:"Manual",layout:"type",hook:v("#a-good"),
       fmt:el.querySelector("#a-f").value,dur:type==="video"?"0:30":"",spend:"—",ctr:"—",hookRate:"—",days:0,
-      added:new Date().toISOString().slice(0,10),by:"Added by you",note:v("#a-n")||"No note yet.",
+      added:new Date().toISOString().slice(0,10),by:"Added by you",note:"",
       img:picked||v("#a-url")||"",c1:"#4A5560",c2:"#20262C"};
     DATA.unshift(item);store({added:[item,...(saved().added||[])]});
-    shut();go("all");toast("Added");
+    shut();go("all");toast("Added to "+item.industry+" · "+item.theme);
   });
   put(el);
 }

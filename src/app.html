@@ -741,7 +741,7 @@ function viewSlack(){
    anything here can be put back for someone to look at. */
 function leftOut(){
   if(!LEFT.length)return;
-  const box=document.createElement("details");box.className="leftout";
+  const box=document.createElement("details");box.className="leftout";box.open=true;
   box.innerHTML=`<summary>Left out of the library<span>${LEFT.length}</span></summary>`;
   const wrap=document.createElement("div");wrap.className="list";
   for(const d of LEFT){

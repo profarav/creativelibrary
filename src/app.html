@@ -195,6 +195,22 @@ mark{background:#FFE58A;color:#111;border-radius:3px;padding:0 2px}
 .nums div span{font-size:12.5px;color:var(--muted)}
 .sheet .close{position:absolute;top:10px;right:12px;border:0;background:var(--card);border-radius:50%;
   width:32px;height:32px;font-size:19px;cursor:pointer;line-height:1}
+.extpill{position:absolute;bottom:10px;right:10px;z-index:2;display:flex;align-items:center;gap:5px;
+  background:#fff;color:#111;border-radius:14px;padding:4px 10px;font-size:12px;font-weight:700;
+  box-shadow:0 2px 8px rgba(0,0,0,.25)}
+.art.linkart{justify-content:flex-end}
+.linkart .linkcard{position:absolute;left:50%;top:40%;transform:translate(-50%,-50%);display:flex;flex-direction:column;
+  align-items:center;gap:6px;background:rgba(255,255,255,.95);color:#111;border-radius:14px;padding:14px 16px;
+  text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.3);width:max-content;max-width:80%}
+.linkart .linkcard b{font-size:14px}
+.linkart .linkcard small{font-size:11.5px;color:#666}
+.linkart .txt{padding-bottom:30px}
+.sub .ext{display:inline-flex;align-items:center;gap:3px;color:var(--text);font-weight:600}
+.openext{display:flex;flex-direction:column;gap:2px;background:var(--btn);color:var(--btn-text);border-radius:12px;
+  padding:11px 14px;text-decoration:none}
+.openext span{display:flex;align-items:center;gap:7px;font-weight:700;font-size:14.5px}
+.openext small{opacity:.75;font-size:12.5px}
+.openext:hover{opacity:.9}
 .guess{font-size:13px;color:var(--muted);background:var(--bg);border-radius:10px;padding:8px 12px}
 .linkbtn{border:0;background:none;padding:0;color:var(--text);font-weight:600;text-decoration:underline;cursor:pointer}
 .sheet a.btn{text-align:center;text-decoration:none;color:var(--text)}
@@ -440,6 +456,18 @@ function when(iso){
   return days<1?"Today":days<2?"Yesterday":DAY.format(d);
 }
 
+/* Where a creative's link goes, in words people recognise. */
+const PLATFORMS=[[/motionapp\.com$/,"Motion"],[/tiktok\.com$/,"TikTok"],[/instagram\.com$/,"Instagram"],
+  [/facebook\.com$/,"Meta Ad Library"],[/fb\.watch$/,"Facebook"],[/(youtube\.com|youtu\.be)$/,"YouTube"],
+  [/(x\.com|twitter\.com)$/,"X"],[/linkedin\.com$/,"LinkedIn"],[/pinterest\.[a-z.]+$/,"Pinterest"],
+  [/(docs|drive)\.google\.com$/,"Google Drive"],[/canva\.com$/,"Canva"],[/figma\.com$/,"Figma"]];
+function platform(url){
+  let host="";try{host=new URL(url).hostname.replace(/^www\./,"")}catch(e){return null}
+  const hit=PLATFORMS.find(([re])=>re.test(host));
+  return {name:hit?hit[1]:host,host};
+}
+const ARROW=`<svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 2h6v6M10 2 3 9"/></svg>`;
+
 /* A stored record → what the board draws. */
 function view(r){
   return Object.assign({},r,{hook:r.good||r.text||r.theme||"Untitled",note:r.text||"",
@@ -491,14 +519,24 @@ const stage=document.getElementById("stage");
 /* one simple thumbnail: flat colour, the hook, a play badge if it's video */
 function pic(d,opts){
   opts=opts||{};
+  const p=d.link?platform(d.link):null;
   const badges=`
       ${(!opts.plain&&d.type==="video")?`<span class="play">▶ ${esc(d.dur||"")}</span>`:""}
+      ${(!opts.plain&&p)?`<span class="extpill" title="Links to ${esc(p.host)}">${ARROW} ${esc(p.name)}</span>`:""}
       ${(!opts.plain&&d.source==="Competitor scan")?`<span class="livetag" style="${d.type==="video"?"top:40px":""}">Live ${wks(d)} wks</span>`:""}`;
   // A real screenshot or export of the ad, when we have one.
   const ratio=d.w&&d.h?Math.min(2,Math.max(.5,d.w/d.h)):0;
   if(d.img) return `<div class="pic ${R[d.fmt]||"r45"}">
       <div class="imgwrap"${ratio?` style="aspect-ratio:${ratio}"`:""}><img src="${esc(d.img)}" alt="${esc(d.hook)}" loading="lazy">${badges}</div>
     </div>`;
+  // A link to an ad we can't show (e.g. Motion needs a login): say so, and where it is.
+  if(p&&!opts.plain) return `<div class="pic ${R[d.fmt]||"r45"}">
+    <div class="art linkart" style="background:${d.c1}">
+      <span class="shade"></span>
+      <span class="linkcard">${ARROW.replace(/11/g,"22")}<b>View on ${esc(p.name)}</b><small>${esc(p.host)}</small></span>
+      <span class="txt">${esc(d.hook)}</span>
+      ${badges}
+    </div></div>`;
   // Otherwise: a stand-in, so the board still reads while assets are being imported.
   const shape=d.layout==="product"?'<span class="shape box"></span>'
             :(d.layout==="ugc"||d.layout==="split")?'<span class="shape"></span>'
@@ -591,9 +629,9 @@ function card(d,list,i){
     <button class="save" type="button" data-saved="${SAVED.has(d.id)}">${SAVED.has(d.id)?"Saved":"Save"}</button>
     <div class="info">${d.img
       ?`<div class="good">${esc(d.hook)}</div>
-        <div class="sub">${[d.client,d.industry,d.theme].filter(Boolean).map(esc).join(" · ")}</div>`
+        <div class="sub">${[d.client,d.industry,d.theme].filter(Boolean).map(esc).join(" · ")}${d.link?` · <span class="ext">${ARROW} ${esc(platform(d.link)?.name||"Link")}</span>`:""}</div>`
       :`<div class="hook">${esc(d.client||d.industry||"Not tagged yet")}</div>
-        <div class="sub">${[d.client?d.industry:"",d.theme].filter(Boolean).map(esc).join(" · ")}</div>`}
+        <div class="sub">${[d.client?d.industry:"",d.theme].filter(Boolean).map(esc).join(" · ")}${d.link?`${d.industry||d.theme?" · ":""}<span class="ext">${ARROW} ${esc(platform(d.link)?.name||"Link")}</span>`:""}</div>`}
     </div>`;
   const open=()=>detail(d,list,i);
   el.addEventListener("click",e=>{if(!e.target.closest(".save"))open()});
@@ -799,6 +837,9 @@ function detail(d,list,i){
     <div class="right">
       <h2>${esc(d.hook)}</h2>
       <div class="meta">${[d.client,d.industry,d.theme,d.type==="video"?"Video "+d.dur:"Image",d.fmt].filter(Boolean).map(esc).join(" · ")}</div>
+      ${d.link?(()=>{const p=platform(d.link);return `<a class="openext" href="${esc(d.link)}" target="_blank" rel="noopener">
+          <span>${ARROW.replace(/11/g,"14")} Open on ${esc(p?.name||"the website")}</span>
+          <small>${d.img?"The full ad is":"The ad itself is"} on ${esc(p?.host||"another site")}. Opens in a new tab.</small></a>`})():""}
       ${d.tagsUnconfirmed?`<div class="guess">Claude's best guess at the tags. <button class="linkbtn" data-a="tags">Fix them</button></div>`:""}
       ${nums.length?`<div class="nums">${nums.map(n=>`<div><b>${esc(n[1])}</b><span>${esc(n[0])}</span></div>`).join("")}</div>`:""}
       ${d.source==="Slack"&&d.note
@@ -809,7 +850,6 @@ function detail(d,list,i){
       <button class="btn" data-a="save">${SAVED.has(d.id)?"Saved":"Save"}</button>
       <button class="btn" data-a="more">More ${d.client?"from "+esc(d.client):esc(d.theme)}</button>
       ${d.permalink?`<a class="btn" href="${esc(d.permalink)}" target="_blank" rel="noopener">Open in Slack</a>`:""}
-      ${d.link?`<a class="btn" href="${esc(d.link)}" target="_blank" rel="noopener">${/motionapp\.com/.test(d.link)?"Open in Motion":"Open the link"}</a>`:""}
       ${!d.example&&MODE==="live"?`<button class="btn" data-a="tags">Edit tags</button>
         <button class="btn danger" data-a="del">Remove from library</button>`:""}
     </div>`;

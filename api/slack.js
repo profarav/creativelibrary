@@ -5,7 +5,7 @@
  * do the download / file / save afterwards (waitUntil keeps the function alive).
  */
 import { waitUntil } from "@vercel/functions";
-import { verifySlack, ingestMessage, removeMessage, slackApi } from "../lib/slack.js";
+import { verifySlack, ingestMessage, removeMessage, addThreadImage, slackApi } from "../lib/slack.js";
 import { listCreatives } from "../lib/store.js";
 
 const ok = () => new Response("ok");
@@ -32,6 +32,11 @@ export async function POST(request) {
   if (only && ev.channel !== only) return ok();
 
   const token = process.env.SLACK_BOT_TOKEN;
+  // A screenshot added in a post's thread becomes that post's image.
+  if (ev.thread_ts && ev.thread_ts !== ev.ts && (ev.files || []).length) {
+    waitUntil(addThreadImage(ev.channel, ev.thread_ts, token).catch((e) => console.error(e)));
+    return ok();
+  }
   if (ev.subtype === "message_deleted") {
     waitUntil(removeMessage(ev.channel, ev.deleted_ts).catch((e) => console.error(e)));
     return ok();

@@ -195,6 +195,8 @@ mark{background:#FFE58A;color:#111;border-radius:3px;padding:0 2px}
 .nums div span{font-size:12.5px;color:var(--muted)}
 .sheet .close{position:absolute;top:10px;right:12px;border:0;background:var(--card);border-radius:50%;
   width:32px;height:32px;font-size:19px;cursor:pointer;line-height:1}
+.guess{font-size:13px;color:var(--muted);background:var(--bg);border-radius:10px;padding:8px 12px}
+.linkbtn{border:0;background:none;padding:0;color:var(--text);font-weight:600;text-decoration:underline;cursor:pointer}
 .sheet a.btn{text-align:center;text-decoration:none;color:var(--text)}
 .btn.danger{color:var(--live);border-color:transparent;background:none}
 .btn.danger:hover{background:var(--hover)}
@@ -590,7 +592,7 @@ function card(d,list,i){
     <div class="info">${d.img
       ?`<div class="good">${esc(d.hook)}</div>
         <div class="sub">${[d.client,d.industry,d.theme].filter(Boolean).map(esc).join(" · ")}</div>`
-      :`<div class="hook">${esc(d.client||d.industry)}</div>
+      :`<div class="hook">${esc(d.client||d.industry||"Not tagged yet")}</div>
         <div class="sub">${[d.client?d.industry:"",d.theme].filter(Boolean).map(esc).join(" · ")}</div>`}
     </div>`;
   const open=()=>detail(d,list,i);
@@ -821,6 +823,7 @@ function detail(d,list,i){
     <div class="right">
       <h2>${esc(d.hook)}</h2>
       <div class="meta">${[d.client,d.industry,d.theme,d.type==="video"?"Video "+d.dur:"Image",d.fmt].filter(Boolean).map(esc).join(" · ")}</div>
+      ${d.tagsUnconfirmed?`<div class="guess">Claude's best guess at the tags. <button class="linkbtn" data-a="tags">Fix them</button></div>`:""}
       ${nums.length?`<div class="nums">${nums.map(n=>`<div><b>${esc(n[1])}</b><span>${esc(n[0])}</span></div>`).join("")}</div>`:""}
       ${d.source==="Slack"&&d.note
         ?`<div class="why"><b>Posted in Slack</b>${esc(d.note)}<span>${by} in ${esc(d.channel||"#creative-inspiration")} · ${at}</span></div>`
@@ -831,13 +834,15 @@ function detail(d,list,i){
       <button class="btn" data-a="more">More ${d.client?"from "+esc(d.client):esc(d.theme)}</button>
       ${d.permalink?`<a class="btn" href="${esc(d.permalink)}" target="_blank" rel="noopener">Open in Slack</a>`:""}
       ${d.link?`<a class="btn" href="${esc(d.link)}" target="_blank" rel="noopener">${/motionapp\.com/.test(d.link)?"Open in Motion":"Open the link"}</a>`:""}
-      ${!d.example&&MODE==="live"?`<button class="btn danger" data-a="del">Remove from library</button>`:""}
+      ${!d.example&&MODE==="live"?`<button class="btn" data-a="tags">Edit tags</button>
+        <button class="btn danger" data-a="del">Remove from library</button>`:""}
     </div>`;
   el.querySelector(".close").addEventListener("click",shut);
   el.querySelector('[data-a="save"]').addEventListener("click",()=>{
     SAVED.has(d.id)?SAVED.delete(d.id):SAVED.add(d.id);
     keepSaved();draw();detail(d,list,i);
   });
+  el.querySelectorAll('[data-a="tags"]').forEach(b=>b.addEventListener("click",()=>editTags(d)));
   const del=el.querySelector('[data-a="del"]');
   if(del)del.addEventListener("click",async()=>{
     if(!confirm("Remove this creative from the library? It goes for everyone."))return;
@@ -852,6 +857,43 @@ function detail(d,list,i){
     S.client=d.client||"";S.theme=d.client?"":d.theme;S.industry="";S.type="all";shut();go("all");window.scrollTo({top:0});
   });
   put(el);ctx={list:list||[d],i:i||0};
+}
+
+/* ---- fix a creative's tags ---- */
+function editTags(d){
+  const el=document.createElement("div");
+  el.className="modal";el.setAttribute("role","dialog");el.setAttribute("aria-label","Edit tags");
+  const opts=(list,cur)=>list.map(c=>`<option ${c===cur?"selected":""}>${esc(c)}</option>`).join("");
+  el.innerHTML=`
+    <h2>Edit tags</h2>
+    <div class="row2">
+      <div class="f" data-req="e-i"><label for="e-i">Industry <i>*</i></label>
+        <select id="e-i"><option value="">Choose…</option>${opts(industries(),d.industry)}</select><span class="err">Pick an industry</span></div>
+      <div class="f" data-req="e-t"><label for="e-t">Creative theme <i>*</i></label>
+        <select id="e-t"><option value="">Choose…</option>${opts(THEMES,d.theme)}</select><span class="err">Pick a theme</span></div>
+    </div>
+    <div class="f"><label for="e-c">Client <span class="opt">optional</span></label>
+      <input id="e-c" list="cl2" value="${esc(d.client||"")}"><datalist id="cl2">${uniq("client").filter(Boolean).map(c=>`<option value="${esc(c)}">`).join("")}</datalist></div>
+    <div class="f"><label for="e-g">What's good about it</label><textarea id="e-g">${esc(d.hook||"")}</textarea></div>
+    <div class="acts"><button class="btn" data-a="x">Cancel</button><button class="btn btn-dark" data-a="ok">Save</button></div>`;
+  el.querySelector('[data-a="x"]').addEventListener("click",shut);
+  const ok=el.querySelector('[data-a="ok"]');
+  ok.addEventListener("click",async()=>{
+    const v=id=>el.querySelector(id).value.trim();
+    let valid=true;
+    el.querySelectorAll("[data-req]").forEach(f=>{const e=!v("#"+f.dataset.req);f.classList.toggle("bad",e);if(e)valid=false});
+    if(!valid)return;
+    ok.disabled=true;
+    try{
+      const change={id:d.id,industry:v("#e-i"),theme:v("#e-t"),client:v("#e-c")};
+      if(v("#e-g")!==d.hook)change.good=v("#e-g");
+      const {creative}=await api("PATCH",change);
+      const nv=view(creative);
+      DATA=DATA.map(x=>x.id===d.id?nv:x);AUTO=AUTO.map(x=>x.id===d.id?nv:x);
+      shut();go();toast("Saved");
+    }catch(e){ok.disabled=false;toast(e.message)}
+  });
+  put(el);
 }
 
 /* ---- add ---- */

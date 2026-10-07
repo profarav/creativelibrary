@@ -66,6 +66,7 @@ export async function PATCH(request) {
 
   for (const k of ["industry", "theme", "client", "good"]) if (k in body) record[k] = clean(body[k], k === "good" ? 1000 : 80);
   if ("good" in body) record.goodByHand = true;
+  if ("industry" in body || "theme" in body) delete record.tagsUnconfirmed; // a person has checked them
   if (body.status === "skipped") {
     record.status = "skipped";
     record.autoSkipped = false;

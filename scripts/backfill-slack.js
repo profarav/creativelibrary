@@ -4,6 +4,8 @@
  *   vercel env pull .env.local     # once, to get the tokens
  *   npm run backfill               # whole history
  *   npm run backfill -- 2026-01-01 # only posts since a date
+ *   npm run backfill -- --media    # only posts with an uploaded image or video
+ *   npm run backfill -- --limit 50 # only the most recent 50 posts
  *
  * Safe to re-run: posts already in the library are skipped.
  */
@@ -34,7 +36,11 @@ if (!channel) {
 }
 if (!channel) throw new Error(`Can't see #${name}. Invite the bot to it: /invite @Creative Library`);
 
-const since = process.argv[2] ? Date.parse(process.argv[2]) / 1000 : 0;
+const args = process.argv.slice(2);
+const dateArg = args.find((a) => /^\d{4}-\d{2}-\d{2}$/.test(a));
+const since = dateArg ? Date.parse(dateArg) / 1000 : 0;
+const mediaOnly = args.includes("--media");
+const limit = Number(args[args.indexOf("--limit") + 1]) || 0;
 const clients = [...new Set((await listCreatives()).map((c) => c.client).filter(Boolean))];
 
 const messages = [];
@@ -46,14 +52,17 @@ do {
   cursor = page.response_metadata?.next_cursor;
 } while (cursor);
 
-console.log(`#${name}: ${messages.length} messages${since ? ` since ${process.argv[2]}` : ""}`);
+let posts = messages.filter((m) => !m.subtype || m.subtype === "file_share");
+if (mediaOnly) posts = posts.filter((m) => (m.files || []).some((f) => /^(image|video)\//.test(f.mimetype || "")));
+if (limit) posts = posts.slice(0, limit); // history comes newest first
+console.log(`#${name}: ${posts.length} posts to import${since ? ` since ${dateArg}` : ""}${mediaOnly ? " (with an image or video)" : ""}`);
 let saved = 0, done = 0;
-for (const msg of messages.reverse()) {
+for (const msg of posts.reverse()) {
   try {
     saved += await ingestMessage(msg, { channel, channelName: name, token, clients });
   } catch (e) {
     console.warn(`  skipped ${msg.ts}: ${e.message}`);
   }
-  if (++done % 25 === 0) console.log(`  ${done}/${messages.length} read, ${saved} added`);
+  if (++done % 5 === 0) console.log(`  ${done}/${posts.length} read, ${saved} added`);
 }
 console.log(`Done — ${saved} new creatives added.`);

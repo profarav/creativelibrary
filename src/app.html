@@ -660,30 +660,6 @@ function viewSlack(){
     <p class="eg">For example <code>beauty ugc kiss now — love the hook</code> <code>#finance #facts</code> <code>primer growth organic</code></p>`;
   stage.appendChild(head);
 
-  if(AUTO.length){
-    const h=document.createElement("h2");h.className="section";
-    h.innerHTML=`Filed automatically<span>${MODE==="live"?"latest "+AUTO.length:AUTO.length}</span>`;
-    const wrap=document.createElement("div");wrap.className="list";
-    AUTO.forEach((d,i)=>{
-      const row=document.createElement("div");row.className="item done";
-      row.innerHTML=`${pic(d,{plain:true})}
-        <div>
-          <div class="who">${posted(d)}</div>
-          <div class="said">${highlight(d.note,clients)}</div>
-          <div class="acts">
-            <span class="filed">${d.filedBy==="claude"?"Claude filed it to":"Filed to"}</span>
-            <span class="chip">${esc(d.industry)}</span><span class="chip">${esc(d.theme)}</span>
-            ${d.client?`<span class="chip">${esc(d.client)}</span>`:""}
-            <span class="gap"></span>
-            <button class="btn" data-a="view">View</button>
-          </div>
-        </div>`;
-      row.querySelector('[data-a="view"]').addEventListener("click",()=>detail(d,AUTO,i));
-      wrap.appendChild(row);
-    });
-    stage.append(h,wrap);
-  }
-
   const h2=document.createElement("h2");h2.className="section";
   h2.innerHTML=`Needs a look<span>${INBOX.length}</span>`;
   stage.appendChild(h2);

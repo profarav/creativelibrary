@@ -442,8 +442,8 @@ function useExamples(){
   INBOX=[];AUTO=[];
   const clients=[...new Set(DATA.map(d=>d.client))];
   for(const it of INBOX_SEED){
-    const t=tag(it.msg,clients);
-    const v=view({id:"s-"+it.id,status:t.industry&&t.theme?"filed":"review",source:"Slack",example:true,
+    const t=fileFor(it.msg,clients);
+    const v=view({id:"s-"+it.id,status:t.automatic?"filed":"review",source:"Slack",example:true,
       industry:t.industry,theme:t.theme,client:t.client,type:it.type,layout:it.layout,fmt:it.fmt,dur:it.dur||"",
       good:it.hook,text:it.msg,by:it.who,channel:it.ch,added:it.time,c1:it.c1});
     if(v.status==="filed"){DATA.push(v);AUTO.push(v)}else INBOX.push(v);
@@ -644,9 +644,9 @@ const posted=d=>`<b>${esc(d.by||"Someone")}</b> in ${esc(d.channel||"#creative-i
 function viewSlack(){
   const clients=uniq("client").filter(Boolean);
   const head=document.createElement("div");head.className="slackhead";
-  head.innerHTML=`<p>Post an image in <b>#creative-inspiration</b> with a few words: an industry, a theme,
-    and the client if there is one. Anything that names an industry and a theme files itself.</p>
-    <p class="eg">For example <code>beauty ugc kiss now</code> <code>finance facts</code> <code>primer growth organic</code></p>`;
+  head.innerHTML=`<p>To file a post straight into the library, <b>start it</b> with an industry and a theme
+    (and the client, if there is one), or add them as hashtags. Anything else waits here for someone to sort.</p>
+    <p class="eg">For example <code>beauty ugc kiss now — love the hook</code> <code>#finance #facts</code> <code>primer growth organic</code></p>`;
   stage.appendChild(head);
 
   if(AUTO.length){
@@ -779,7 +779,7 @@ function detail(d,list,i){
       <button class="btn" data-a="save">${SAVED.has(d.id)?"Saved":"Save"}</button>
       <button class="btn" data-a="more">More ${d.client?"from "+esc(d.client):esc(d.theme)}</button>
       ${d.permalink?`<a class="btn" href="${esc(d.permalink)}" target="_blank" rel="noopener">Open in Slack</a>`:""}
-      ${d.link?`<a class="btn" href="${esc(d.link)}" target="_blank" rel="noopener">Open the link</a>`:""}
+      ${d.link?`<a class="btn" href="${esc(d.link)}" target="_blank" rel="noopener">${/motionapp\.com/.test(d.link)?"Open in Motion":"Open the link"}</a>`:""}
       ${!d.example&&MODE==="live"?`<button class="btn danger" data-a="del">Remove from library</button>`:""}
     </div>`;
   el.querySelector(".close").addEventListener("click",shut);

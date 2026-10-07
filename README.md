@@ -33,11 +33,16 @@ The website, the API and the Slack bot all read from it.
 
 ## #creative-inspiration
 
-Post an image (or a link) with a few words — `beauty ugc kiss now`. The bot reads the
-words against `KEYWORDS` in `lib/vocab.js`:
+Post an image (or a link) and **start the message** with an industry and a theme —
+`beauty ugc kiss now — love the hook` — or add them as hashtags: `#beauty #ugc`.
 
-- **industry and theme both found** → filed straight into the library
-- **either missing** → held under *From Slack → Needs a look*
+- **industry and theme given that way** → filed straight into the library
+- **anything else** → held under *From Slack → Needs a look*, with a best guess
+  pre-selected from words elsewhere in the message
+
+Only deliberate tags file automatically, because ordinary sentences are full of words
+like "home", "data" or "review". The words are matched against `KEYWORDS` in
+`lib/vocab.js`.
 
 Filing words at the start of a message are trimmed off, so the rest becomes the note.
 Several images in one post become several creatives. Deleting the post in Slack removes

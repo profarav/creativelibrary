@@ -1,0 +1,27 @@
+# Paste this at https://api.slack.com/apps → Create New App → From a manifest.
+display_information:
+  name: Creative Library
+  description: Files every post in #creative-inspiration into the Creative Library.
+  background_color: "#111111"
+features:
+  bot_user:
+    display_name: Creative Library
+    always_online: false
+oauth_config:
+  scopes:
+    bot:
+      - channels:history   # read posts in public channels it's invited to
+      - channels:read      # find #creative-inspiration by name
+      - groups:history     # same, if the channel is private
+      - groups:read
+      - files:read         # download the images people post
+      - users:read         # show who posted it
+settings:
+  event_subscriptions:
+    request_url: https://creativelibraryprimer.vercel.app/api/slack
+    bot_events:
+      - message.channels
+      - message.groups
+  org_deploy_enabled: false
+  socket_mode_enabled: false
+  token_rotation_enabled: false

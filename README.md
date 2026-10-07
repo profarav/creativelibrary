@@ -1,98 +1,93 @@
 # Creative Library
 
-A unified creative library for Klimt & Design — every ad the agency has saved, in one
-filterable board, separate from the on-demand platform and usable by both teams.
+The agency's shared creative library: every ad worth remembering, in one Pinterest-style
+board, filed by industry, creative theme and client. Separate from the on-demand platform,
+usable by both teams.
 
-This is a **working prototype**: real interaction, real information design, sample data.
+**Live:** https://creativelibraryprimer.vercel.app
 
 ## What's in it
 
 | Section | What it does |
 | --- | --- |
-| **All creative** | The board. Filter by ad type (images / video), industry, creative theme and client, or search. Click anything for the detail view. |
-| **Boards** | Three tabs — Industries, Themes, Clients — one board per bucket. Open one to see just that board. |
-| **From Slack** | Posts from `#creative-inspiration`, sorted by the keywords people type with them. A post that names an industry and a theme files itself; anything else waits under *Needs a look*. |
-| **Competitors** | Scanned weekly. Anything a competitor has kept running over a week saves itself here with a "Live N wks" badge. |
+| **All creative** | The board. Filter by images / video, industry, creative theme and client, or search. Click anything for the detail view. |
+| **Boards** | Three tabs — Industries, Themes, Clients — one board per bucket. |
+| **From Slack** | What came in from `#creative-inspiration`: posts that filed themselves, and posts that need someone to pick an industry and theme. |
+| **Competitors** | For the weekly competitor scan (not switched on yet). |
 
-Saved items and anything you add persist in the browser via `localStorage`.
-
-## Design
-
-Deliberately plain: a Pinterest-style masonry board, system type, and filters that sit in
-one row above it. Nothing competes with the creative itself. Works in light and dark.
+Everything is shared: what one person adds, everyone sees. *Save* is a personal shortlist
+and stays in your browser. Until the library has its first real creative, the board shows
+sample ads with a banner saying so.
 
 ## Filing rules
 
-Every creative needs an **industry** and a **creative theme**. The client is optional.
-When adding one by hand, *What's good about this?* is required — it's what shows on the
-tile.
+Every creative needs an **industry** and a **creative theme**; the client is optional.
+Adding by hand also needs *What's good about this?*
 
 - **Industries:** Beauty, Finance, Fintech, Food & bev, Home, Primer Growth, Wellness
 - **Creative themes:** UGC, Vs the alt, Facts + Stats, This or that, Copy only,
   Reviews/Testimonials, BDQs, Search bar, Question box/comment response, Organic
 
-Both lists, and the Slack keywords that map to them, live at the top of the script in
-`creative-library.html` (`INDUSTRIES`, `THEMES`, `KEYWORDS`).
+Both lists and the Slack keywords live in **`lib/vocab.js`** — the only place to edit them.
+The website, the API and the Slack bot all read from it.
 
-### Slack keyword sorting
+## #creative-inspiration
 
-Someone posts an image in `#creative-inspiration` with a few words — `beauty ugc kiss now`.
-The words are matched against `KEYWORDS`: first industry hit, first theme hit, and any
-client name. Industry **and** theme found → filed automatically. Either missing → held
-for a person, with whatever was found pre-selected.
+Post an image (or a link) with a few words — `beauty ugc kiss now`. The bot reads the
+words against `KEYWORDS` in `lib/vocab.js`:
 
-In this prototype the posts are sample data. The live version needs the Slack bot to
-forward channel messages (image + text) to an endpoint that runs the same `tag()`
-function and stores the result.
+- **industry and theme both found** → filed straight into the library
+- **either missing** → held under *From Slack → Needs a look*
 
-## Adding the real ads
+Filing words at the start of a message are trimmed off, so the rest becomes the note.
+Several images in one post become several creatives. Deleting the post in Slack removes
+it from the library. Ordinary chat (no image, no link) is ignored.
 
-Three ways, in order of effort:
+### Setting up the Slack app (once)
 
-1. **In the app** — *Add* takes a file straight off your machine (it's downscaled and
-   kept in the browser) or an image URL.
-2. **In the repo** — put files in `assets/` and add `img:"assets/name.jpg"` to that
-   creative in `creative-library.html`. This is the one to use for the Motion import.
-3. **Remote URLs** — any `img` value that is a URL works on the deployed site.
+1. https://api.slack.com/apps → **Create New App → From a manifest** → pick the workspace
+   → paste `slack-app-manifest.yml` → **Create** → **Install to workspace**.
+2. Copy the **Bot User OAuth Token** (*OAuth & Permissions*, starts `xoxb-`) and the
+   **Signing Secret** (*Basic Information*), and add them to Vercel:
+   ```bash
+   vercel env add SLACK_BOT_TOKEN production
+   vercel env add SLACK_SIGNING_SECRET production
+   vercel --prod
+   ```
+3. In Slack, in `#creative-inspiration`: `/invite @Creative Library`
 
-A creative with no `img` falls back to a colour block, so a partial import still reads
-as a board. Note that the published Claude artifact blocks remote images — the Vercel
-site doesn't, so use that for the demo.
-
-## Sample data
-
-Everything in `creative-library.html` is **illustrative**. Client names, spend, CTR, hook
-rates and Slack messages are invented to show the shape of the real thing. None of the
-figures are real performance data. Phase 1 replaces `SEED` and `INBOX_SEED` with the
-Motion export and the Slack backfill.
-
-## Running it
+### Pulling in what's already in the channel
 
 ```bash
-npm run build     # regenerate index.html from the source
-npm run dev       # build, then serve on localhost
+vercel env pull .env.local
+npm run backfill                 # everything
+npm run backfill -- 2026-01-01   # or just since a date
 ```
 
-`creative-library.html` is the **source**. `index.html` is generated from it by
-`build.js`, which adds the document skeleton (charset, viewport, meta, favicon) that the
-Artifact host supplies in preview. Edit the source, then rebuild — never edit
-`index.html` directly.
+Safe to re-run — anything already in the library is skipped.
 
-## Deploying
+## How it's built
 
-Vercel builds from `vercel.json`: `node build.js` regenerates `index.html` from the
-source, output directory is the repo root. Clean URLs and security headers are set there
-too. The GitHub repo is connected, so a push to `main` deploys.
+| Path | |
+| --- | --- |
+| `src/app.html` | The website (one file, no framework). Edit this, not `public/`. |
+| `lib/vocab.js` | Industries, themes, Slack keywords, and the sorting. |
+| `lib/store.js` | Storage — creatives and images in Vercel Blob. |
+| `lib/slack.js` | Turning a Slack post into creatives. |
+| `api/creatives.js` | The library API: list, add, refile, remove. |
+| `api/slack.js` | Where Slack sends new posts. |
+| `scripts/backfill-slack.js` | Imports the channel's history. |
+| `build.js` | Builds `public/index.html` from `src/app.html` + `lib/vocab.js`. |
 
-To deploy from the CLI:
+Pushing to `main` deploys. Storage is Vercel Blob: one JSON file per creative, plus the
+images. That's comfortable into the low thousands of creatives; past that, swap
+`lib/store.js` for a database — nothing else needs to change.
 
-```bash
-npx vercel --prod
-```
+Local development: `vercel dev` (reads `.env.local`).
 
 ## Not built yet
 
-- A real asset pipeline (resizing, CDN, video playback — `img` is a plain file path today)
-- The Motion and Slack connections themselves — the bot, the export, the sync
-- A view for the shortlist; **Save** currently only marks creatives
-- Auth, and any notion of who is looking
+- Motion import
+- The weekly competitor scan
+- Editing a creative's note after it's added (industry/theme/client can be refiled from Slack)
+- Video playback — videos show as their thumbnail

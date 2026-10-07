@@ -1,9 +1,9 @@
 /**
  * /api/creatives — the shared library.
  *
- *   GET                 everything that isn't skipped or removed, plus the filing vocabulary
+ *   GET                 everything that isn't removed (left-out posts too, so they can be put back)
  *   POST   {...}        add a creative by hand
- *   PATCH  {id, ...}    file a Slack post that needed a look, skip it, or correct its tags
+ *   PATCH  {id, ...}    file a post that needed a look, leave it out, put it back, or correct its tags
  *   DELETE ?id=...      remove a creative (kept, but hidden — so a backfill won't bring it back)
  */
 import { listCreatives, getCreative, saveCreative, putImage, shapeOf, newId } from "../lib/store.js";
@@ -16,7 +16,7 @@ const clean = (v, max = 600) => String(v ?? "").trim().slice(0, max);
 export async function GET() {
   const all = await listCreatives();
   const creatives = all
-    .filter((c) => c.status !== "removed" && c.status !== "skipped")
+    .filter((c) => c.status !== "removed")
     .sort((a, b) => String(b.added).localeCompare(String(a.added)));
   return json({ creatives, vocab: { industries: INDUSTRIES, themes: THEMES, keywords: KEYWORDS } });
 }
@@ -65,8 +65,17 @@ export async function PATCH(request) {
   if (!record) return json({ error: "That creative no longer exists." }, 404);
 
   for (const k of ["industry", "theme", "client", "good"]) if (k in body) record[k] = clean(body[k], k === "good" ? 1000 : 80);
-  if (body.status === "skipped") record.status = "skipped";
-  else if (record.industry && record.theme) record.status = "filed";
+  if ("good" in body) record.goodByHand = true;
+  if (body.status === "skipped") {
+    record.status = "skipped";
+    record.autoSkipped = false;
+  } else if (body.status === "review") {
+    record.status = "review"; // "Put it back": a person wants to look at it after all
+    record.autoSkipped = false;
+  } else if (record.industry && record.theme) {
+    record.status = "filed";
+    record.filedBy = "person";
+  }
   record.updated = new Date().toISOString();
   await saveCreative(record);
   return json({ creative: record });

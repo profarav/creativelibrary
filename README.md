@@ -44,6 +44,18 @@ Only deliberate tags file automatically, because ordinary sentences are full of 
 like "home", "data" or "review". The words are matched against `KEYWORDS` in
 `lib/vocab.js`.
 
+**Untagged posts go to Claude** (`lib/classify.js`), which looks at the message and the
+image and decides whether it's an ad and, if so, its industry, theme and client:
+
+- sure it's an ad, sure of industry and theme → filed (marked "Claude filed it")
+- sure it's **not** an ad → left out, listed under *Left out of the library* with a
+  **Put it back** button
+- anything less than sure → *Needs a look*, with Claude's guess filled in and the reason
+
+This needs `ANTHROPIC_API_KEY` on Vercel. Without it, untagged posts simply wait under
+*Needs a look*. To re-sort posts already waiting: `npm run reclassify` (add `-- --dry`
+to preview).
+
 Filing words at the start of a message are trimmed off, so the rest becomes the note.
 Several images in one post become several creatives. Deleting the post in Slack removes
 it from the library. Ordinary chat (no image, no link) is ignored.

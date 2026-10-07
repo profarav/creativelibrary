@@ -115,6 +115,11 @@ mark{background:#FFE58A;color:#111;border-radius:3px;padding:0 2px}
 .chip{font-size:12.5px;font-weight:600;background:var(--hover);border-radius:12px;padding:3px 10px}
 .item .missing{font-size:12.5px;color:var(--muted);margin:-6px 0 10px}
 .item.done .said{margin-bottom:10px}
+.item .missing b{color:var(--text);font-weight:600}
+.leftout{margin:8px 0 40px}
+.leftout summary{padding:18px 20px 10px;font-size:15px;font-weight:700;cursor:pointer;color:var(--muted)}
+.leftout summary span{font-weight:500;margin-left:6px}
+.leftout[open] summary{color:var(--text)}
 .item .said{display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;cursor:pointer}
 .item .said.open{display:block}
 .item .pic img{background:#fff}
@@ -412,7 +417,7 @@ const INBOX_SEED=[
 
 const STORE="creative-library-saved";
 const R={"9:16":"r916","4:5":"r45","1:1":"r11"};
-let DATA=[],INBOX=[],AUTO=[],SAVED=new Set();
+let DATA=[],INBOX=[],AUTO=[],LEFT=[],SAVED=new Set();
 let S={view:"all",type:"all",industry:"",theme:"",client:"",q:""};
 /* live: the shared library · empty: it has nothing in it yet · offline: can't reach it (e.g. a local preview) */
 let MODE="live";
@@ -442,7 +447,7 @@ function view(r){
 /* Sample creatives, shown until the shared library has something real in it. */
 function useExamples(){
   DATA=SEED.map(d=>Object.assign({},d,{status:"filed",example:true}));
-  INBOX=[];AUTO=[];
+  INBOX=[];AUTO=[];LEFT=[];
   const clients=[...new Set(DATA.map(d=>d.client))];
   for(const it of INBOX_SEED){
     const t=fileFor(it.msg,clients);
@@ -464,7 +469,8 @@ async function load(){
     const all=records.map(view);
     DATA=all.filter(d=>d.status==="filed");
     INBOX=all.filter(d=>d.status==="review");
-    AUTO=DATA.filter(d=>d.source==="Slack").slice(0,12);
+    LEFT=all.filter(d=>d.status==="skipped"&&d.source==="Slack").slice(0,30);
+    AUTO=DATA.filter(d=>d.source==="Slack"&&d.filedBy!=="person").slice(0,12);
   }else{MODE=records?"empty":"offline";useExamples()}
   go();
 }
@@ -663,7 +669,7 @@ function viewSlack(){
           <div class="who">${posted(d)}</div>
           <div class="said">${highlight(d.note,clients)}</div>
           <div class="acts">
-            <span class="filed">Filed to</span>
+            <span class="filed">${d.filedBy==="claude"?"Claude filed it to":"Filed to"}</span>
             <span class="chip">${esc(d.industry)}</span><span class="chip">${esc(d.theme)}</span>
             ${d.client?`<span class="chip">${esc(d.client)}</span>`:""}
             <span class="gap"></span>
@@ -690,7 +696,9 @@ function viewSlack(){
       <div>
         <div class="who">${posted(it)}</div>
         <div class="said">${it.note?highlight(it.note,clients):"<i>No message with this one</i>"}</div>
-        <div class="missing">${it.industry||it.theme
+        <div class="missing">${it.claude?.reason
+          ?`<b>Claude wasn't sure:</b> ${esc(it.claude.reason)}`
+          :it.industry||it.theme
           ?"Not tagged at the start, so this is a best guess. Check it before filing."
           :"Not tagged. Pick an industry and a theme, or leave it out."}</div>
         <div class="acts">
@@ -726,8 +734,44 @@ function viewSlack(){
     wrap.appendChild(row);
   }
   stage.appendChild(wrap);
+  leftOut();
 }
-function drop(id){INBOX=INBOX.filter(i=>i.id!==id);go()}
+
+/* Posts kept out of the library — by Claude (not an ad) or by a person. Nothing is lost:
+   anything here can be put back for someone to look at. */
+function leftOut(){
+  if(!LEFT.length)return;
+  const box=document.createElement("details");box.className="leftout";
+  box.innerHTML=`<summary>Left out of the library<span>${LEFT.length}</span></summary>`;
+  const wrap=document.createElement("div");wrap.className="list";
+  for(const d of LEFT){
+    const row=document.createElement("div");row.className="item done";
+    row.innerHTML=`${pic(d,{plain:true})}
+      <div>
+        <div class="who">${posted(d)}</div>
+        <div class="said">${esc(d.note||d.hook)}</div>
+        <div class="missing">${d.autoSkipped?`<b>Claude:</b> ${esc(d.claude?.reason||"Not an ad.")}`:"Left out by someone on the team."}</div>
+        <div class="acts"><span class="gap"></span><button class="btn" data-a="back">Put it back</button></div>
+      </div>`;
+    row.querySelector(".said").addEventListener("click",e=>e.currentTarget.classList.toggle("open"));
+    const b=row.querySelector('[data-a="back"]');
+    b.addEventListener("click",async()=>{
+      b.disabled=true;
+      try{
+        const {creative}=await api("PATCH",{id:d.id,status:"review"});
+        LEFT=LEFT.filter(x=>x.id!==d.id);INBOX.unshift(view(creative));go();toast("Back in Needs a look");
+      }catch(e){b.disabled=false;toast(e.message)}
+    });
+    wrap.appendChild(row);
+  }
+  box.appendChild(wrap);stage.appendChild(box);
+}
+function drop(id){
+  const it=INBOX.find(i=>i.id===id);
+  INBOX=INBOX.filter(i=>i.id!==id);
+  if(it&&!it.example&&MODE==="live")LEFT.unshift(Object.assign({},it,{status:"skipped",autoSkipped:false}));
+  go();
+}
 
 /* ---- competitors ---- */
 function viewComp(){

@@ -205,6 +205,11 @@ mark{background:#FFE58A;color:#111;border-radius:3px;padding:0 2px}
 .linkart .linkcard b{font-size:14px}
 .linkart .linkcard small{font-size:11.5px;color:#666}
 .linkart .txt{padding-bottom:30px}
+.linkart .linkcard .addimg{margin-top:6px;border:0;background:#111;color:#fff;border-radius:16px;padding:6px 12px;
+  font-size:12.5px;font-weight:700;cursor:pointer}
+.linkart .linkcard .addimg:hover{background:#333}
+.upl{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.upl .btn{padding:7px 13px;font-size:13px}
 .sub .ext{display:inline-flex;align-items:center;gap:3px;color:var(--text);font-weight:600}
 .openext{display:flex;flex-direction:column;gap:2px;background:var(--btn);color:var(--btn-text);border-radius:12px;
   padding:11px 14px;text-decoration:none}
@@ -533,7 +538,8 @@ function pic(d,opts){
   if(p&&!opts.plain) return `<div class="pic ${R[d.fmt]||"r45"}">
     <div class="art linkart" style="background:${d.c1}">
       <span class="shade"></span>
-      <span class="linkcard">${ARROW.replace(/11/g,"22")}<b>View on ${esc(p.name)}</b><small>${esc(p.host)}</small></span>
+      <span class="linkcard">${ARROW.replace(/11/g,"22")}<b>View on ${esc(p.name)}</b><small>${esc(p.host)}</small>
+        ${opts.card&&!d.example&&MODE==="live"?`<button class="addimg" type="button" data-a="addimg">＋ Add image</button>`:""}</span>
       <span class="txt">${esc(d.hook)}</span>
       ${badges}
     </div></div>`;
@@ -625,7 +631,7 @@ function card(d,list,i){
   const el=document.createElement("div");
   el.className="card";el.tabIndex=0;el.setAttribute("role","button");
   el.setAttribute("aria-label",d.hook+", "+(d.client||d.industry));
-  el.innerHTML=pic(d)+`
+  el.innerHTML=pic(d,{card:true})+`
     <button class="save" type="button" data-saved="${SAVED.has(d.id)}">${SAVED.has(d.id)?"Saved":"Save"}</button>
     <div class="info">${d.img
       ?`<div class="good">${esc(d.hook)}</div>
@@ -634,7 +640,9 @@ function card(d,list,i){
         <div class="sub">${[d.client?d.industry:"",d.theme].filter(Boolean).map(esc).join(" · ")}${d.link?`${d.industry||d.theme?" · ":""}<span class="ext">${ARROW} ${esc(platform(d.link)?.name||"Link")}</span>`:""}</div>`}
     </div>`;
   const open=()=>detail(d,list,i);
-  el.addEventListener("click",e=>{if(!e.target.closest(".save"))open()});
+  el.addEventListener("click",e=>{if(!e.target.closest(".save,.addimg"))open()});
+  const add=el.querySelector('[data-a="addimg"]');
+  if(add)add.addEventListener("click",e=>{e.stopPropagation();uploadImage(d)});
   el.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();open()}});
   el.querySelector(".save").addEventListener("click",()=>{
     SAVED.has(d.id)?SAVED.delete(d.id):SAVED.add(d.id);
@@ -839,7 +847,10 @@ function detail(d,list,i){
       <div class="meta">${[d.client,d.industry,d.theme,d.type==="video"?"Video "+d.dur:"Image",d.fmt].filter(Boolean).map(esc).join(" · ")}</div>
       ${d.link?(()=>{const p=platform(d.link);return `<a class="openext" href="${esc(d.link)}" target="_blank" rel="noopener">
           <span>${ARROW.replace(/11/g,"14")} Open on ${esc(p?.name||"the website")}</span>
-          <small>${d.img?"The full ad is":"The ad itself is"} on ${esc(p?.host||"another site")}. Opens in a new tab.</small></a>`})():""}
+          <small>${d.img?"The full ad is":"The ad itself is"} on ${esc(p?.host||"another site")}. Opens in a new tab.</small></a>
+        ${!d.example&&MODE==="live"?`<div class="upl">${d.img
+          ?`<button class="linkbtn" data-a="upl">Replace image</button>`
+          :`Downloaded the ad from ${esc(p?.name||"there")}? <button class="btn btn-dark" data-a="upl">Upload the image</button>`}</div>`:""}`})():""}
       ${d.tagsUnconfirmed?`<div class="guess">Claude's best guess at the tags. <button class="linkbtn" data-a="tags">Fix them</button></div>`:""}
       ${nums.length?`<div class="nums">${nums.map(n=>`<div><b>${esc(n[1])}</b><span>${esc(n[0])}</span></div>`).join("")}</div>`:""}
       ${d.source==="Slack"&&d.note
@@ -858,6 +869,8 @@ function detail(d,list,i){
     SAVED.has(d.id)?SAVED.delete(d.id):SAVED.add(d.id);
     keepSaved();draw();detail(d,list,i);
   });
+  const upl=el.querySelector('[data-a="upl"]');
+  if(upl)upl.addEventListener("click",()=>uploadImage(d,nv=>detail(nv,list,i)));
   el.querySelectorAll('[data-a="tags"]').forEach(b=>b.addEventListener("click",()=>editTags(d)));
   const del=el.querySelector('[data-a="del"]');
   if(del)del.addEventListener("click",async()=>{
@@ -873,6 +886,26 @@ function detail(d,list,i){
     S.client=d.client||"";S.theme=d.client?"":d.theme;S.industry="";S.type="all";shut();go("all");window.scrollTo({top:0});
   });
   put(el);ctx={list:list||[d],i:i||0};
+}
+
+/* ---- add the ad's image to a creative that only has a link ---- */
+function uploadImage(d,after){
+  const input=document.createElement("input");input.type="file";input.accept="image/*";
+  input.addEventListener("change",()=>{
+    const f=input.files[0];if(!f)return;
+    toast("Uploading…");
+    shrink(f,1400,async(url,w,h)=>{
+      let by="";try{by=localStorage.getItem(NAME_KEY)||""}catch(e){}
+      try{
+        const {creative}=await api("PATCH",{id:d.id,imageData:url,w,h,by});
+        const nv=view(creative);
+        DATA=DATA.map(x=>x.id===d.id?nv:x);
+        draw();toast("Image added");
+        if(after)after(nv);
+      }catch(e){toast(e.message)}
+    });
+  });
+  input.click();
 }
 
 /* ---- fix a creative's tags ---- */

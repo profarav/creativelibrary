@@ -8,10 +8,20 @@
  */
 import { listCreatives, getCreative, saveCreative, putImage, shapeOf, newId } from "../lib/store.js";
 import { INDUSTRIES, THEMES, KEYWORDS } from "../lib/vocab.js";
+import { classify, applyClassification } from "../lib/classify.js";
 
 const json = (data, status = 200) =>
   Response.json(data, { status, headers: { "Cache-Control": "no-store" } });
 const clean = (v, max = 600) => String(v ?? "").trim().slice(0, max);
+
+/** An image sent from the browser (resized there) as a data URL → stored, public URL. */
+async function storeUpload(dataUrl, name) {
+  const data = /^data:(image\/[\w.+-]+);base64,(.+)$/.exec(dataUrl || "");
+  if (!data) return null;
+  const bytes = Buffer.from(data[2], "base64");
+  if (bytes.length > 4_000_000) throw Object.assign(new Error("That image is too large — keep it under 4 MB."), { status: 413 });
+  return putImage(bytes, data[1], name);
+}
 
 export async function GET() {
   const all = await listCreatives();
@@ -33,11 +43,10 @@ export async function POST(request) {
   if (img && !/^https?:\/\//i.test(img)) return json({ error: "The image link has to start with http:// or https://." }, 400);
   const w = Number(body.w) || 0, h = Number(body.h) || 0;
 
-  const data = /^data:(image\/[\w.+-]+);base64,(.+)$/.exec(body.imageData || "");
-  if (data) {
-    const bytes = Buffer.from(data[2], "base64");
-    if (bytes.length > 4_000_000) return json({ error: "That image is too large — keep it under 4 MB." }, 413);
-    img = await putImage(bytes, data[1], clean(body.client) || industry);
+  try {
+    img = (await storeUpload(body.imageData, clean(body.client) || industry)) || img;
+  } catch (e) {
+    return json({ error: e.message }, e.status || 500);
   }
 
   const record = {
@@ -63,6 +72,32 @@ export async function PATCH(request) {
   try { body = await request.json(); } catch { return json({ error: "Send the change as JSON." }, 400); }
   const record = body.id && (await getCreative(clean(body.id, 120)));
   if (!record) return json({ error: "That creative no longer exists." }, 404);
+
+  // Someone added the ad's image (e.g. downloaded from Motion). The link stays.
+  if (body.imageData) {
+    try {
+      record.img = await storeUpload(body.imageData, record.client || record.industry || "creative");
+    } catch (e) {
+      return json({ error: e.message }, e.status || 500);
+    }
+    record.w = Number(body.w) || 0; record.h = Number(body.h) || 0;
+    record.fmt = shapeOf(record.w, record.h);
+    record.imageAddedBy = clean(body.by, 80) || "someone on the team";
+    // If Claude's tags were only a guess, it can do better now it can see the ad.
+    if (record.tagsUnconfirmed && record.filedBy === "claude") {
+      const c = await classify({ text: record.text, img: record.img, link: record.link });
+      if (c && c.isAd === "yes") {
+        if (c.industry) record.industry = c.industry;
+        if (c.theme) record.theme = c.theme;
+        if (c.client && !record.client) record.client = c.client;
+        if (c.confident && record.industry && record.theme) delete record.tagsUnconfirmed;
+        record.claude = { ...(record.claude || {}), confident: c.confident, reason: c.reason, at: new Date().toISOString() };
+      }
+    }
+    record.updated = new Date().toISOString();
+    await saveCreative(record);
+    return json({ creative: record });
+  }
 
   for (const k of ["industry", "theme", "client", "good"]) if (k in body) record[k] = clean(body[k], k === "good" ? 1000 : 80);
   if ("good" in body) record.goodByHand = true;

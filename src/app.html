@@ -216,9 +216,6 @@ mark{background:#FFE58A;color:#111;border-radius:3px;padding:0 2px}
 .openext span{display:flex;align-items:center;gap:7px;font-weight:700;font-size:14.5px}
 .openext small{opacity:.75;font-size:12.5px}
 .openext:hover{opacity:.9}
-.boardpick{display:flex;gap:14px;flex-wrap:wrap;font-size:14px}
-.boardpick label{display:flex;align-items:center;gap:6px;cursor:pointer;color:var(--text);font-weight:500}
-.onboards{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
 .sheet .vid{width:100%;max-width:300px;max-height:70vh;border-radius:14px;background:#000}
 .guess{font-size:13px;color:var(--muted);background:var(--bg);border-radius:10px;padding:8px 12px}
 .linkbtn{border:0;background:none;padding:0;color:var(--text);font-weight:600;text-decoration:underline;cursor:pointer}
@@ -445,7 +442,7 @@ const INBOX_SEED=[
 const STORE="creative-library-saved";
 const R={"9:16":"r916","4:5":"r45","1:1":"r11"};
 let DATA=[],INBOX=[],AUTO=[],LEFT=[],SAVED=new Set();
-let S={view:"all",type:"all",industry:"",theme:"",client:"",board:"",q:"",boardBy:"board"};
+let S={view:"all",type:"all",industry:"",theme:"",client:"",q:""};
 /* live: the shared library · empty: it has nothing in it yet · offline: can't reach it (e.g. a local preview) */
 let MODE="live";
 
@@ -565,7 +562,6 @@ function shown(){
     if(S.type!=="all"&&d.type!==S.type)return false;
     if(S.industry&&d.industry!==S.industry)return false;
     if(S.theme&&d.theme!==S.theme)return false;
-    if(S.board&&!(d.boards||[]).includes(S.board))return false;
     if(S.client&&d.client!==S.client)return false;
     if(S.q){
       const hay=[d.hook,d.client,d.industry,d.theme,d.note,d.by].join(" ").toLowerCase();
@@ -609,16 +605,14 @@ function viewAll(){
     </div>
     <select id="f-ind"><option value="">All industries</option>${industries().map(v=>`<option ${v===S.industry?"selected":""}>${esc(v)}</option>`).join("")}</select>
     <select id="f-thm"><option value="">All themes</option>${THEMES.map(v=>`<option ${v===S.theme?"selected":""}>${esc(v)}</option>`).join("")}</select>
-    <select id="f-brd"><option value="">All boards</option>${BOARDS.map(v=>`<option ${v===S.board?"selected":""}>${esc(v)}</option>`).join("")}</select>
     <select id="f-cli"><option value="">All clients</option>${uniq("client").filter(Boolean).map(v=>`<option ${v===S.client?"selected":""}>${esc(v)}</option>`).join("")}</select>
-    ${(S.type!=="all"||S.industry||S.theme||S.client||S.board||S.q)?`<button class="clear">Clear</button>`:""}`;
+    ${(S.type!=="all"||S.industry||S.theme||S.client||S.q)?`<button class="clear">Clear</button>`:""}`;
   f.querySelectorAll(".pills button").forEach(b=>b.addEventListener("click",()=>{S.type=b.dataset.t;draw()}));
   f.querySelector("#f-ind").addEventListener("change",e=>{S.industry=e.target.value;draw()});
   f.querySelector("#f-thm").addEventListener("change",e=>{S.theme=e.target.value;draw()});
   f.querySelector("#f-cli").addEventListener("change",e=>{S.client=e.target.value;draw()});
-  f.querySelector("#f-brd").addEventListener("change",e=>{S.board=e.target.value;draw()});
   const c=f.querySelector(".clear");
-  if(c)c.addEventListener("click",()=>{S.type="all";S.industry="";S.theme="";S.client="";S.board="";S.q="";document.getElementById("q").value="";draw()});
+  if(c)c.addEventListener("click",()=>{S.type="all";S.industry="";S.theme="";S.client="";S.q="";document.getElementById("q").value="";draw()});
   const items=shown();
   const r=document.createElement("span");
   r.className="result";r.textContent=items.length+(items.length===1?" creative":" creatives");
@@ -660,10 +654,10 @@ function card(d,list,i){
 }
 
 /* ---- boards ---- */
-const BOARD_TABS=[["board","Team boards"],["industry","Industries"],["theme","Themes"],["client","Clients"]];
+const BOARD_TABS=[["industry","Industries"],["theme","Themes"],["client","Clients"]];
 function viewBoards(){
-  const key=S.boardBy||"board";
-  const groupsFor=k=>k==="board"?BOARDS.slice():k==="theme"?THEMES.slice()
+  const key=S.boardBy||"industry";
+  const groupsFor=k=>k==="theme"?THEMES.slice()
     :k==="industry"?industries()
     :uniq("client").filter(Boolean);
   const tabs=document.createElement("div");tabs.className="subtabs";tabs.setAttribute("role","group");
@@ -672,10 +666,10 @@ function viewBoards(){
   tabs.querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{S.boardBy=b.dataset.k;draw()}));
   stage.appendChild(tabs);
 
-  const inGroup=(d,g)=>key==="board"?(d.boards||[]).includes(g):d[key]===g;
+  const inGroup=(d,g)=>d[key]===g;
   const count=g=>DATA.filter(d=>inGroup(d,g)).length;
   // Themes keep the order they were defined in; industries and clients go biggest first.
-  const groups=key==="theme"||key==="board"?groupsFor(key):groupsFor(key).sort((a,b)=>count(b)-count(a)||a.localeCompare(b));
+  const groups=key==="theme"?groupsFor(key):groupsFor(key).sort((a,b)=>count(b)-count(a)||a.localeCompare(b));
   const grid=document.createElement("div");grid.className="tiles";grid.style.paddingTop="14px";
   for(const g of groups){
     const items=DATA.filter(d=>inGroup(d,g));
@@ -685,7 +679,7 @@ function viewBoards(){
       <h3>${esc(g)}</h3>
       <div class="sub">${items.length} creative${items.length===1?"":"s"}</div>`;
     t.addEventListener("click",()=>{
-      S.industry=key==="industry"?g:"";S.theme=key==="theme"?g:"";S.client=key==="client"?g:"";S.board=key==="board"?g:"";S.type="all";
+      S.industry=key==="industry"?g:"";S.theme=key==="theme"?g:"";S.client=key==="client"?g:"";S.type="all";
       go("all");window.scrollTo({top:0});
     });
     grid.appendChild(t);
@@ -859,7 +853,6 @@ function detail(d,list,i){
         ${!d.example&&MODE==="live"?`<div class="upl">${d.img
           ?`<button class="linkbtn" data-a="upl">Replace image</button>`
           :`Downloaded the ad from ${esc(p?.name||"there")}? <button class="btn btn-dark" data-a="upl">Upload the image</button>`}</div>`:""}`})():""}
-      ${(d.boards||[]).length?`<div class="onboards">On ${d.boards.map(b=>`<span class="chip">${esc(b)}</span>`).join(" ")}</div>`:""}
       ${d.tagsUnconfirmed?`<div class="guess">Claude's best guess at the tags. <button class="linkbtn" data-a="tags">Fix them</button></div>`:""}
       ${nums.length?`<div class="nums">${nums.map(n=>`<div><b>${esc(n[1])}</b><span>${esc(n[0])}</span></div>`).join("")}</div>`:""}
       ${d.source==="Slack"&&d.note
@@ -870,7 +863,7 @@ function detail(d,list,i){
       <button class="btn" data-a="save">${SAVED.has(d.id)?"Saved":"Save"}</button>
       <button class="btn" data-a="more">More ${d.client?"from "+esc(d.client):esc(d.theme)}</button>
       ${d.permalink?`<a class="btn" href="${esc(d.permalink)}" target="_blank" rel="noopener">Open in Slack</a>`:""}
-      ${!d.example&&MODE==="live"?`<button class="btn" data-a="tags">Edit tags and boards</button>
+      ${!d.example&&MODE==="live"?`<button class="btn" data-a="tags">Edit tags</button>
         <button class="btn danger" data-a="del">Remove from library</button>`:""}
     </div>`;
   el.querySelector(".close").addEventListener("click",shut);
@@ -896,11 +889,6 @@ function detail(d,list,i){
   });
   put(el);ctx={list:list||[d],i:i||0};
 }
-
-/* Tick boxes for the team boards a creative is on. */
-const boardPicker=(cur=[])=>`<div class="f"><label>Team boards <span class="opt">optional</span></label>
-  <div class="boardpick">${BOARDS.map(b=>`<label><input type="checkbox" value="${esc(b)}" ${cur.includes(b)?"checked":""}> ${esc(b)}</label>`).join("")}</div></div>`;
-const pickedBoards=el=>[...el.querySelectorAll(".boardpick input:checked")].map(i=>i.value);
 
 /* ---- add the ad's image to a creative that only has a link ---- */
 function uploadImage(d,after){
@@ -928,7 +916,7 @@ function editTags(d){
   el.className="modal";el.setAttribute("role","dialog");el.setAttribute("aria-label","Edit tags");
   const opts=(list,cur)=>list.map(c=>`<option ${c===cur?"selected":""}>${esc(c)}</option>`).join("");
   el.innerHTML=`
-    <h2>Edit tags and boards</h2>
+    <h2>Edit tags</h2>
     <div class="row2">
       <div class="f" data-req="e-i"><label for="e-i">Industry <i>*</i></label>
         <select id="e-i"><option value="">Choose…</option>${opts(industries(),d.industry)}</select><span class="err">Pick an industry</span></div>
@@ -937,7 +925,6 @@ function editTags(d){
     </div>
     <div class="f"><label for="e-c">Client <span class="opt">optional</span></label>
       <input id="e-c" list="cl2" value="${esc(d.client||"")}"><datalist id="cl2">${uniq("client").filter(Boolean).map(c=>`<option value="${esc(c)}">`).join("")}</datalist></div>
-    ${boardPicker(d.boards||[])}
     <div class="f"><label for="e-g">What's good about it</label><textarea id="e-g">${esc(d.hook||"")}</textarea></div>
     <div class="acts"><button class="btn" data-a="x">Cancel</button><button class="btn btn-dark" data-a="ok">Save</button></div>`;
   el.querySelector('[data-a="x"]').addEventListener("click",shut);
@@ -949,7 +936,7 @@ function editTags(d){
     if(!valid)return;
     ok.disabled=true;
     try{
-      const change={id:d.id,industry:v("#e-i"),theme:v("#e-t"),client:v("#e-c"),boards:pickedBoards(el)};
+      const change={id:d.id,industry:v("#e-i"),theme:v("#e-t"),client:v("#e-c")};
       if(v("#e-g")!==d.hook)change.good=v("#e-g");
       const {creative}=await api("PATCH",change);
       const nv=view(creative);
@@ -991,7 +978,6 @@ function addForm(){
       <div class="f"><label for="a-by">Your name <span class="opt">optional</span></label>
         <input id="a-by" value="${esc(myName)}" placeholder="So people know who to ask"></div>
     </div>
-    ${boardPicker(S.board?[S.board]:[])}
     <div class="f"><label for="a-t">Type</label><select id="a-t"><option value="static">Image</option><option value="video">Video</option></select></div>
     <div class="acts"><button class="btn" data-a="x">Cancel</button><button class="btn btn-dark" data-a="ok">Add to library</button></div>`;
   let picked=null;
@@ -1017,7 +1003,7 @@ function addForm(){
     ok.disabled=true;ok.textContent="Adding…";
     try{
       const {creative}=await api("POST",{good:v("#a-good"),industry:v("#a-i"),theme:v("#a-th"),client:v("#a-c"),
-        by:v("#a-by"),type:el.querySelector("#a-t").value,boards:pickedBoards(el),
+        by:v("#a-by"),type:el.querySelector("#a-t").value,
         imageData:picked?picked.url:"",imageUrl:picked?"":v("#a-url"),w:picked?picked.w:0,h:picked?picked.h:0});
       shut();
       if(MODE==="live"){DATA.unshift(view(creative));go("all")}else await load();

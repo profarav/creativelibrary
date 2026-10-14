@@ -26,7 +26,14 @@ Adding by hand also needs *What's good about this?*
 
 - **Industries:** Beauty, Finance, Fintech, Food & bev, Home, Primer Growth, Wellness
 - **Creative themes:** UGC, Vs the alt, Facts + Stats, This or that, Copy only,
-  Reviews/Testimonials, BDQs, Search bar, Question box/comment response, Organic
+  Reviews/Testimonials, BDQs, Search bar, Question box/comment response, Organic,
+  Editing, Nails, Visual hooks
+
+To load a folder of downloads under a theme (images and videos; videos stay playable):
+
+```bash
+npm run import -- ~/Downloads/Nails --theme Nails
+```
 
 Both lists and the Slack keywords live in **`lib/vocab.js`** — the only place to edit them.
 The website, the API and the Slack bot all read from it.

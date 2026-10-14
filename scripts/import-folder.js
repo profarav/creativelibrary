@@ -1,13 +1,13 @@
 /**
- * Load a folder of creatives (images and/or videos) onto a team board.
+ * Load a folder of creatives (images and/or videos) into the library under one theme.
  *
  *   vercel env pull .env.local
- *   npm run import -- "~/Downloads/Nails" --board "Nails"
- *   npm run import -- ./editing --board Editing --dry     # list what it would do
+ *   npm run import -- "~/Downloads/Nails" --theme "Nails"
+ *   npm run import -- ./editing --theme Editing --dry     # list what it would do
  *
  * For each file: uploads it (images resized to 1600px, HEIC converted; videos get a
- * thumbnail and stay playable), asks Claude for industry / theme / client / a
- * "what's good" line, and files it on the board. Tags Claude isn't sure of are
+ * thumbnail and stay playable), files it under the theme, and asks Claude for the
+ * industry, client and a "what's good" line. An industry Claude isn't sure of is
  * marked as a guess. Re-running skips files already imported (matched by content).
  * macOS: uses sips and ffmpeg.
  */
@@ -22,17 +22,17 @@ for (const line of fs.existsSync(".env.local") ? fs.readFileSync(".env.local", "
   if (m && !process.env[m[1]]) process.env[m[1]] = m[2];
 }
 
-const { BOARDS } = await import("../lib/vocab.js");
+const { THEMES } = await import("../lib/vocab.js");
 const { getCreative, saveCreative, putImage, shapeOf } = await import("../lib/store.js");
 const { classify } = await import("../lib/classify.js");
 const { put } = await import("@vercel/blob");
 
 const args = process.argv.slice(2);
-const dir = (args.find((a) => !a.startsWith("--") && args[args.indexOf(a) - 1] !== "--board") || "").replace(/^~/, os.homedir());
-const board = args[args.indexOf("--board") + 1];
+const dir = (args.find((a) => !a.startsWith("--") && args[args.indexOf(a) - 1] !== "--theme") || "").replace(/^~/, os.homedir());
+const theme = args[args.indexOf("--theme") + 1];
 const dry = args.includes("--dry");
 if (!dir || !fs.existsSync(dir)) throw new Error(`Folder not found: ${dir || "(none given)"}`);
-if (!BOARDS.includes(board)) throw new Error(`--board must be one of: ${BOARDS.join(", ")}`);
+if (!THEMES.includes(theme)) throw new Error(`--theme must be one of: ${THEMES.join(", ")}`);
 
 const IMG = /\.(jpe?g|png|webp|gif|heic|heif)$/i, VID = /\.(mp4|mov|m4v|webm)$/i;
 const walk = (d) => fs.readdirSync(d, { withFileTypes: true }).flatMap((e) =>
@@ -68,20 +68,13 @@ function prepVideo(file) {
   return { poster: fs.readFileSync(poster), w, h, dur: `${Math.floor(secs / 60)}:${String(secs % 60).padStart(2, "0")}`, video };
 }
 
-console.log(`${files.length} file(s) in ${dir} → board "${board}"${dry ? " (dry run)" : ""}`);
+console.log(`${files.length} file(s) in ${dir} → theme "${theme}"${dry ? " (dry run)" : ""}`);
 let added = 0, skipped = 0;
 for (const file of files) {
   const id = "f-" + crypto.createHash("sha1").update(fs.readFileSync(file)).digest("hex").slice(0, 14);
   const name = path.basename(file);
   const existing = await getCreative(id);
-  if (existing) {
-    if (!(existing.boards || []).includes(board) && !dry) {
-      existing.boards = [...(existing.boards || []), board];
-      await saveCreative(existing);
-      console.log(`  ${name}: already in the library — added to "${board}"`);
-    } else { console.log(`  ${name}: already imported`); }
-    skipped++; continue;
-  }
+  if (existing) { console.log(`  ${name}: already imported`); skipped++; continue; }
   if (dry) { console.log(`  ${name}: would import (${VID.test(file) ? "video" : "image"})`); continue; }
 
   try {
@@ -90,29 +83,29 @@ for (const file of files) {
     if (isVideo) {
       const v = prepVideo(file);
       ({ w, h, dur } = v);
-      img = await putImage(v.poster, "image/jpeg", board);
-      video = (await put(`videos/${board.toLowerCase().replace(/\W+/g, "-")}.mp4`, fs.readFileSync(v.video),
+      img = await putImage(v.poster, "image/jpeg", theme);
+      video = (await put(`videos/${theme.toLowerCase().replace(/\W+/g, "-")}.mp4`, fs.readFileSync(v.video),
         { access: "public", addRandomSuffix: true, contentType: "video/mp4", multipart: fs.statSync(v.video).size > 50e6 })).url;
     } else {
       const i = prepImage(file);
       ({ w, h } = i);
-      img = await putImage(i.bytes, i.type, board);
+      img = await putImage(i.bytes, i.type, theme);
     }
-    const c = await classify({ text: `Saved to the team's "${board}" board. File name: ${name}`, img });
-    const sure = c?.confident && c.industry && c.theme;
+    const c = await classify({ text: `Saved by the team as a "${theme}" example. File name: ${name}`, img });
+    const sure = c?.confident && c.industry;
     await saveCreative({
       id, status: "filed", source: "Upload", filedBy: "claude",
-      industry: c?.industry || "", theme: c?.theme || "", client: c?.client || "",
+      industry: c?.industry || "", theme, client: c?.client || "",
       ...(sure ? {} : { tagsUnconfirmed: true }),
       type: isVideo ? "video" : "static", dur, fmt: shapeOf(w, h), w, h,
       good: c?.note || name.replace(/\.\w+$/, "").replace(/[_-]+/g, " "),
       img, ...(video && { video }),
-      boards: [board], by: "Imported", file: name,
+      by: "Imported", file: name,
       claude: c ? { isAd: c.isAd, confident: c.confident, reason: c.reason, at: new Date().toISOString() } : null,
       added: new Date().toISOString(),
     });
     added++;
-    console.log(`  ${name}: ${c?.industry || "?"} · ${c?.theme || "?"}${sure ? "" : " (guess)"}`);
+    console.log(`  ${name}: ${c?.industry || "industry ?"} · ${theme}${sure ? "" : " (industry is a guess)"}`);
   } catch (e) {
     console.warn(`  ${name}: FAILED — ${e.message}`);
   }

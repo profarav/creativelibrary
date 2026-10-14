@@ -217,6 +217,14 @@ mark{background:#FFE58A;color:#111;border-radius:3px;padding:0 2px}
 .openext small{opacity:.75;font-size:12.5px}
 .openext:hover{opacity:.9}
 .sheet .vid{width:100%;max-width:300px;max-height:70vh;border-radius:14px;background:#000}
+.drop.over{border-color:var(--text);color:var(--text);background:var(--hover)}
+.picked{display:flex;flex-direction:column;gap:6px;max-height:200px;overflow:auto}
+.picked .pk{display:flex;align-items:center;gap:10px;font-size:13px;background:var(--bg);border-radius:10px;padding:5px 8px}
+.picked img,.picked .vthumb{width:36px;height:36px;border-radius:6px;object-fit:cover;flex:0 0 auto}
+.picked .vthumb{display:grid;place-items:center;background:#111;color:#fff;font-size:12px}
+.picked .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.picked button{border:0;background:none;font-size:18px;color:var(--muted);cursor:pointer;line-height:1;padding:2px 6px}
+.picked button:hover{color:var(--text)}
 .guess{font-size:13px;color:var(--muted);background:var(--bg);border-radius:10px;padding:8px 12px}
 .linkbtn{border:0;background:none;padding:0;color:var(--text);font-weight:600;text-decoration:underline;cursor:pointer}
 .sheet a.btn{text-align:center;text-decoration:none;color:var(--text)}
@@ -949,66 +957,127 @@ function editTags(d){
 
 /* ---- add ---- */
 const NAME_KEY="creative-library-name";
+const BLOB_CLIENT="https://esm.sh/@vercel/blob@2.8.1/client";
+const fmtDur=s=>s&&isFinite(s)?`${Math.floor(s/60)}:${String(Math.round(s)%60).padStart(2,"0")}`:"";
+
+/* A still frame, size and length for a video file, read in the browser. Some .mov files
+   (HEVC) can't be decoded by every browser; then it's uploaded without a still. */
+function videoInfo(file){
+  return new Promise(res=>{
+    const v=document.createElement("video");v.preload="metadata";v.muted=true;v.playsInline=true;
+    const url=URL.createObjectURL(file);let done=false;
+    const finish=r=>{if(done)return;done=true;URL.revokeObjectURL(url);res(r)};
+    v.onloadedmetadata=()=>{v.currentTime=Math.min(1,(v.duration||2)/2)};
+    v.onseeked=()=>{
+      const k=Math.min(1,1200/Math.max(v.videoWidth,v.videoHeight)),c=document.createElement("canvas");
+      c.width=Math.round(v.videoWidth*k);c.height=Math.round(v.videoHeight*k);
+      c.getContext("2d").drawImage(v,0,0,c.width,c.height);
+      let poster="";try{poster=c.toDataURL("image/jpeg",.82)}catch(e){}
+      finish({poster,w:v.videoWidth,h:v.videoHeight,dur:fmtDur(v.duration)});
+    };
+    v.onerror=()=>finish({poster:"",w:0,h:0,dur:""});
+    setTimeout(()=>finish({poster:"",w:0,h:0,dur:""}),15000);
+    v.src=url;
+  });
+}
+const shrinkP=(f,max)=>new Promise(r=>shrink(f,max,(url,w,h)=>r({url,w,h})));
+
 function addForm(){
   let myName="";try{myName=localStorage.getItem(NAME_KEY)||""}catch(e){}
   const el=document.createElement("div");
-  el.className="modal";el.setAttribute("role","dialog");el.setAttribute("aria-label","Add a creative");
+  el.className="modal";el.setAttribute("role","dialog");el.setAttribute("aria-label","Add creatives");
   el.innerHTML=`
-    <h2>Add a creative</h2>
-    <div class="f"><label>The ad</label>
-      <div class="drop" id="a-drop" role="button" tabindex="0">Click to choose a screenshot or export</div>
-      <input type="file" id="a-file" accept="image/*" hidden>
+    <h2>Add creatives</h2>
+    <div class="f"><label>The ads <span class="opt">images or videos — as many as you like</span></label>
+      <div class="drop" id="a-drop" role="button" tabindex="0">Drop files here, or click to choose</div>
+      <div class="picked" id="a-picked" hidden></div>
+      <input type="file" id="a-file" accept="image/*,video/*" multiple hidden>
       <input id="a-url" placeholder="…or paste an image link" aria-label="Image link">
     </div>
-    <div class="f" data-req="a-good"><label for="a-good">What's good about this? <i>*</i></label>
+    <div class="f" data-req="a-good"><label for="a-good"><span id="a-goodlbl">What's good about this?</span> <i>*</i></label>
       <textarea id="a-good" placeholder="e.g. The first two seconds — no talking, just the product doing its thing"></textarea>
       <span class="err">Say what makes it worth saving</span></div>
     <div class="row2">
       <div class="f" data-req="a-i"><label for="a-i">Industry <i>*</i></label>
-        <select id="a-i"><option value="">Choose…</option>${industries().map(c=>`<option>${esc(c)}</option>`).join("")}</select>
+        <select id="a-i"><option value="">Choose…</option>${industries().map(c=>`<option ${c===S.industry?"selected":""}>${esc(c)}</option>`).join("")}</select>
         <span class="err">Pick an industry</span></div>
       <div class="f" data-req="a-th"><label for="a-th">Creative theme <i>*</i></label>
-        <select id="a-th"><option value="">Choose…</option>${THEMES.map(c=>`<option>${esc(c)}</option>`).join("")}</select>
+        <select id="a-th"><option value="">Choose…</option>${THEMES.map(c=>`<option ${c===S.theme?"selected":""}>${esc(c)}</option>`).join("")}</select>
         <span class="err">Pick a theme</span></div>
     </div>
     <div class="row2">
       <div class="f"><label for="a-c">Client <span class="opt">optional</span></label>
-        <input id="a-c" list="cl" placeholder="If it's for a client">
+        <input id="a-c" list="cl" placeholder="If it's for a client" value="${esc(S.client||"")}">
         <datalist id="cl">${uniq("client").filter(Boolean).map(c=>`<option value="${esc(c)}">`).join("")}</datalist></div>
       <div class="f"><label for="a-by">Your name <span class="opt">optional</span></label>
         <input id="a-by" value="${esc(myName)}" placeholder="So people know who to ask"></div>
     </div>
-    <div class="f"><label for="a-t">Type</label><select id="a-t"><option value="static">Image</option><option value="video">Video</option></select></div>
     <div class="acts"><button class="btn" data-a="x">Cancel</button><button class="btn btn-dark" data-a="ok">Add to library</button></div>`;
-  let picked=null;
-  const drop_=el.querySelector("#a-drop"),file=el.querySelector("#a-file");
-  drop_.addEventListener("click",()=>file.click());
-  drop_.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();file.click()}});
-  file.addEventListener("change",()=>{
-    const f=file.files[0];if(!f)return;
-    shrink(f,1400,(url,w,h)=>{picked={url,w,h};drop_.classList.add("has");drop_.innerHTML=`<img src="${url}" alt="">`;});
-  });
+
+  let files=[];
+  const drop_=el.querySelector("#a-drop"),input=el.querySelector("#a-file"),list=el.querySelector("#a-picked");
+  const ok=el.querySelector('[data-a="ok"]');
+  const render=()=>{
+    list.hidden=!files.length;
+    list.innerHTML=files.map((f,i)=>`<span class="pk">${f.type.startsWith("video/")
+      ?`<span class="vthumb">▶</span>`:`<img src="${f._url||(f._url=URL.createObjectURL(f))}" alt="">`}
+      <span class="nm">${esc(f.name)}</span><button type="button" data-i="${i}" aria-label="Remove ${esc(f.name)}">×</button></span>`).join("");
+    list.querySelectorAll("button[data-i]").forEach(b=>b.addEventListener("click",()=>{files.splice(+b.dataset.i,1);render()}));
+    drop_.textContent=files.length?`${files.length} file${files.length===1?"":"s"} ready — drop or click to add more`:"Drop files here, or click to choose";
+    el.querySelector("#a-url").hidden=files.length>0;
+    el.querySelector("#a-goodlbl").textContent=files.length>1?`What's good about these ${files.length}?`:"What's good about this?";
+    ok.textContent=files.length>1?`Add ${files.length} to library`:"Add to library";
+  };
+  const take=fl=>{for(const f of fl)if(/^(image|video)\//.test(f.type))files.push(f);render()};
+  drop_.addEventListener("click",()=>input.click());
+  drop_.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();input.click()}});
+  input.addEventListener("change",()=>{take(input.files);input.value=""});
+  drop_.addEventListener("dragover",e=>{e.preventDefault();drop_.classList.add("over")});
+  drop_.addEventListener("dragleave",()=>drop_.classList.remove("over"));
+  drop_.addEventListener("drop",e=>{e.preventDefault();drop_.classList.remove("over");take(e.dataTransfer.files)});
+
   el.querySelectorAll("[data-req] input,[data-req] select,[data-req] textarea").forEach(x=>
     x.addEventListener("input",()=>x.closest(".f").classList.remove("bad")));
   el.querySelector('[data-a="x"]').addEventListener("click",shut);
-  const ok=el.querySelector('[data-a="ok"]');
+
   ok.addEventListener("click",async()=>{
     const v=id=>el.querySelector(id).value.trim();
     let valid=true;
-    el.querySelectorAll("[data-req]").forEach(f=>{
-      const empty=!v("#"+f.dataset.req);f.classList.toggle("bad",empty);if(empty)valid=false;
-    });
+    el.querySelectorAll("[data-req]").forEach(f=>{const e=!v("#"+f.dataset.req);f.classList.toggle("bad",e);if(e)valid=false});
     if(!valid){el.querySelector(".f.bad textarea,.f.bad select").focus();return;}
     try{localStorage.setItem(NAME_KEY,v("#a-by"))}catch(e){}
-    ok.disabled=true;ok.textContent="Adding…";
-    try{
-      const {creative}=await api("POST",{good:v("#a-good"),industry:v("#a-i"),theme:v("#a-th"),client:v("#a-c"),
-        by:v("#a-by"),type:el.querySelector("#a-t").value,
-        imageData:picked?picked.url:"",imageUrl:picked?"":v("#a-url"),w:picked?picked.w:0,h:picked?picked.h:0});
-      shut();
-      if(MODE==="live"){DATA.unshift(view(creative));go("all")}else await load();
-      toast("Added to "+creative.industry+" · "+creative.theme);
-    }catch(e){ok.disabled=false;ok.textContent="Add to library";toast(e.message)}
+    const shared={good:v("#a-good"),industry:v("#a-i"),theme:v("#a-th"),client:v("#a-c"),by:v("#a-by")};
+    const jobs=files.length?files:[null];
+    const added=[],failed=[];
+    ok.disabled=true;
+    for(let n=0;n<jobs.length;n++){
+      const f=jobs[n];
+      const step=t=>{ok.textContent=jobs.length>1?`Adding ${n+1} of ${jobs.length}… ${t||""}`:`Adding… ${t||""}`};
+      step();
+      try{
+        let body={...shared};
+        if(!f){body.imageUrl=v("#a-url");}
+        else if(f.type.startsWith("video/")){
+          const info=await videoInfo(f);
+          const {upload}=await import(BLOB_CLIENT);
+          const safe=f.name.toLowerCase().replace(/[^a-z0-9.]+/g,"-").slice(-60)||"video.mp4";
+          const blob=await upload(`videos/${safe}`,f,{access:"public",handleUploadUrl:"/api/upload",
+            contentType:f.type||"video/mp4",multipart:f.size>50e6,
+            onUploadProgress:p=>step(`${Math.round(p.percentage)}%`)});
+          body={...body,type:"video",video:blob.url,imageData:info.poster,w:info.w,h:info.h,dur:info.dur};
+        }else{
+          const img=await shrinkP(f,1400);
+          body={...body,type:"static",imageData:img.url,w:img.w,h:img.h};
+        }
+        const {creative}=await api("POST",body);
+        added.push(creative);
+      }catch(e){failed.push(`${f?f.name:"link"}: ${e.message}`)}
+    }
+    if(!added.length){ok.disabled=false;render();toast(failed[0]||"Nothing was added");return;}
+    shut();
+    if(MODE==="live"){DATA.unshift(...added.map(view));go("all")}else await load();
+    toast(failed.length?`${added.length} added, ${failed.length} didn't: ${failed[0]}`
+      :added.length>1?`${added.length} added to ${shared.theme}`:`Added to ${shared.industry} · ${shared.theme}`);
   });
   put(el);
 }

@@ -42,6 +42,11 @@ export async function POST(request) {
   let img = clean(body.imageUrl, 2000);
   if (img && !/^https?:\/\//i.test(img)) return json({ error: "The image link has to start with http:// or https://." }, 400);
   const w = Number(body.w) || 0, h = Number(body.h) || 0;
+  // A video the browser already uploaded to our storage (see api/upload.js).
+  const video = clean(body.video, 2000);
+  if (video && !/^https:\/\/[a-z0-9]+\.public\.blob\.vercel-storage\.com\//i.test(video)) {
+    return json({ error: "That video didn't upload to the library's storage. Try again." }, 400);
+  }
 
   try {
     img = (await storeUpload(body.imageData, clean(body.client) || industry)) || img;
@@ -55,7 +60,8 @@ export async function POST(request) {
     source: "Manual",
     industry, theme,
     client: clean(body.client, 80),
-    type: body.type === "video" ? "video" : "static",
+    type: video || body.type === "video" ? "video" : "static",
+    ...(video && { video, dur: clean(body.dur, 10) }),
     fmt: w && h ? shapeOf(w, h) : ["9:16", "4:5", "1:1"].includes(body.fmt) ? body.fmt : "4:5",
     w, h,
     good,

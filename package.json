@@ -7,7 +7,8 @@
   "scripts": {
     "build": "node build.js",
     "backfill": "node scripts/backfill-slack.js",
-    "reclassify": "node scripts/reclassify.js"
+    "reclassify": "node scripts/reclassify.js",
+    "import": "node scripts/import-folder.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.132.0",

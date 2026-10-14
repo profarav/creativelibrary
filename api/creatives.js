@@ -7,12 +7,13 @@
  *   DELETE ?id=...      remove a creative (kept, but hidden — so a backfill won't bring it back)
  */
 import { listCreatives, getCreative, saveCreative, putImage, shapeOf, newId } from "../lib/store.js";
-import { INDUSTRIES, THEMES, KEYWORDS } from "../lib/vocab.js";
+import { INDUSTRIES, THEMES, KEYWORDS, BOARDS } from "../lib/vocab.js";
 import { classify, applyClassification } from "../lib/classify.js";
 
 const json = (data, status = 200) =>
   Response.json(data, { status, headers: { "Cache-Control": "no-store" } });
 const clean = (v, max = 600) => String(v ?? "").trim().slice(0, max);
+const boardsFrom = (v) => [...new Set((Array.isArray(v) ? v : []).filter((b) => BOARDS.includes(b)))];
 
 /** An image sent from the browser (resized there) as a data URL → stored, public URL. */
 async function storeUpload(dataUrl, name) {
@@ -28,7 +29,7 @@ export async function GET() {
   const creatives = all
     .filter((c) => c.status !== "removed")
     .sort((a, b) => String(b.added).localeCompare(String(a.added)));
-  return json({ creatives, vocab: { industries: INDUSTRIES, themes: THEMES, keywords: KEYWORDS } });
+  return json({ creatives, vocab: { industries: INDUSTRIES, themes: THEMES, boards: BOARDS, keywords: KEYWORDS } });
 }
 
 export async function POST(request) {
@@ -60,6 +61,7 @@ export async function POST(request) {
     w, h,
     good,
     img,
+    boards: boardsFrom(body.boards),
     by: clean(body.by, 80) || "Someone on the team",
     added: new Date().toISOString(),
   };
@@ -101,6 +103,7 @@ export async function PATCH(request) {
 
   for (const k of ["industry", "theme", "client", "good"]) if (k in body) record[k] = clean(body[k], k === "good" ? 1000 : 80);
   if ("good" in body) record.goodByHand = true;
+  if ("boards" in body) record.boards = boardsFrom(body.boards);
   if ("industry" in body || "theme" in body) delete record.tagsUnconfirmed; // a person has checked them
   if (body.status === "skipped") {
     record.status = "skipped";

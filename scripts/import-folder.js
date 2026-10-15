@@ -22,7 +22,8 @@ for (const line of fs.existsSync(".env.local") ? fs.readFileSync(".env.local", "
   if (m && !process.env[m[1]]) process.env[m[1]] = m[2];
 }
 
-const { THEMES } = await import("../lib/vocab.js");
+const { getVocab } = await import("../lib/terms.js");
+const { themes: THEMES } = await getVocab();
 const { getCreative, saveCreative, putImage, shapeOf } = await import("../lib/store.js");
 const { classify } = await import("../lib/classify.js");
 const { put } = await import("@vercel/blob");

@@ -225,6 +225,8 @@ mark{background:#FFE58A;color:#111;border-radius:3px;padding:0 2px}
 .picked .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .picked button{border:0;background:none;font-size:18px;color:var(--muted);cursor:pointer;line-height:1;padding:2px 6px}
 .picked button:hover{color:var(--text)}
+.tile .empty.addtile{font-size:15px;font-weight:700;color:var(--text);border-style:dashed}
+.tile:hover .empty.addtile{background:var(--hover)}
 .guess{font-size:13px;color:var(--muted);background:var(--bg);border-radius:10px;padding:8px 12px}
 .linkbtn{border:0;background:none;padding:0;color:var(--text);font-weight:600;text-decoration:underline;cursor:pointer}
 .sheet a.btn{text-align:center;text-decoration:none;color:var(--text)}
@@ -461,6 +463,44 @@ function keepSaved(){try{localStorage.setItem(STORE,JSON.stringify([...SAVED]))}
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const uniq=k=>[...new Set(DATA.map(d=>d[k]))].sort();
 const industries=()=>[...new Set([...INDUSTRIES,...DATA.map(d=>d.industry)])].filter(Boolean).sort();
+let EXTRA_CLIENTS=[];
+const allClients=()=>[...new Set([...DATA.map(d=>d.client),...EXTRA_CLIENTS])].filter(Boolean).sort();
+/* Names the team added on the site arrive with the library; fold them into the lists in use. */
+function applyVocab(v){
+  if(!v)return;
+  if(v.industries)INDUSTRIES.splice(0,INDUSTRIES.length,...v.industries);
+  if(v.themes)THEMES.splice(0,THEMES.length,...v.themes);
+  if(v.keywords){Object.assign(KEYWORDS.industry,v.keywords.industry||{});Object.assign(KEYWORDS.theme,v.keywords.theme||{})}
+  EXTRA_CLIENTS=v.clients||[];
+}
+/* Ask for a name, add it for everyone, return it ("" if cancelled or it failed). */
+async function newTerm(kind){
+  const name=(prompt(`Name the new ${kind}:`)||"").trim();
+  if(!name)return "";
+  try{
+    const r=await fetch("/api/vocab",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({kind,name})});
+    const d=await r.json().catch(()=>({}));
+    if(!r.ok)throw new Error(d.error||"Couldn't add it. Try again.");
+    applyVocab(d.vocab);
+    toast(d.existed?`"${d.name}" already exists, so it's selected`:`Added ${kind} "${d.name}"`);
+    return d.name;
+  }catch(e){toast(e.message);return ""}
+}
+/* Every industry / theme / client dropdown ends with "+ New …". */
+function wireNew(root){
+  if(MODE!=="live")return;
+  root.querySelectorAll("select[data-kind]").forEach(sel=>{
+    sel.insertAdjacentHTML("beforeend",`<option value="__new">＋ New ${sel.dataset.kind}…</option>`);
+    let prev=sel.value;
+    sel.addEventListener("change",async()=>{
+      if(sel.value!=="__new"){prev=sel.value;return}
+      const name=await newTerm(sel.dataset.kind);
+      if(!name){sel.value=prev;return}
+      if(![...sel.options].some(o=>o.value===name))sel.insertBefore(new Option(name,name),sel.querySelector('option[value="__new"]'));
+      sel.value=name;prev=name;sel.dispatchEvent(new Event("input",{bubbles:true}));
+    });
+  });
+}
 const PALETTE={"Beauty":"#B8446A","Finance":"#245247","Fintech":"#5B3FA0","Food & bev":"#A8741E",
   "Home":"#2E6E75","Primer Growth":"#2F4F8F","Wellness":"#3F7A34"};
 const DAY=new Intl.DateTimeFormat(undefined,{day:"numeric",month:"short"});
@@ -506,7 +546,7 @@ async function load(){
   let records=null;
   try{
     const res=await fetch("/api/creatives",{cache:"no-store"});
-    if(res.ok)records=(await res.json()).creatives;
+    if(res.ok){const data=await res.json();records=data.creatives;applyVocab(data.vocab)}
   }catch(e){}
   if(records&&records.length){
     MODE="live";
@@ -613,7 +653,7 @@ function viewAll(){
     </div>
     <select id="f-ind"><option value="">All industries</option>${industries().map(v=>`<option ${v===S.industry?"selected":""}>${esc(v)}</option>`).join("")}</select>
     <select id="f-thm"><option value="">All themes</option>${THEMES.map(v=>`<option ${v===S.theme?"selected":""}>${esc(v)}</option>`).join("")}</select>
-    <select id="f-cli"><option value="">All clients</option>${uniq("client").filter(Boolean).map(v=>`<option ${v===S.client?"selected":""}>${esc(v)}</option>`).join("")}</select>
+    <select id="f-cli"><option value="">All clients</option>${allClients().map(v=>`<option ${v===S.client?"selected":""}>${esc(v)}</option>`).join("")}</select>
     ${(S.type!=="all"||S.industry||S.theme||S.client||S.q)?`<button class="clear">Clear</button>`:""}`;
   f.querySelectorAll(".pills button").forEach(b=>b.addEventListener("click",()=>{S.type=b.dataset.t;draw()}));
   f.querySelector("#f-ind").addEventListener("change",e=>{S.industry=e.target.value;draw()});
@@ -667,7 +707,7 @@ function viewBoards(){
   const key=S.boardBy||"industry";
   const groupsFor=k=>k==="theme"?THEMES.slice()
     :k==="industry"?industries()
-    :uniq("client").filter(Boolean);
+    :allClients();
   const tabs=document.createElement("div");tabs.className="subtabs";tabs.setAttribute("role","group");
   tabs.innerHTML=BOARD_TABS.map(([k,label])=>
     `<button data-k="${k}" aria-pressed="${k===key}">${label}<span class="n">${groupsFor(k).length}</span></button>`).join("");
@@ -692,6 +732,13 @@ function viewBoards(){
     });
     grid.appendChild(t);
   }
+  if(MODE==="live"){
+    const kind={industry:"industry",theme:"theme",client:"client"}[key];
+    const add=document.createElement("button");add.className="tile";add.type="button";
+    add.innerHTML=`<div class="empty addtile">＋ Add ${kind}</div><h3>New ${kind}</h3><div class="sub">Available to everyone straight away</div>`;
+    add.addEventListener("click",async()=>{if(await newTerm(kind))draw()});
+    grid.appendChild(add);
+  }
   stage.appendChild(grid);
 }
 
@@ -709,7 +756,7 @@ function highlight(msg,clients){
 const posted=d=>`<b>${esc(d.by||"Someone")}</b> in ${esc(d.channel||"#creative-inspiration")} · ${esc(when(d.added))}`;
 
 function viewSlack(){
-  const clients=uniq("client").filter(Boolean);
+  const clients=allClients();
   const head=document.createElement("div");head.className="slackhead";
   head.innerHTML=`<p>To file a post straight into the library, <b>start it</b> with an industry and a theme
     (and the client, if there is one), or add them as hashtags. Anything else waits here for someone to sort.</p>
@@ -736,14 +783,15 @@ function viewSlack(){
           ?"Not tagged at the start, so this is a best guess. Check it before filing."
           :"Not tagged. Pick an industry and a theme, or leave it out."}</div>
         <div class="acts">
-          <select aria-label="Industry"><option value="">Industry *</option>${industries().map(c=>`<option ${c===it.industry?"selected":""}>${esc(c)}</option>`).join("")}</select>
-          <select aria-label="Creative theme"><option value="">Theme *</option>${THEMES.map(c=>`<option ${c===it.theme?"selected":""}>${esc(c)}</option>`).join("")}</select>
-          <select aria-label="Client"><option value="">Client (optional)</option>${clients.map(c=>`<option ${c===it.client?"selected":""}>${esc(c)}</option>`).join("")}</select>
+          <select aria-label="Industry" data-kind="industry"><option value="">Industry *</option>${industries().map(c=>`<option ${c===it.industry?"selected":""}>${esc(c)}</option>`).join("")}</select>
+          <select aria-label="Creative theme" data-kind="theme"><option value="">Theme *</option>${THEMES.map(c=>`<option ${c===it.theme?"selected":""}>${esc(c)}</option>`).join("")}</select>
+          <select aria-label="Client" data-kind="client"><option value="">Client (optional)</option>${clients.map(c=>`<option ${c===it.client?"selected":""}>${esc(c)}</option>`).join("")}</select>
           <span class="gap"></span>
           <button class="btn" data-a="skip">Not for the library</button>
           <button class="btn btn-dark" data-a="add">File it</button>
         </div>
       </div>`;
+    wireNew(row);
     const said=row.querySelector(".said");said.title="Click to read it all";
     said.addEventListener("click",()=>said.classList.toggle("open"));
     const [si,st,sc]=row.querySelectorAll("select");
@@ -939,14 +987,15 @@ function editTags(d){
     <h2>Edit tags</h2>
     <div class="row2">
       <div class="f" data-req="e-i"><label for="e-i">Industry <i>*</i></label>
-        <select id="e-i"><option value="">Choose…</option>${opts(industries(),d.industry)}</select><span class="err">Pick an industry</span></div>
+        <select id="e-i" data-kind="industry"><option value="">Choose…</option>${opts(industries(),d.industry)}</select><span class="err">Pick an industry</span></div>
       <div class="f" data-req="e-t"><label for="e-t">Creative theme <i>*</i></label>
-        <select id="e-t"><option value="">Choose…</option>${opts(THEMES,d.theme)}</select><span class="err">Pick a theme</span></div>
+        <select id="e-t" data-kind="theme"><option value="">Choose…</option>${opts(THEMES,d.theme)}</select><span class="err">Pick a theme</span></div>
     </div>
     <div class="f"><label for="e-c">Client <span class="opt">optional</span></label>
-      <input id="e-c" list="cl2" value="${esc(d.client||"")}"><datalist id="cl2">${uniq("client").filter(Boolean).map(c=>`<option value="${esc(c)}">`).join("")}</datalist></div>
+      <input id="e-c" list="cl2" value="${esc(d.client||"")}"><datalist id="cl2">${allClients().map(c=>`<option value="${esc(c)}">`).join("")}</datalist></div>
     <div class="f"><label for="e-g">What's good about it</label><textarea id="e-g">${esc(d.hook||"")}</textarea></div>
     <div class="acts"><button class="btn" data-a="x">Cancel</button><button class="btn btn-dark" data-a="ok">Save</button></div>`;
+  wireNew(el);
   el.querySelector('[data-a="x"]').addEventListener("click",shut);
   const ok=el.querySelector('[data-a="ok"]');
   ok.addEventListener("click",async()=>{
@@ -1011,16 +1060,16 @@ function addForm(){
       <span class="err">Say what makes it worth saving</span></div>
     <div class="row2">
       <div class="f" data-req="a-i"><label for="a-i">Industry <i>*</i></label>
-        <select id="a-i"><option value="">Choose…</option>${industries().map(c=>`<option ${c===S.industry?"selected":""}>${esc(c)}</option>`).join("")}</select>
+        <select id="a-i" data-kind="industry"><option value="">Choose…</option>${industries().map(c=>`<option ${c===S.industry?"selected":""}>${esc(c)}</option>`).join("")}</select>
         <span class="err">Pick an industry</span></div>
       <div class="f" data-req="a-th"><label for="a-th">Creative theme <i>*</i></label>
-        <select id="a-th"><option value="">Choose…</option>${THEMES.map(c=>`<option ${c===S.theme?"selected":""}>${esc(c)}</option>`).join("")}</select>
+        <select id="a-th" data-kind="theme"><option value="">Choose…</option>${THEMES.map(c=>`<option ${c===S.theme?"selected":""}>${esc(c)}</option>`).join("")}</select>
         <span class="err">Pick a theme</span></div>
     </div>
     <div class="row2">
       <div class="f"><label for="a-c">Client <span class="opt">optional</span></label>
         <input id="a-c" list="cl" placeholder="If it's for a client" value="${esc(S.client||"")}">
-        <datalist id="cl">${uniq("client").filter(Boolean).map(c=>`<option value="${esc(c)}">`).join("")}</datalist></div>
+        <datalist id="cl">${allClients().map(c=>`<option value="${esc(c)}">`).join("")}</datalist></div>
       <div class="f"><label for="a-by">Your name <span class="opt">optional</span></label>
         <input id="a-by" value="${esc(myName)}" placeholder="So people know who to ask"></div>
     </div>
@@ -1050,6 +1099,7 @@ function addForm(){
 
   el.querySelectorAll("[data-req] input,[data-req] select,[data-req] textarea").forEach(x=>
     x.addEventListener("input",()=>x.closest(".f").classList.remove("bad")));
+  wireNew(el);
   el.querySelector('[data-a="x"]').addEventListener("click",shut);
 
   ok.addEventListener("click",async()=>{

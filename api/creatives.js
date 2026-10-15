@@ -7,7 +7,7 @@
  *   DELETE ?id=...      remove a creative (kept, but hidden — so a backfill won't bring it back)
  */
 import { listCreatives, getCreative, saveCreative, putImage, shapeOf, newId } from "../lib/store.js";
-import { INDUSTRIES, THEMES, KEYWORDS } from "../lib/vocab.js";
+import { getVocab } from "../lib/terms.js";
 import { classify, applyClassification } from "../lib/classify.js";
 import { ensurePoster } from "../lib/poster.js";
 
@@ -25,11 +25,11 @@ async function storeUpload(dataUrl, name) {
 }
 
 export async function GET() {
-  const all = await listCreatives();
+  const [all, vocab] = await Promise.all([listCreatives(), getVocab()]);
   const creatives = all
     .filter((c) => c.status !== "removed")
     .sort((a, b) => String(b.added).localeCompare(String(a.added)));
-  return json({ creatives, vocab: { industries: INDUSTRIES, themes: THEMES, keywords: KEYWORDS } });
+  return json({ creatives, vocab });
 }
 
 export async function POST(request) {

@@ -548,7 +548,7 @@ function pic(d,opts){
     <div class="art linkart" style="background:${d.c1}">
       <span class="shade"></span>
       <span class="linkcard">${ARROW.replace(/11/g,"22")}<b>View on ${esc(p.name)}</b><small>${esc(p.host)}</small>
-        ${opts.card&&!d.example&&MODE==="live"?`<button class="addimg" type="button" data-a="addimg">＋ Add image</button>`:""}</span>
+        ${opts.card&&!d.example&&MODE==="live"?`<button class="addimg" type="button" data-a="addimg">＋ Add image or video</button>`:""}</span>
       <span class="txt">${esc(d.hook)}</span>
       ${badges}
     </div></div>`;
@@ -859,8 +859,8 @@ function detail(d,list,i){
           <span>${ARROW.replace(/11/g,"14")} Open on ${esc(p?.name||"the website")}</span>
           <small>${d.img?"The full ad is":"The ad itself is"} on ${esc(p?.host||"another site")}. Opens in a new tab.</small></a>
         ${!d.example&&MODE==="live"?`<div class="upl">${d.img
-          ?`<button class="linkbtn" data-a="upl">Replace image</button>`
-          :`Downloaded the ad from ${esc(p?.name||"there")}? <button class="btn btn-dark" data-a="upl">Upload the image</button>`}</div>`:""}`})():""}
+          ?`<button class="linkbtn" data-a="upl">Replace with another image or video</button>`
+          :`Downloaded the ad from ${esc(p?.name||"there")}? <button class="btn btn-dark" data-a="upl">Upload image or video</button>`}</div>`:""}`})():""}
       ${d.tagsUnconfirmed?`<div class="guess">Claude's best guess at the tags. <button class="linkbtn" data-a="tags">Fix them</button></div>`:""}
       ${nums.length?`<div class="nums">${nums.map(n=>`<div><b>${esc(n[1])}</b><span>${esc(n[0])}</span></div>`).join("")}</div>`:""}
       ${d.source==="Slack"&&d.note
@@ -898,22 +898,34 @@ function detail(d,list,i){
   put(el);ctx={list:list||[d],i:i||0};
 }
 
-/* ---- add the ad's image to a creative that only has a link ---- */
+/* ---- add the ad itself (image or video) to a creative that only has a link ---- */
 function uploadImage(d,after){
-  const input=document.createElement("input");input.type="file";input.accept="image/*";
-  input.addEventListener("change",()=>{
+  const input=document.createElement("input");input.type="file";input.accept="image/*,video/*";
+  input.addEventListener("change",async()=>{
     const f=input.files[0];if(!f)return;
-    toast("Uploading…");
-    shrink(f,1400,async(url,w,h)=>{
-      let by="";try{by=localStorage.getItem(NAME_KEY)||""}catch(e){}
-      try{
-        const {creative}=await api("PATCH",{id:d.id,imageData:url,w,h,by});
-        const nv=view(creative);
-        DATA=DATA.map(x=>x.id===d.id?nv:x);
-        draw();toast("Image added");
-        if(after)after(nv);
-      }catch(e){toast(e.message)}
-    });
+    let by="";try{by=localStorage.getItem(NAME_KEY)||""}catch(e){}
+    try{
+      let body;
+      if(f.type.startsWith("video/")){
+        toast("Uploading video…");
+        const info=await videoInfo(f);
+        const {upload}=await import(BLOB_CLIENT);
+        const safe=f.name.toLowerCase().replace(/[^a-z0-9.]+/g,"-").slice(-60)||"video.mp4";
+        const blob=await upload(`videos/${safe}`,f,{access:"public",handleUploadUrl:"/api/upload",
+          contentType:f.type||"video/mp4",multipart:f.size>50e6,
+          onUploadProgress:p=>toast(`Uploading video… ${Math.round(p.percentage)}%`)});
+        body={id:d.id,video:blob.url,imageData:info.poster,w:info.w,h:info.h,dur:info.dur,by};
+      }else{
+        toast("Uploading…");
+        const img=await shrinkP(f,1400);
+        body={id:d.id,imageData:img.url,w:img.w,h:img.h,by};
+      }
+      const {creative}=await api("PATCH",body);
+      const nv=view(creative);
+      DATA=DATA.map(x=>x.id===d.id?nv:x);
+      draw();toast(nv.video?"Video added":"Image added");
+      if(after)after(nv);
+    }catch(e){toast(e.message)}
   });
   input.click();
 }

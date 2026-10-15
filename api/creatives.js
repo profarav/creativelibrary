@@ -84,15 +84,26 @@ export async function PATCH(request) {
   const record = body.id && (await getCreative(clean(body.id, 120)));
   if (!record) return json({ error: "That creative no longer exists." }, 404);
 
-  // Someone added the ad's image (e.g. downloaded from Motion). The link stays.
-  if (body.imageData) {
+  // Someone added the ad itself — an image, or a video (e.g. downloaded from Motion). The link stays.
+  if (body.imageData || body.video) {
+    const video = clean(body.video, 2000);
+    if (video && !/^https:\/\/[a-z0-9]+\.public\.blob\.vercel-storage\.com\//i.test(video)) {
+      return json({ error: "That video didn't upload to the library's storage. Try again." }, 400);
+    }
     try {
-      record.img = await storeUpload(body.imageData, record.client || record.industry || "creative");
+      record.img = (await storeUpload(body.imageData, record.client || record.industry || "creative")) || "";
     } catch (e) {
       return json({ error: e.message }, e.status || 500);
     }
     record.w = Number(body.w) || 0; record.h = Number(body.h) || 0;
     record.fmt = shapeOf(record.w, record.h);
+    if (video) {
+      record.video = video; record.type = "video"; record.dur = clean(body.dur, 10);
+      // No still from the browser? Make one from the video here.
+      if (!record.img) { try { await ensurePoster(record); } catch (e) { console.error("thumbnail failed", e.message); } }
+    } else {
+      delete record.video; record.type = "static"; record.dur = "";
+    }
     record.imageAddedBy = clean(body.by, 80) || "someone on the team";
     // If Claude's tags were only a guess, it can do better now it can see the ad.
     if (record.tagsUnconfirmed && record.filedBy === "claude") {

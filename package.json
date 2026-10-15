@@ -8,12 +8,14 @@
     "build": "node build.js",
     "backfill": "node scripts/backfill-slack.js",
     "reclassify": "node scripts/reclassify.js",
-    "import": "node scripts/import-folder.js"
+    "import": "node scripts/import-folder.js",
+    "thumbnails": "node scripts/fix-thumbnails.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.132.0",
     "@vercel/blob": "^2.0.0",
-    "@vercel/functions": "^3.0.0"
+    "@vercel/functions": "^3.0.0",
+    "ffmpeg-static": "^5.3.0"
   },
   "engines": {
     "node": ">=20"

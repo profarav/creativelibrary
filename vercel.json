@@ -5,15 +5,26 @@
   "framework": null,
   "cleanUrls": true,
   "functions": {
-    "api/slack.js": { "maxDuration": 60 },
-    "api/creatives.js": { "maxDuration": 30 }
+    "api/slack.js": {
+      "maxDuration": 60
+    },
+    "api/creatives.js": {
+      "maxDuration": 60,
+      "includeFiles": "node_modules/ffmpeg-static/ffmpeg"
+    }
   },
   "headers": [
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        }
       ]
     }
   ]

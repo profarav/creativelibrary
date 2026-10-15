@@ -9,6 +9,7 @@
 import { listCreatives, getCreative, saveCreative, putImage, shapeOf, newId } from "../lib/store.js";
 import { INDUSTRIES, THEMES, KEYWORDS } from "../lib/vocab.js";
 import { classify, applyClassification } from "../lib/classify.js";
+import { ensurePoster } from "../lib/poster.js";
 
 const json = (data, status = 200) =>
   Response.json(data, { status, headers: { "Cache-Control": "no-store" } });
@@ -69,6 +70,10 @@ export async function POST(request) {
     by: clean(body.by, 80) || "Someone on the team",
     added: new Date().toISOString(),
   };
+  // The browser couldn't grab a frame (common in Safari) — make the thumbnail here instead.
+  if (record.video && !record.img) {
+    try { await ensurePoster(record); } catch (e) { console.error("thumbnail failed", e.message); }
+  }
   await saveCreative(record);
   return json({ creative: record }, 201);
 }

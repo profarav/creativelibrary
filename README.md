@@ -24,7 +24,7 @@ sample ads with a banner saying so.
 Every creative needs an **industry** and a **creative theme**; the client is optional.
 Adding by hand also needs *What's good about this?*
 
-- **Industries:** Beauty, Finance, Fintech, Food & bev, Home, Primer Growth, Wellness
+- **Industries:** Beauty, Finance (includes fintech), Food & bev, Home, Primer Growth, Wellness
 - **Creative themes:** UGC, Vs the alt, Facts + Stats, This or that, Copy only,
   Reviews/Testimonials, BDQs, Search bar, Question box/comment response, Organic,
   Editing, Nails, Visual hooks

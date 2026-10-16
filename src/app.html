@@ -272,7 +272,6 @@ mark{background:#FFE58A;color:#111;border-radius:3px;padding:0 2px}
   <button data-view="all" aria-current="page">All creative</button>
   <button data-view="boards">Boards</button>
   <button data-view="slack">From Slack<span class="count" id="n-slack"></span></button>
-  <button data-view="comp">Competitors</button>
 </div>
 
 <div id="banner" hidden></div>
@@ -617,7 +616,7 @@ function shown(){
     if(S.theme&&d.theme!==S.theme)return false;
     if(S.client&&d.client!==S.client)return false;
     if(S.q){
-      const hay=[d.hook,d.client,d.industry,d.theme,d.note,d.by].join(" ").toLowerCase();
+      const hay=[d.hook,d.client,d.brand,d.industry,d.theme,d.note,d.by].join(" ").toLowerCase();
       if(!hay.includes(S.q))return false;
     }
     return true;
@@ -642,8 +641,7 @@ function draw(){
   stage.innerHTML="";
   if(S.view==="all")viewAll();
   else if(S.view==="boards")viewBoards();
-  else if(S.view==="slack")viewSlack();
-  else viewComp();
+  else viewSlack();
 }
 
 /* ---- all creative ---- */
@@ -689,8 +687,8 @@ function card(d,list,i){
     <button class="save" type="button" data-saved="${SAVED.has(d.id)}">${SAVED.has(d.id)?"Saved":"Save"}</button>
     <div class="info">${d.img
       ?`<div class="good">${esc(d.hook)}</div>
-        <div class="sub">${[d.client,d.industry,d.theme].filter(Boolean).map(esc).join(" · ")}${d.link?` · <span class="ext">${ARROW} ${esc(platform(d.link)?.name||"Link")}</span>`:""}</div>`
-      :`<div class="hook">${esc(d.client||d.industry||"Not tagged yet")}</div>
+        <div class="sub">${[d.client||d.brand,d.industry,d.theme].filter(Boolean).map(esc).join(" · ")}${d.link?` · <span class="ext">${ARROW} ${esc(platform(d.link)?.name||"Link")}</span>`:""}</div>`
+      :`<div class="hook">${esc(d.client||d.brand||d.industry||"Not tagged yet")}</div>
         <div class="sub">${[d.client?d.industry:"",d.theme].filter(Boolean).map(esc).join(" · ")}${d.link?`${d.industry||d.theme?" · ":""}<span class="ext">${ARROW} ${esc(platform(d.link)?.name||"Link")}</span>`:""}</div>`}
     </div>`;
   const open=()=>detail(d,list,i);
@@ -720,6 +718,11 @@ function viewBoards(){
   stage.appendChild(tabs);
 
   const inGroup=(d,g)=>d[key]===g;
+  if(key==="client"){
+    const note=document.createElement("p");note.className="note-line";note.style.paddingTop="12px";
+    note.textContent="Our clients' winning ads — every top performer in one place. Add a client, open it, then Add its winners.";
+    stage.appendChild(note);
+  }
   const count=g=>DATA.filter(d=>inGroup(d,g)).length;
   // Themes keep the order they were defined in; industries and clients go biggest first.
   const groups=key==="theme"?groupsFor(key):groupsFor(key).sort((a,b)=>count(b)-count(a)||a.localeCompare(b));
@@ -790,7 +793,6 @@ function viewSlack(){
         <div class="acts">
           <select aria-label="Industry" data-kind="industry"><option value="">Industry *</option>${industries().map(c=>`<option ${c===it.industry?"selected":""}>${esc(c)}</option>`).join("")}</select>
           <select aria-label="Creative theme" data-kind="theme"><option value="">Theme *</option>${THEMES.map(c=>`<option ${c===it.theme?"selected":""}>${esc(c)}</option>`).join("")}</select>
-          <select aria-label="Client" data-kind="client"><option value="">Client (optional)</option>${clients.map(c=>`<option ${c===it.client?"selected":""}>${esc(c)}</option>`).join("")}</select>
           <span class="gap"></span>
           <button class="btn" data-a="skip">Not for the library</button>
           <button class="btn btn-dark" data-a="add">File it</button>
@@ -799,7 +801,7 @@ function viewSlack(){
     wireNew(row);
     const said=row.querySelector(".said");said.title="Click to read it all";
     said.addEventListener("click",()=>said.classList.toggle("open"));
-    const [si,st,sc]=row.querySelectorAll("select");
+    const [si,st]=row.querySelectorAll("select");
     [si,st].forEach(x=>x.addEventListener("change",()=>x.classList.remove("bad")));
     const busy=on=>row.querySelectorAll("button,select").forEach(b=>b.disabled=on);
     row.querySelector('[data-a="skip"]').addEventListener("click",async()=>{
@@ -812,7 +814,7 @@ function viewSlack(){
       if(!si.value||!st.value){toast("Pick an industry and a theme first");return;}
       busy(true);
       try{
-        const change={industry:si.value,theme:st.value,client:sc.value};
+        const change={industry:si.value,theme:st.value};
         const rec=it.example?Object.assign({},it,change,{status:"filed"})
           :(await api("PATCH",Object.assign({id:it.id},change))).creative;
         DATA.unshift(view(rec));drop(it.id);toast("Filed to "+rec.industry+" · "+rec.theme);
@@ -860,21 +862,6 @@ function drop(id){
   go();
 }
 
-/* ---- competitors ---- */
-function viewComp(){
-  const items=DATA.filter(d=>d.source==="Competitor scan").sort((a,b)=>b.days-a.days);
-  const note=document.createElement("p");
-  note.className="note-line";
-  note.textContent="Scanned weekly. Anything a competitor has kept running for more than a week saves itself here.";
-  stage.appendChild(note);
-  const board=document.createElement("div");board.className="board";
-  if(!items.length){
-    board.style.columns="1";
-    board.innerHTML=`<div class="blank"><b>The weekly competitor scan isn't switched on yet</b>Competitor ads added by hand or from Slack still show up in the main board.</div>`;
-  } else items.forEach((d,i)=>board.appendChild(card(d,items,i)));
-  stage.appendChild(board);
-}
-
 /* ---- detail ---- */
 let open_=null,ctx=null;
 function shut(){if(!open_)return;open_.forEach(n=>n.remove());open_=null;ctx=null;document.removeEventListener("keydown",key)}
@@ -907,7 +894,7 @@ function detail(d,list,i){
     <div class="left">${d.video?`<video class="vid" src="${esc(d.video)}" poster="${esc(d.img||"")}" controls playsinline preload="metadata"></video>`:pic(d)}</div>
     <div class="right">
       <h2>${esc(d.hook)}</h2>
-      <div class="meta">${[d.client,d.industry,d.theme,d.type==="video"?"Video "+d.dur:"Image",d.fmt].filter(Boolean).map(esc).join(" · ")}</div>
+      <div class="meta">${d.client?`<b>${esc(d.client)} winner</b> · `:""}${[d.brand,d.industry,d.theme,d.type==="video"?"Video "+d.dur:"Image"].filter(Boolean).map(esc).join(" · ")}</div>
       ${d.link?(()=>{const p=platform(d.link);return `<a class="openext" href="${esc(d.link)}" target="_blank" rel="noopener">
           <span>${ARROW.replace(/11/g,"14")} Open on ${esc(p?.name||"the website")}</span>
           <small>${d.img?"The full ad is":"The ad itself is"} on ${esc(p?.host||"another site")}. Opens in a new tab.</small></a>
@@ -922,7 +909,7 @@ function detail(d,list,i){
         ?`<div class="why"><b>What's good</b>${esc(d.note)}<span>${by} · ${at}</span></div>`
         :`<div class="meta">Added by ${by} · ${at}</div>`}
       <button class="btn" data-a="save">${SAVED.has(d.id)?"Saved":"Save"}</button>
-      <button class="btn" data-a="more">More ${d.client?"from "+esc(d.client):esc(d.theme)}</button>
+      <button class="btn" data-a="more">More ${d.client?"from "+esc(d.client):esc(d.theme||d.industry||"like this")}</button>
       ${d.permalink?`<a class="btn" href="${esc(d.permalink)}" target="_blank" rel="noopener">Open in Slack</a>`:""}
       ${!d.example&&MODE==="live"?`<button class="btn" data-a="tags">Edit tags</button>
         <button class="btn danger" data-a="del">Remove from library</button>`:""}
@@ -996,8 +983,12 @@ function editTags(d){
       <div class="f" data-req="e-t"><label for="e-t">Creative theme <i>*</i></label>
         <select id="e-t" data-kind="theme"><option value="">Choose…</option>${opts(THEMES,d.theme)}</select><span class="err">Pick a theme</span></div>
     </div>
-    <div class="f"><label for="e-c">Client <span class="opt">optional</span></label>
+    <div class="row2">
+    <div class="f"><label for="e-b">Brand <span class="opt">whose ad it is</span></label>
+      <input id="e-b" value="${esc(d.brand||"")}" placeholder="e.g. Chime"></div>
+    <div class="f"><label for="e-c">Client <span class="opt">only if it's our client's winner</span></label>
       <input id="e-c" list="cl2" value="${esc(d.client||"")}"><datalist id="cl2">${allClients().map(c=>`<option value="${esc(c)}">`).join("")}</datalist></div>
+    </div>
     <div class="f"><label for="e-g">What's good about it</label><textarea id="e-g">${esc(d.hook||"")}</textarea></div>
     <div class="acts"><button class="btn" data-a="x">Cancel</button><button class="btn btn-dark" data-a="ok">Save</button></div>`;
   wireNew(el);
@@ -1010,7 +1001,7 @@ function editTags(d){
     if(!valid)return;
     ok.disabled=true;
     try{
-      const change={id:d.id,industry:v("#e-i"),theme:v("#e-t"),client:v("#e-c")};
+      const change={id:d.id,industry:v("#e-i"),theme:v("#e-t"),client:v("#e-c"),brand:v("#e-b")};
       if(v("#e-g")!==d.hook)change.good=v("#e-g");
       const {creative}=await api("PATCH",change);
       const nv=view(creative);
@@ -1072,8 +1063,8 @@ function addForm(){
         <span class="err">Pick a theme</span></div>
     </div>
     <div class="row2">
-      <div class="f"><label for="a-c">Client <span class="opt">optional</span></label>
-        <input id="a-c" list="cl" placeholder="If it's for a client" value="${esc(S.client||"")}">
+      <div class="f"><label for="a-c">Client <span class="opt">if it's one of our client's winners</span></label>
+        <input id="a-c" list="cl" placeholder="Leave blank for inspiration" value="${esc(S.client||"")}">
         <datalist id="cl">${allClients().map(c=>`<option value="${esc(c)}">`).join("")}</datalist></div>
       <div class="f"><label for="a-by">Your name <span class="opt">optional</span></label>
         <input id="a-by" value="${esc(myName)}" placeholder="So people know who to ask"></div>

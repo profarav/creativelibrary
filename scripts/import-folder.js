@@ -96,7 +96,7 @@ for (const file of files) {
     const sure = c?.confident && c.industry;
     await saveCreative({
       id, status: "filed", source: "Upload", filedBy: "claude",
-      industry: c?.industry || "", theme, client: c?.client || "",
+      industry: c?.industry || "", theme, client: "", brand: c?.brand || "",
       ...(sure ? {} : { tagsUnconfirmed: true }),
       type: isVideo ? "video" : "static", dur, fmt: shapeOf(w, h), w, h,
       good: c?.note || name.replace(/\.\w+$/, "").replace(/[_-]+/g, " "),

@@ -115,7 +115,7 @@ export async function PATCH(request) {
       if (c && c.isAd === "yes") {
         if (c.industry) record.industry = c.industry;
         if (c.theme) record.theme = c.theme;
-        if (c.client && !record.client) record.client = c.client;
+        if (c.brand && !record.brand) record.brand = c.brand;
         if (c.confident && record.industry && record.theme) delete record.tagsUnconfirmed;
         record.claude = { ...(record.claude || {}), confident: c.confident, reason: c.reason, at: new Date().toISOString() };
       }
@@ -125,7 +125,7 @@ export async function PATCH(request) {
     return json({ creative: record });
   }
 
-  for (const k of ["industry", "theme", "client", "good"]) if (k in body) record[k] = clean(body[k], k === "good" ? 1000 : 80);
+  for (const k of ["industry", "theme", "client", "brand", "good"]) if (k in body) record[k] = clean(body[k], k === "good" ? 1000 : 80);
   if ("good" in body) record.goodByHand = true;
   if ("industry" in body || "theme" in body) delete record.tagsUnconfirmed; // a person has checked them
   if (body.status === "skipped") {

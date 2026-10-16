@@ -21,7 +21,6 @@ a @goprimer address gets in. Needs `SESSION_SECRET` on Vercel.
 | **All creative** | The board. Filter by images / video, industry, creative theme and client, or search. Click anything for the detail view. |
 | **Boards** | Three tabs — Industries, Themes, Clients — one board per bucket. |
 | **From Slack** | What came in from `#creative-inspiration`: posts that filed themselves, and posts that need someone to pick an industry and theme. |
-| **Competitors** | For the weekly competitor scan (not switched on yet). |
 
 Everything is shared: what one person adds, everyone sees. *Save* is a personal shortlist
 and stays in your browser. Until the library has its first real creative, the board shows
@@ -29,13 +28,16 @@ sample ads with a banner saying so.
 
 ## Filing rules
 
-Every creative needs an **industry** and a **creative theme**; the client is optional.
+Every creative needs an **industry** and a **creative theme**. **Client** means one of
+Primer's own clients and is only for their winning ads — the Clients section is the
+place for every historical top performer. It's set by people, never by Slack or Claude.
+**Brand** is the advertiser in the ad (Claude fills this in).
 Adding by hand also needs *What's good about this?*
 
 - **Industries:** Beauty, Finance (includes fintech), Food & bev, Home, Primer Growth, Wellness
 - **Creative themes:** UGC, Vs the alt, Facts + Stats, This or that, Copy only,
-  Reviews/Testimonials, BDQs, Search bar, Question box/comment response, Organic,
-  Editing, Nails, Visual hooks
+  Reviews/Testimonials, BDQs, Search bar, Question box/comment response, Organic, Nails
+  (editing and visual hooks are part of UGC)
 
 To load a folder of downloads under a theme (images and videos; videos stay playable):
 

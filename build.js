@@ -47,4 +47,23 @@ ${markup}
 
 fs.mkdirSync("public", { recursive: true });
 fs.writeFileSync("public/index.html", html);
+
+// The sign-in page is self-contained; just give it a document around it.
+const login = fs.readFileSync("src/login.html", "utf8");
+const loginTitle = (/<title>(.*?)<\/title>/.exec(login) || [, "Sign in"])[1];
+fs.writeFileSync("public/login.html", `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>${loginTitle}</title>
+<link rel="icon" href="${favicon}">
+${(/<style>[\s\S]*?<\/style>/.exec(login) || [""])[0]}
+</head>
+<body>
+${login.replace(/<title>[\s\S]*?<\/title>/, "").replace(/<style>[\s\S]*?<\/style>/, "").trim()}
+</body>
+</html>
+`);
 console.log(`built public/index.html (${(html.length / 1024).toFixed(1)} kB)`);

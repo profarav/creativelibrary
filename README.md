@@ -6,6 +6,14 @@ usable by both teams.
 
 **Live:** https://creativelibraryprimer.vercel.app
 
+## Signing in
+
+The site opens on a sign-in page that asks for an email. Any **@goprimer** address gets
+in; there's no password. A signed cookie keeps you in for 30 days (`lib/session.js`,
+enforced for the page and the API by `middleware.js`; Slack's endpoint is exempt — Slack
+signs its own requests). It's a placeholder until real sign-in is added: anyone who types
+a @goprimer address gets in. Needs `SESSION_SECRET` on Vercel.
+
 ## What's in it
 
 | Section | What it does |

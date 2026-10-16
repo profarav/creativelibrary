@@ -8,6 +8,7 @@
  */
 import { listCreatives, getCreative, saveCreative, putImage, shapeOf, newId } from "../lib/store.js";
 import { getVocab } from "../lib/terms.js";
+import { emailFrom } from "../lib/session.js";
 import { classify, applyClassification } from "../lib/classify.js";
 import { ensurePoster } from "../lib/poster.js";
 
@@ -33,6 +34,7 @@ export async function GET() {
 }
 
 export async function POST(request) {
+  const email = await emailFrom(request);
   let body;
   try { body = await request.json(); } catch { return json({ error: "Send the creative as JSON." }, 400); }
 
@@ -67,7 +69,8 @@ export async function POST(request) {
     w, h,
     good,
     img,
-    by: clean(body.by, 80) || "Someone on the team",
+    by: clean(body.by, 80) || (email ? email.split("@")[0] : "Someone on the team"),
+    addedBy: email || "",
     added: new Date().toISOString(),
   };
   // The browser couldn't grab a frame (common in Safari) — make the thumbnail here instead.
@@ -79,6 +82,7 @@ export async function POST(request) {
 }
 
 export async function PATCH(request) {
+  const email = await emailFrom(request);
   let body;
   try { body = await request.json(); } catch { return json({ error: "Send the change as JSON." }, 400); }
   const record = body.id && (await getCreative(clean(body.id, 120)));
@@ -135,6 +139,7 @@ export async function PATCH(request) {
     record.filedBy = "person";
   }
   record.updated = new Date().toISOString();
+  record.updatedBy = email || "";
   await saveCreative(record);
   return json({ creative: record });
 }
